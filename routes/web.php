@@ -91,12 +91,11 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:super_admin'])->group(function () {
         Route::resource('users', UserController::class);
         Route::resource('roles', \App\Http\Controllers\RoleController::class);
-        Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
         Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
         Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
     });
 
-    // Activity logs (limited access)
+    // Activity logs accessible to anyone with the permission (including super_admin)
     Route::get('activity-logs', [ActivityLogController::class, 'index'])
         ->middleware('permission:activity-log.view')
         ->name('activity-logs.index');
