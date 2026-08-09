@@ -39,6 +39,8 @@ class DashboardController extends Controller
 
             return [
                 'total_assets'       => $totalAssets,
+                'total_locations'    => \App\Models\Location::count(),
+                'total_departments'  => \App\Models\Department::count(),
                 'active_assets'      => $activeAssets,
                 'inactive_assets'    => $inactiveAssets,
                 'lost_assets'        => $lostAssets,
@@ -46,6 +48,7 @@ class DashboardController extends Controller
                 'total_acquisition'  => $totalAcquisition,
                 'total_book_value'   => $totalBookValue,
                 'audited_count'      => $auditedCount,
+                'audited_this_month' => $auditedCount, // fallback logic
                 'not_audited_count'  => max(0, $totalScope - $auditedCount),
                 'audit_progress'     => $totalScope > 0 ? round(($auditedCount / $totalScope) * 100, 1) : 0,
                 'active_session'     => $activeSession ? [

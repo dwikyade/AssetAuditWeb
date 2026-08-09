@@ -52,6 +52,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('asset-code-prefixes/{prefix}/deactivate', [AssetCodePrefixController::class, 'deactivate'])->name('asset-code-prefixes.deactivate');
 
     // Audit
+    Route::get('api/assets/lookup', [AssetController::class, 'lookup'])->name('assets.lookup');
     Route::resource('audit-sessions', AuditSessionController::class);
     Route::post('audit-sessions/{session}/start', [AuditSessionController::class, 'start'])->name('audit-sessions.start');
     Route::post('audit-sessions/{session}/complete', [AuditSessionController::class, 'complete'])->name('audit-sessions.complete');

@@ -20,9 +20,28 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Http\JsonResponse;
 
 class AssetController extends Controller
 {
+    public function lookup(Request $request): JsonResponse
+    {
+        $code = $request->get('code');
+        if (!$code) {
+            return response()->json(['error' => 'Code is required'], 400);
+        }
+
+        $asset = Asset::with(['category', 'department', 'location', 'status', 'condition'])
+            ->where('asset_code', $code)
+            ->first();
+
+        if (!$asset) {
+            return response()->json(['error' => 'Asset not found'], 404);
+        }
+
+        return response()->json($asset);
+    }
+
     public function index(Request $request): Response
     {
         $this->authorize('asset.view');
