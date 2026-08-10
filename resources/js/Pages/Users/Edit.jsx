@@ -1,6 +1,6 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button, Input, Label } from '@/Components/UI';
+import { Button, Input, Label , Select} from '@/Components/UI';
 import { ArrowLeft, Save, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { getInitials, formatRole } from '@/lib/utils';
@@ -59,10 +59,10 @@ export default function UsersEdit({ user, roles }) {
                         </div>
                         <div>
                             <Label htmlFor="role">Role / Hak Akses <span className="text-red-500">*</span></Label>
-                            <select id="role" value={data.role} onChange={e => setData('role', e.target.value)}
-                                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 bg-white">
+                            <Select id="role" value={data.role} onChange={e => setData('role', e.target.value)}
+                                className="mt-1 flex min-h-[40px] w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 shadow-sm">
                                 {roles.map(r => <option key={r.id} value={r.name}>{formatRole(r.name)}</option>)}
-                            </select>
+                            </Select>
                             {errors.role && <p className="text-red-500 text-xs mt-1">{errors.role}</p>}
                         </div>
 

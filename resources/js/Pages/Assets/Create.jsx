@@ -1,6 +1,6 @@
 import { Head, useForm, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button, Input, Label } from '@/Components/UI';
+import { Button, Input, Label , Select} from '@/Components/UI';
 import { ArrowLeft, Save } from 'lucide-react';
 import { useState } from 'react';
 import axios from 'axios';
@@ -116,18 +116,18 @@ export default function AssetCreate({ categories, departments, locations, status
                                 ) : (
                                     <div>
                                         <Label htmlFor="prefix_id">Pilih Prefix *</Label>
-                                        <select
+                                        <Select
                                             id="prefix_id"
                                             value={data.prefix_id}
                                             onChange={handlePrefixChange}
-                                            className={`flex h-10 w-full rounded-md border ${errors.prefix_id ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900`}
+                                            className={`flex h-10 w-full rounded-xl border ${errors.prefix_id ? 'border-red-500' : 'border-gray-200'} bg-gray-50 px-3.5 py-2 text-sm focus:bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 shadow-sm`}
                                             required
                                         >
                                             <option value="">-- Pilih Prefix --</option>
                                             {prefixes.map(p => (
                                                 <option key={p.id} value={p.id}>{p.name} ({p.prefix})</option>
                                             ))}
-                                        </select>
+                                        </Select>
                                         {errors.prefix_id && <p className="mt-1 text-xs text-red-500 font-medium">{errors.prefix_id}</p>}
                                         {previewCode && <p className="mt-1 text-xs text-black">Preview: {previewCode}</p>}
                                     </div>
@@ -146,22 +146,22 @@ export default function AssetCreate({ categories, departments, locations, status
 
                                 <div>
                                     <Label htmlFor="category_id">Kategori *</Label>
-                                    <select
+                                    <Select
                                         id="category_id"
                                         value={data.category_id}
                                         onChange={(e) => setData('category_id', e.target.value)}
-                                        className={`flex h-10 w-full rounded-md border ${errors.category_id ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900`}
+                                        className={`flex h-10 w-full rounded-xl border ${errors.category_id ? 'border-red-500' : 'border-gray-300'} bg-gray-50 px-3.5 py-2 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 shadow-sm`}
                                         required
                                     >
                                         <option value="">-- Pilih Kategori --</option>
                                         {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                                    </select>
+                                    </Select>
                                     {errors.category_id && <p className="mt-1 text-xs text-red-500 font-medium">{errors.category_id}</p>}
                                 </div>
 
                                 <div>
                                     <Label htmlFor="department_id">Departemen</Label>
-                                    <select
+                                    <Select
                                         id="department_id"
                                         value={data.department_id}
                                         onChange={(e) => setData('department_id', e.target.value)}
@@ -169,12 +169,12 @@ export default function AssetCreate({ categories, departments, locations, status
                                     >
                                         <option value="">-- Tidak Ada --</option>
                                         {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-                                    </select>
+                                    </Select>
                                 </div>
 
                                 <div className="md:col-span-2">
                                     <Label htmlFor="location_id">Lokasi Penempatan</Label>
-                                    <select
+                                    <Select
                                         id="location_id"
                                         value={data.location_id}
                                         onChange={(e) => setData('location_id', e.target.value)}
@@ -182,7 +182,7 @@ export default function AssetCreate({ categories, departments, locations, status
                                     >
                                         <option value="">-- Tidak Ada --</option>
                                         {locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
-                                    </select>
+                                    </Select>
                                 </div>
                             </div>
                         </section>
@@ -246,30 +246,30 @@ export default function AssetCreate({ categories, departments, locations, status
                                 </div>
                                 <div>
                                     <Label htmlFor="status_id">Status Aset *</Label>
-                                    <select
+                                    <Select
                                         id="status_id"
                                         value={data.status_id}
                                         onChange={(e) => setData('status_id', e.target.value)}
-                                        className={`flex h-10 w-full rounded-md border ${errors.status_id ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900`}
+                                        className={`flex h-10 w-full rounded-xl border ${errors.status_id ? 'border-red-500' : 'border-gray-300'} bg-gray-50 px-3.5 py-2 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 shadow-sm`}
                                         required
                                     >
                                         <option value="">-- Pilih Status --</option>
                                         {statuses.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                                    </select>
+                                    </Select>
                                     {errors.status_id && <p className="mt-1 text-xs text-red-500 font-medium">{errors.status_id}</p>}
                                 </div>
                                 <div>
                                     <Label htmlFor="condition_id">Kondisi *</Label>
-                                    <select
+                                    <Select
                                         id="condition_id"
                                         value={data.condition_id}
                                         onChange={(e) => setData('condition_id', e.target.value)}
-                                        className={`flex h-10 w-full rounded-md border ${errors.condition_id ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900`}
+                                        className={`flex h-10 w-full rounded-xl border ${errors.condition_id ? 'border-red-500' : 'border-gray-300'} bg-gray-50 px-3.5 py-2 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 shadow-sm`}
                                         required
                                     >
                                         <option value="">-- Pilih Kondisi --</option>
                                         {conditions.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                                    </select>
+                                    </Select>
                                     {errors.condition_id && <p className="mt-1 text-xs text-red-500 font-medium">{errors.condition_id}</p>}
                                 </div>
                             </div>

@@ -1,6 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button, Input } from '@/Components/UI';
+import { Button, Input , Select} from '@/Components/UI';
 import { Search, Plus, Eye, Play, StopCircle, FileText, CheckCircle2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -58,8 +58,8 @@ export default function AuditSessionIndex({ sessions, filters }) {
                                 onChange={(e) => setSearch(e.target.value)}
                             />
                         </div>
-                        <select 
-                            className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-gray-900"
+                        <Select 
+                            className="rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-3 py-2 text-sm focus:ring-gray-900"
                             value={filters.status || ''}
                             onChange={(e) => router.get('/audit-sessions', { ...filters, status: e.target.value })}
                         >
@@ -68,7 +68,7 @@ export default function AuditSessionIndex({ sessions, filters }) {
                             <option value="scheduled">Dijadwalkan</option>
                             <option value="in_progress">Sedang Berjalan</option>
                             <option value="completed">Selesai</option>
-                        </select>
+                        </Select>
                     </div>
 
                     <div className="overflow-x-auto">

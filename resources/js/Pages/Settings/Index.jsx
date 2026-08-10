@@ -1,6 +1,6 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button } from '@/Components/UI';
+import { Button , Select} from '@/Components/UI';
 import { Save, Settings, Building2, DollarSign, ClipboardList } from 'lucide-react';
 
 export default function SettingsIndex({ settings }) {
@@ -70,7 +70,7 @@ export default function SettingsIndex({ settings }) {
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Alamat Hotel</label>
-                                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none"
+                                <textarea className="flex min-h-[80px] w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 shadow-sm resize-none"
                                     rows={2} value={data.settings.hotel_address} onChange={e => setData('settings', {...data.settings, hotel_address: e.target.value})} />
                             </div>
                             <div>
@@ -88,30 +88,30 @@ export default function SettingsIndex({ settings }) {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Mata Uang</label>
-                                    <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 bg-white"
+                                    <Select className="flex min-h-[40px] w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 shadow-sm"
                                         value={data.settings.currency} onChange={e => setData('settings', {...data.settings, currency: e.target.value})}>
                                         <option value="IDR">IDR - Rupiah</option>
                                         <option value="USD">USD - Dollar</option>
                                         <option value="SGD">SGD - Singapore Dollar</option>
-                                    </select>
+                                    </Select>
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Metode Depresiasi</label>
-                                    <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 bg-white"
+                                    <Select className="flex min-h-[40px] w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 shadow-sm"
                                         value={data.settings.depreciation_method} onChange={e => setData('settings', {...data.settings, depreciation_method: e.target.value})}>
                                         <option value="straight_line">Garis Lurus (Straight Line)</option>
                                         <option value="declining_balance">Saldo Menurun (Declining Balance)</option>
-                                    </select>
+                                    </Select>
                                 </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Bulan Awal Tahun Fiskal</label>
-                                <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 bg-white"
+                                <Select className="flex min-h-[40px] w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 shadow-sm"
                                     value={data.settings.fiscal_year_start} onChange={e => setData('settings', {...data.settings, fiscal_year_start: e.target.value})}>
                                     {['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'].map((m, i) => (
                                         <option key={i} value={String(i+1).padStart(2,'0')}>{m}</option>
                                     ))}
-                                </select>
+                                </Select>
                             </div>
                         </div>
                     </div>

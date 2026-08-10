@@ -1,6 +1,6 @@
 import { Head, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button } from '@/Components/UI';
+import { Button , Select} from '@/Components/UI';
 import { ArrowLeft, AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
 
@@ -36,8 +36,8 @@ export default function MismatchReport({ audits, sessions, filters }) {
                             <AlertTriangle size={16} />
                             Total Mismatch: {audits.total} Aset
                         </div>
-                        <select 
-                            className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-gray-900 bg-white min-w-[250px]"
+                        <Select 
+                            className="rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-3 py-2 text-sm focus:ring-gray-900 bg-white min-w-[250px]"
                             value={sessionId}
                             onChange={handleFilterChange}
                         >
@@ -45,7 +45,7 @@ export default function MismatchReport({ audits, sessions, filters }) {
                             {sessions.map(s => (
                                 <option key={s.id} value={s.id}>{s.name} ({s.code})</option>
                             ))}
-                        </select>
+                        </Select>
                     </div>
 
                     <div className="overflow-x-auto">

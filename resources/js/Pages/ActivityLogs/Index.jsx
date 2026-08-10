@@ -1,6 +1,6 @@
 import { Head, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button, Input } from '@/Components/UI';
+import { Button, Input , Select} from '@/Components/UI';
 import { Search, Filter, Clock } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -60,14 +60,14 @@ export default function ActivityLogsIndex({ logs, filters, modules }) {
                             </div>
                             <Input type="text" placeholder="Cari deskripsi..." className="pl-8 text-sm h-9" value={search} onChange={e => setSearch(e.target.value)} />
                         </div>
-                        <select
-                            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 bg-white h-9"
+                        <Select
+                            className="flex min-h-[40px] w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 shadow-sm h-9"
                             value={module}
                             onChange={e => setModule(e.target.value)}
                         >
                             <option value="">Semua Modul</option>
                             {modules.map(m => <option key={m} value={m}>{m}</option>)}
-                        </select>
+                        </Select>
                         <Input type="date" className="text-sm h-9" value={dateFrom} onChange={e => setDateFrom(e.target.value)} title="Dari tanggal" />
                         <Input type="date" className="text-sm h-9" value={dateTo} onChange={e => setDateTo(e.target.value)} title="Sampai tanggal" />
                     </div>

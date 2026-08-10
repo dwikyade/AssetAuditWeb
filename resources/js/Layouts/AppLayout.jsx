@@ -4,7 +4,7 @@ import {
     LayoutDashboard, Package, ClipboardList, FileUp,
     BarChart3, Users, Settings, LogOut, ChevronLeft,
     Bell, ChevronDown, Building2, Tag, MapPin, Hash,
-    Activity, Shield
+    Activity, Shield, X
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn, getInitials, formatRole } from '@/lib/utils';
@@ -347,24 +347,30 @@ export default function AppLayout({ children }) {
             </div>
 
             {/* Toast notifications */}
-            <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
+            <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none">
+                {/* Need to add pointer-events-auto to the children */}
                 <AnimatePresence>
                     {toasts.map(toast => (
                         <motion.div
                             key={toast.id}
-                            initial={{ opacity: 0, x: 100, scale: 0.9 }}
-                            animate={{ opacity: 1, x: 0, scale: 1 }}
-                            exit={{ opacity: 0, x: 100, scale: 0.9 }}
+                            initial={{ opacity: 0, y: -20, scale: 0.9 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+                            transition={{ type: 'spring', bounce: 0.3 }}
                             className={cn(
-                                'flex items-start gap-3 px-4 py-3 rounded-xl shadow-lg text-sm max-w-sm',
-                                toast.type === 'success' && 'bg-green-50 text-green-800 border border-green-200',
-                                toast.type === 'error' && 'bg-red-50 text-red-800 border border-red-200',
-                                toast.type === 'warning' && 'bg-yellow-50 text-yellow-800 border border-yellow-200',
-                                toast.type === 'info' && 'bg-blue-50 text-blue-800 border border-blue-200',
+                                'flex items-center gap-3 px-5 py-3.5 rounded-full shadow-2xl text-sm min-w-[320px] border pointer-events-auto',
+                                toast.type === 'success' && 'bg-gray-900 text-white border-gray-800',
+                                toast.type === 'error' && 'bg-red-600 text-white border-red-700',
+                                toast.type === 'warning' && 'bg-yellow-500 text-white border-yellow-600',
+                                toast.type === 'info' && 'bg-blue-600 text-white border-blue-700',
                             )}
                         >
-                            <span className="flex-1">{toast.msg}</span>
-                            <button onClick={() => dismissToast(toast.id)} className="text-gray-400 hover:text-gray-600 shrink-0">×</button>
+                            <div className="flex-1 flex items-center gap-2 pointer-events-auto">
+                                {toast.type === "success" && <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>}
+                                {toast.type === "error" && <svg className="w-5 h-5 text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>}
+                                <span className="font-medium tracking-wide">{toast.msg}</span>
+                            </div>
+                            <button onClick={() => dismissToast(toast.id)} className="text-gray-400 hover:text-white shrink-0 pointer-events-auto ml-2"><X size={16} /></button>
                         </motion.div>
                     ))}
                 </AnimatePresence>

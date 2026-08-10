@@ -1,6 +1,6 @@
 import { Head, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button } from '@/Components/UI';
+import { Button , Select} from '@/Components/UI';
 import { UploadCloud, FileSpreadsheet, AlertCircle, CheckCircle2, Loader2, ArrowRight } from 'lucide-react';
 import { useState, useRef } from 'react';
 import axios from 'axios';
@@ -217,8 +217,8 @@ export default function ImportIndex({ default_mapping }) {
                                                     {header}
                                                 </div>
                                                 <ArrowRight size={16} className="text-gray-400 shrink-0" />
-                                                <select
-                                                    className="w-1/2 p-2 border border-gray-300 rounded text-sm focus:ring-gray-900 focus:border-gray-900"
+                                                <Select
+                                                    className="w-1/2 p-2 border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm rounded text-sm focus:ring-gray-900 focus:border-gray-900"
                                                     value={mapping[header] || ''}
                                                     onChange={(e) => handleMappingChange(header, e.target.value)}
                                                 >
@@ -226,7 +226,7 @@ export default function ImportIndex({ default_mapping }) {
                                                     {dbFields.map(f => (
                                                         <option key={f.value} value={f.value}>{f.label}</option>
                                                     ))}
-                                                </select>
+                                                </Select>
                                             </div>
                                         ))}
                                     </div>

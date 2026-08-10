@@ -1,20 +1,20 @@
 import { Head, useForm, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button, Input, Label } from '@/Components/UI';
+import { Button, Input, Label , Select} from '@/Components/UI';
 import { ArrowLeft, Save, AlertCircle } from 'lucide-react';
 
 const Select = ({ children, ...props }) => (
-    <select
-        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+    <Select
+        className="w-full rounded-lg border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
         {...props}
     >
         {children}
-    </select>
+    </Select>
 );
 
 const Textarea = ({ ...props }) => (
     <textarea
-        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none"
+        className="w-full rounded-lg border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none"
         rows={3}
         {...props}
     />

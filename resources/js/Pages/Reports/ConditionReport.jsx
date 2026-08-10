@@ -1,6 +1,6 @@
 import { Head, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button } from '@/Components/UI';
+import { Button , Select} from '@/Components/UI';
 import { ArrowLeft, FileText } from 'lucide-react';
 import { useState } from 'react';
 
@@ -48,8 +48,8 @@ export default function ConditionReport({ by_condition, assets, filters }) {
                             <FileText size={18} className="text-gray-400" />
                             Daftar Aset
                         </h3>
-                        <select 
-                            className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-gray-900 bg-white min-w-[200px]"
+                        <Select 
+                            className="rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-3 py-2 text-sm focus:ring-gray-900 bg-white min-w-[200px]"
                             value={conditionId}
                             onChange={handleFilterChange}
                         >
@@ -57,7 +57,7 @@ export default function ConditionReport({ by_condition, assets, filters }) {
                             {by_condition.map(c => (
                                 <option key={c.name} value={c.id || c.name}>{c.name}</option> // using name as fallback if id is not available in raw query
                             ))}
-                        </select>
+                        </Select>
                     </div>
 
                     <div className="overflow-x-auto">

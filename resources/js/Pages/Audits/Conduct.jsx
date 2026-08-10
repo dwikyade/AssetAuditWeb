@@ -1,6 +1,6 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button, Input, Label } from '@/Components/UI';
+import { Button, Input, Label , Select} from '@/Components/UI';
 import { 
     Search, QrCode, ArrowLeft, CheckCircle2, 
     XCircle, AlertTriangle, Save, Loader2 
@@ -247,7 +247,7 @@ export default function AuditConduct({ session, conditions, locations, audited_i
                                         <>
                                             <div>
                                                 <Label>Kondisi Fisik Saat Ini *</Label>
-                                                <select
+                                                <Select
                                                     value={data.condition_id}
                                                     onChange={(e) => setData('condition_id', e.target.value)}
                                                     className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-gray-900"
@@ -255,11 +255,11 @@ export default function AuditConduct({ session, conditions, locations, audited_i
                                                 >
                                                     <option value="">-- Pilih Kondisi --</option>
                                                     {conditions.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                                                </select>
+                                                </Select>
                                             </div>
                                             <div>
                                                 <Label>Lokasi Aktual Ditemukan *</Label>
-                                                <select
+                                                <Select
                                                     value={data.location_id}
                                                     onChange={(e) => setData('location_id', e.target.value)}
                                                     className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-gray-900"
@@ -267,7 +267,7 @@ export default function AuditConduct({ session, conditions, locations, audited_i
                                                 >
                                                     <option value="">-- Pilih Lokasi --</option>
                                                     {locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
-                                                </select>
+                                                </Select>
                                             </div>
                                             <div>
                                                 <Label>Jumlah/Qty Aktual *</Label>

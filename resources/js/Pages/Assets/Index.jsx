@@ -1,6 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button, Input } from '@/Components/UI';
+import { Button, Input , Select} from '@/Components/UI';
 import { 
     Search, Plus, Filter, MoreVertical, Edit, 
     Trash, Eye, Download, FileSpreadsheet, QrCode
@@ -87,56 +87,56 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                         <div className="p-4 border-b border-gray-200 bg-white grid grid-cols-1 md:grid-cols-5 gap-4">
                             <div>
                                 <label className="block text-xs font-medium text-gray-700 mb-1">Kategori</label>
-                                <select 
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                                <Select 
+                                    className="w-full rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                     value={filters.category_id || ''}
                                     onChange={(e) => handleFilterChange('category_id', e.target.value)}
                                 >
                                     <option value="">Semua Kategori</option>
                                     {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                                </select>
+                                </Select>
                             </div>
                             <div>
                                 <label className="block text-xs font-medium text-gray-700 mb-1">Departemen</label>
-                                <select 
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                                <Select 
+                                    className="w-full rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                     value={filters.department_id || ''}
                                     onChange={(e) => handleFilterChange('department_id', e.target.value)}
                                 >
                                     <option value="">Semua Departemen</option>
                                     {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-                                </select>
+                                </Select>
                             </div>
                             <div>
                                 <label className="block text-xs font-medium text-gray-700 mb-1">Lokasi</label>
-                                <select 
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                                <Select 
+                                    className="w-full rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                     value={filters.location_id || ''}
                                     onChange={(e) => handleFilterChange('location_id', e.target.value)}
                                 >
                                     <option value="">Semua Lokasi</option>
                                     {locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
-                                </select>
+                                </Select>
                             </div>
                             <div>
                                 <label className="block text-xs font-medium text-gray-700 mb-1">Status & Kondisi</label>
                                 <div className="flex gap-2">
-                                    <select 
-                                        className="w-1/2 rounded-md border border-gray-300 px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                                    <Select 
+                                        className="w-1/2 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                         value={filters.status_id || ''}
                                         onChange={(e) => handleFilterChange('status_id', e.target.value)}
                                     >
                                         <option value="">Status</option>
                                         {statuses.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                                    </select>
-                                    <select 
-                                        className="w-1/2 rounded-md border border-gray-300 px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                                    </Select>
+                                    <Select 
+                                        className="w-1/2 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                         value={filters.condition_id || ''}
                                         onChange={(e) => handleFilterChange('condition_id', e.target.value)}
                                     >
                                         <option value="">Kondisi</option>
                                         {conditions.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                                    </select>
+                                    </Select>
                                 </div>
                             </div>
                             <div className="flex items-end">

@@ -1,6 +1,6 @@
 import { Head, useForm } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button, Input, Label } from '@/Components/UI';
+import { Button, Input, Label , Select} from '@/Components/UI';
 import { ArrowLeft, Save } from 'lucide-react';
 import { useState } from 'react';
 
@@ -152,18 +152,18 @@ export default function AuditSessionCreate({ departments, locations, categories 
                             <div className="space-y-4">
                                 <div>
                                     <Label htmlFor="scope_type">Tentukan Ruang Lingkup Audit *</Label>
-                                    <select
+                                    <Select
                                         id="scope_type"
                                         value={data.scope_type}
                                         onChange={handleScopeChange}
-                                        className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                                        className="mt-1 block w-full rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                         required
                                     >
                                         <option value="all">Semua Aset (Seluruh Hotel)</option>
                                         <option value="department">Berdasarkan Departemen</option>
                                         <option value="location">Berdasarkan Lokasi Target</option>
                                         <option value="category">Berdasarkan Kategori Aset</option>
-                                    </select>
+                                    </Select>
                                     <p className="mt-1 text-xs text-gray-500">Menentukan jumlah aset target yang wajib diaudit pada sesi ini.</p>
                                     
                                     {renderScopeSelection()}

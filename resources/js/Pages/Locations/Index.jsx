@@ -1,6 +1,6 @@
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button, Input, Label, Modal } from '@/Components/UI';
+import { Button, Input, Label, Modal , Select} from '@/Components/UI';
 import { Search, Plus, Edit, Trash, MapPin, Save } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -77,7 +77,7 @@ function LocationForm({ isOpen, onClose, initialData = null, parents = [] }) {
 
                 <div>
                     <Label htmlFor="parent_id">Lokasi Induk (opsional)</Label>
-                    <select
+                    <Select
                         id="parent_id"
                         value={data.parent_id}
                         onChange={e => setData('parent_id', e.target.value)}
@@ -89,7 +89,7 @@ function LocationForm({ isOpen, onClose, initialData = null, parents = [] }) {
                                 {p.name} ({p.code})
                             </option>
                         ))}
-                    </select>
+                    </Select>
                     {errors.parent_id && <p className="mt-1 text-xs text-red-500 font-medium">{errors.parent_id}</p>}
                 </div>
 
