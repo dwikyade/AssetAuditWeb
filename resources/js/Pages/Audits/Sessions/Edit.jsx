@@ -1,15 +1,15 @@
 import { Head, useForm, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button, Input, Label , Select} from '@/Components/UI';
+import { Button, Input, Label, Select as UISelect } from '@/Components/UI';
 import { ArrowLeft, Save, AlertCircle } from 'lucide-react';
 
 const Select = ({ children, ...props }) => (
-    <Select
+    <UISelect
         className="w-full rounded-lg border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
         {...props}
     >
         {children}
-    </Select>
+    </UISelect>
 );
 
 const Textarea = ({ ...props }) => (
@@ -69,16 +69,18 @@ export default function AuditSessionEdit({ session, departments, locations, cate
         <AppLayout>
             <Head title={`Edit Sesi Audit: ${session.name}`} />
 
-            <div className="p-6 md:p-8 w-full max-w-3xl mx-auto">
-                <div className="flex items-center gap-3 mb-6">
-                    <Button variant="ghost" size="icon" onClick={() => router.visit(`/audit-sessions/${session.id}`)}>
-                        <ArrowLeft size={18} />
-                    </Button>
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Edit Sesi Audit</h1>
-                        <p className="text-sm font-mono text-black">{session.code}</p>
-                    </div>
-                </div>
+            <div className="p-6 md:p-8 w-full max-w-7xl mx-auto">
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                    <div className="xl:col-span-2 space-y-4">
+                        <div className="flex items-center gap-3 mb-6">
+                            <Button variant="ghost" size="icon" onClick={() => router.visit(`/audit-sessions/${session.id}`)}>
+                                <ArrowLeft size={18} />
+                            </Button>
+                            <div>
+                                <h1 className="text-2xl font-bold text-gray-900">Edit Sesi Audit</h1>
+                                <p className="text-sm font-mono text-black">{session.code}</p>
+                            </div>
+                        </div>
 
                 {isLocked && (
                     <div className="mb-6 flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
@@ -207,6 +209,31 @@ export default function AuditSessionEdit({ session, departments, locations, cate
                     </div>
                 </form>
             </div>
-        </AppLayout>
+
+            <div className="xl:col-span-1 space-y-6 pt-2 xl:pt-20">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 sticky top-6">
+                    <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                        <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Panduan Pengeditan Audit
+                    </h3>
+                    <div className="space-y-4 text-sm text-gray-600">
+                        <div>
+                            <strong className="text-gray-900 block mb-1">Masa Berlaku Edit</strong>
+                            <p>Anda hanya dapat mengedit detail sesi (seperti Scope dan Tanggal) jika sesi masih berstatus <b>Draft</b> atau <b>Scheduled</b>.</p>
+                        </div>
+                        <div>
+                            <strong className="text-gray-900 block mb-1">Perubahan Scope</strong>
+                            <p>Hati-hati jika Anda memperkecil scope (misalnya membuang suatu departemen). Pastikan ini tidak bertentangan dengan kebijakan audit.</p>
+                        </div>
+                        <div>
+                            <strong className="text-gray-900 block mb-1">Sesi Terkunci</strong>
+                            <p>Jika audit sudah berjalan (In Progress) atau sudah selesai (Completed), seluruh form ini akan terkunci demi menjaga integritas data.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</AppLayout>
     );
 }

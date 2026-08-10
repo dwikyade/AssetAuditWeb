@@ -6,7 +6,10 @@ use App\Models\ActivityLog;
 use App\Models\Asset;
 use App\Models\AssetAudit;
 use App\Models\AuditSession;
+use App\Models\Department;
 use App\Models\ImportJob;
+use App\Models\Location;
+use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -37,27 +40,51 @@ class DashboardController extends Controller
                 $totalScope   = $totalAssets;
             }
 
+            // Extra stats
+            $totalUsers        = User::count();
+            $totalSessions     = AuditSession::count();
+            $completedSessions = AuditSession::where('status', 'completed')->count();
+            $totalLocations   = Location::where('is_active', true)->count();
+            $totalDepartments = Department::where('is_active', true)->count();
+            $newAssetsThisMonth = Asset::whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)->count();
+
             return [
-                'total_assets'       => $totalAssets,
-                'total_locations'    => \App\Models\Location::count(),
-                'total_departments'  => \App\Models\Department::count(),
-                'active_assets'      => $activeAssets,
-                'inactive_assets'    => $inactiveAssets,
-                'lost_assets'        => $lostAssets,
-                'broken_assets'      => $brokenAssets,
-                'total_acquisition'  => $totalAcquisition,
-                'total_book_value'   => $totalBookValue,
-                'audited_count'      => $auditedCount,
-                'audited_this_month' => $auditedCount, // fallback logic
-                'not_audited_count'  => max(0, $totalScope - $auditedCount),
-                'audit_progress'     => $totalScope > 0 ? round(($auditedCount / $totalScope) * 100, 1) : 0,
-                'active_session'     => $activeSession ? [
+                'total_assets'         => $totalAssets,
+                'total_locations'      => $totalLocations,
+                'total_departments'    => $totalDepartments,
+                'total_users'          => $totalUsers,
+                'total_sessions'       => $totalSessions,
+                'completed_sessions'   => $completedSessions,
+                'new_assets_this_month' => $newAssetsThisMonth,
+                'active_assets'        => $activeAssets,
+                'inactive_assets'      => $inactiveAssets,
+                'lost_assets'          => $lostAssets,
+                'broken_assets'        => $brokenAssets,
+                'total_acquisition'    => $totalAcquisition,
+                'total_book_value'     => $totalBookValue,
+                'depreciation_value'   => max(0, $totalAcquisition - $totalBookValue),
+                'audited_count'        => $auditedCount,
+                'not_audited_count'    => max(0, $totalScope - $auditedCount),
+                'audit_progress'       => $totalScope > 0 ? round(($auditedCount / $totalScope) * 100, 1) : 0,
+                'active_session'       => $activeSession ? [
                     'id'   => $activeSession->id,
                     'name' => $activeSession->name,
                     'code' => $activeSession->code,
                 ] : null,
             ];
         });
+
+        // Monthly asset trend (last 6 months)
+        $monthlyTrend = collect(range(5, 0))->map(function ($monthsAgo) {
+            $date = now()->subMonths($monthsAgo);
+            return [
+                'month' => $date->format('M'),
+                'count' => Asset::whereYear('created_at', $date->year)
+                    ->whereMonth('created_at', $date->month)
+                    ->count(),
+            ];
+        })->values();
 
         // Asset by category
         $byCategory = Asset::join('asset_categories', 'assets.category_id', '=', 'asset_categories.id')
@@ -134,10 +161,11 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard/Index', [
             'stats'          => $stats,
             'charts'         => [
-                'by_category'  => $byCategory,
+                'by_category'   => $byCategory,
                 'by_department' => $byDepartment,
-                'by_condition' => $byCondition,
-                'by_status'    => $byStatus,
+                'by_condition'  => $byCondition,
+                'by_status'     => $byStatus,
+                'monthly_trend' => $monthlyTrend,
             ],
             'recentActivity' => $recentActivity,
             'alerts'         => $alerts,

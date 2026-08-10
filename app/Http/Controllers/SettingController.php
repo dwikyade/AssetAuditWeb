@@ -13,7 +13,7 @@ class SettingController extends Controller
     public function index(): Response
     {
         return Inertia::render('Settings/Index', [
-            'settings' => SystemSetting::all()->keyBy('key'),
+            'settings' => SystemSetting::all()->pluck('value', 'key'),
         ]);
     }
 
@@ -24,7 +24,10 @@ class SettingController extends Controller
         ]);
 
         foreach ($data['settings'] as $key => $value) {
-            SystemSetting::where('key', $key)->update(['value' => $value]);
+            SystemSetting::updateOrCreate(
+                ['key' => $key],
+                ['value' => $value]
+            );
         }
 
         return back()->with('success', 'Pengaturan berhasil disimpan.');

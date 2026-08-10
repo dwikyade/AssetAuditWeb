@@ -1,14 +1,14 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import { motion } from 'framer-motion';
 import {
-    Package, MapPin, Building2, ClipboardCheck,
+    Package, MapPin, Building2, ClipboardCheck, Users,
     TrendingUp, AlertTriangle, XCircle, Info,
     CheckCircle2, Activity, Clock, ArrowRight,
     ShieldAlert, Loader2
 } from 'lucide-react';
 import {
-    BarChart, Bar, PieChart, Pie, Cell,
+    AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
     XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer, Legend
 } from 'recharts';
@@ -27,14 +27,32 @@ const timeAgo = (dateStr) => {
 };
 
 // ─── Stat Card ───────────────────────────────────────────────────────────────
-const StatCard = ({ title, value, sub, icon: Icon, colorClass, delay = 0 }) => (
+const StatCard = ({ title, value, sub, icon: Icon, gradient, delay = 0 }) => (
     <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay, duration: 0.4 }}
-        className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex items-center gap-4"
+        className={`rounded-2xl p-5 flex items-center gap-4 shadow-sm ${gradient}`}
     >
-        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${colorClass}`}>
+        <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+            <Icon size={22} className="text-white" />
+        </div>
+        <div className="min-w-0">
+            <p className="text-xs font-medium text-white/70 truncate">{title}</p>
+            <h3 className="text-2xl font-bold text-white leading-tight">{value}</h3>
+            {sub && <p className="text-xs text-white/50 mt-0.5">{sub}</p>}
+        </div>
+    </motion.div>
+);
+
+const StatCardLight = ({ title, value, sub, icon: Icon, iconClass, delay = 0 }) => (
+    <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay, duration: 0.4 }}
+        className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center gap-4"
+    >
+        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${iconClass}`}>
             <Icon size={22} />
         </div>
         <div className="min-w-0">
@@ -80,35 +98,37 @@ const AlertPanel = ({ alerts }) => {
     );
 };
 
-// ─── Pie Custom Label ─────────────────────────────────────────────────────────
-const RADIAN = Math.PI / 180;
-const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
-    if (percent < 0.05) return null;
-    const r = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + r * Math.cos(-midAngle * RADIAN);
-    const y = cy + r * Math.sin(-midAngle * RADIAN);
-    return (
-        <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central" fontSize={11} fontWeight={600}>
-            {`${(percent * 100).toFixed(0)}%`}
-        </text>
-    );
+const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="bg-white border border-gray-200 rounded-xl shadow-lg px-3 py-2 text-sm">
+                <p className="font-semibold text-gray-900">{label}</p>
+                <p className="text-gray-600">{fmt(payload[0]?.value)} aset</p>
+            </div>
+        );
+    }
+    return null;
 };
+
+const DONUT_COLORS = ['#10b981', '#f59e0b', '#ef4444', '#6366f1', '#8b5cf6', '#06b6d4'];
 
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 export default function Dashboard({ stats, charts, recentActivity, alerts }) {
+    const { settings } = usePage().props;
     const progress = stats?.audit_progress ?? 0;
+    const orgName = settings?.company_name || settings?.hotel_name || 'Organisasi';
     const barColors = ['#000000', '#27272a', '#52525b', '#71717a', '#a1a1aa', '#d4d4d8', '#18181b', '#3f3f46'];
 
     return (
         <AppLayout>
             <Head title="Dashboard" />
 
-            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-                        <p className="text-sm text-gray-500">Ringkasan status aset dan audit hotel.</p>
+                        <p className="text-sm text-gray-500">{orgName} — ringkasan status aset dan audit.</p>
                     </div>
                     {stats?.active_session && (
                         <Link
@@ -122,39 +142,60 @@ export default function Dashboard({ stats, charts, recentActivity, alerts }) {
                     )}
                 </div>
 
-                {/* Alerts */}
                 <AlertPanel alerts={alerts} />
 
-                {/* Stats Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                    <StatCard title="Total Aset" value={fmt(stats?.total_assets)} icon={Package}
-                        colorClass="bg-gray-100 text-black" delay={0.05} />
-                    <StatCard title="Aset Aktif" value={fmt(stats?.active_assets)} icon={CheckCircle2}
-                        colorClass="bg-emerald-100 text-emerald-600" delay={0.1} />
-                    <StatCard title="Tidak Aktif" value={fmt(stats?.inactive_assets)} icon={ShieldAlert}
-                        colorClass="bg-gray-100 text-gray-500" delay={0.15} />
-                    <StatCard title="Aset Hilang" value={fmt(stats?.lost_assets)} icon={AlertTriangle}
-                        colorClass="bg-red-100 text-red-500" delay={0.2} />
-                    <StatCard title="Aset Rusak" value={fmt(stats?.broken_assets)} icon={XCircle}
-                        colorClass="bg-orange-100 text-orange-500" delay={0.25} />
+                {/* Stats Row 1 — gradient */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <StatCard title="Total Aset" value={fmt(stats?.total_assets)} sub={`+${stats?.new_assets_this_month ?? 0} bln ini`}
+                        icon={Package} gradient="bg-gradient-to-br from-gray-900 to-gray-700" delay={0.04} />
+                    <StatCard title="Aset Aktif" value={fmt(stats?.active_assets)}
+                        icon={CheckCircle2} gradient="bg-gradient-to-br from-emerald-500 to-emerald-700" delay={0.08} />
+                    <StatCard title="Tidak Aktif" value={fmt(stats?.inactive_assets)}
+                        icon={ShieldAlert} gradient="bg-gradient-to-br from-slate-400 to-slate-600" delay={0.12} />
+                    <StatCard title="Aset Hilang" value={fmt(stats?.lost_assets)}
+                        icon={AlertTriangle} gradient="bg-gradient-to-br from-red-500 to-red-700" delay={0.16} />
+                    <StatCard title="Aset Rusak" value={fmt(stats?.broken_assets)}
+                        icon={XCircle} gradient="bg-gradient-to-br from-orange-500 to-orange-700" delay={0.20} />
+                    <StatCard title="Pengguna" value={fmt(stats?.total_users)}
+                        icon={Users} gradient="bg-gradient-to-br from-violet-500 to-violet-700" delay={0.24} />
+                </div>
+
+                {/* Stats Row 2 — light */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <StatCardLight title="Lokasi" value={fmt(stats?.total_locations)}
+                        icon={MapPin} iconClass="bg-blue-50 text-blue-600" delay={0.28} />
+                    <StatCardLight title="Departemen" value={fmt(stats?.total_departments)}
+                        icon={Building2} iconClass="bg-purple-50 text-purple-600" delay={0.32} />
+                    <StatCardLight title="Total Sesi Audit" value={fmt(stats?.total_sessions)}
+                        sub={`${stats?.completed_sessions ?? 0} selesai`}
+                        icon={ClipboardCheck} iconClass="bg-green-50 text-green-600" delay={0.36} />
+                    <StatCardLight title="Progress Audit" value={`${progress}%`}
+                        sub="audit berjalan" icon={Activity} iconClass="bg-amber-50 text-amber-600" delay={0.40} />
                 </div>
 
                 {/* Financial + Audit Progress */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                     {/* Financial */}
-                    <div className="lg:col-span-1 bg-gradient-to-br from-gray-900 to-black rounded-xl p-6 text-white">
-                        <div className="flex items-center gap-2 mb-4">
-                            <TrendingUp size={20} className="opacity-80" />
-                            <p className="font-semibold text-sm opacity-80">Ringkasan Finansial</p>
-                        </div>
-                        <div className="space-y-4">
-                            <div>
-                                <p className="text-xs opacity-70">Total Nilai Perolehan</p>
-                                <p className="text-xl font-bold">{fmtCurrency(stats?.total_acquisition)}</p>
+                    <div className="lg:col-span-1 bg-gradient-to-br from-gray-900 via-gray-800 to-black rounded-2xl p-6 text-white relative overflow-hidden">
+                        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 80% 20%, #ffffff 0%, transparent 60%)' }} />
+                        <div className="relative">
+                            <div className="flex items-center gap-2 mb-5">
+                                <TrendingUp size={20} className="opacity-70" />
+                                <p className="font-semibold text-sm opacity-70">Ringkasan Finansial</p>
                             </div>
-                            <div className="border-t border-white/20 pt-4">
-                                <p className="text-xs opacity-70">Total Nilai Buku</p>
-                                <p className="text-xl font-bold">{fmtCurrency(stats?.total_book_value)}</p>
+                            <div className="space-y-4">
+                                <div>
+                                    <p className="text-xs opacity-50 mb-1">Total Nilai Perolehan</p>
+                                    <p className="text-xl font-bold">{fmtCurrency(stats?.total_acquisition)}</p>
+                                </div>
+                                <div className="border-t border-white/10 pt-4">
+                                    <p className="text-xs opacity-50 mb-1">Total Nilai Buku</p>
+                                    <p className="text-xl font-bold">{fmtCurrency(stats?.total_book_value)}</p>
+                                </div>
+                                <div className="border-t border-white/10 pt-4">
+                                    <p className="text-xs opacity-50 mb-1">Total Depresiasi</p>
+                                    <p className="text-lg font-semibold text-red-300">{fmtCurrency(stats?.depreciation_value)}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -204,76 +245,66 @@ export default function Dashboard({ stats, charts, recentActivity, alerts }) {
                 </div>
 
                 {/* Charts Row 1 */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* By Category */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h3 className="font-bold text-gray-900 mb-4">Aset per Kategori</h3>
-                        {charts?.by_category?.length > 0 ? (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {/* Monthly Trend - Area Chart */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <div className="flex items-center gap-2 mb-4">
+                            <h3 className="font-bold text-gray-900">Tren Penambahan Aset</h3>
+                            <span className="ml-auto text-xs text-gray-400">6 bulan terakhir</span>
+                        </div>
+                        {charts?.monthly_trend?.length > 0 ? (
                             <ResponsiveContainer width="100%" height={220}>
-                                <BarChart data={charts.by_category} margin={{ top: 0, right: 10, left: -20, bottom: 0 }}>
+                                <AreaChart data={charts.monthly_trend} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                                    <defs>
+                                        <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#18181b" stopOpacity={0.15} />
+                                            <stop offset="95%" stopColor="#18181b" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                                    <XAxis dataKey="name" tick={{ fontSize: 11 }} interval={0} angle={-30} textAnchor="end" height={50} />
-                                    <YAxis tick={{ fontSize: 11 }} />
-                                    <Tooltip formatter={(v) => [fmt(v), 'Jumlah Aset']} />
-                                    <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                                        {charts.by_category.map((_, i) => (
-                                            <Cell key={i} fill={barColors[i % barColors.length]} />
-                                        ))}
-                                    </Bar>
-                                </BarChart>
+                                    <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                                    <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
+                                    <Tooltip />
+                                    <Area type="monotone" dataKey="count" stroke="#18181b" strokeWidth={2.5}
+                                        fill="url(#areaGrad)" dot={{ fill: '#18181b', r: 4 }} />
+                                </AreaChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div className="flex items-center justify-center h-[220px] text-gray-400 text-sm">
-                                Belum ada data kategori
-                            </div>
+                            <div className="flex items-center justify-center h-[220px] text-gray-400 text-sm">Belum ada data tren</div>
                         )}
                     </div>
 
-                    {/* By Department */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    {/* By Department - Horizontal Bar */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                         <h3 className="font-bold text-gray-900 mb-4">Aset per Departemen</h3>
                         {charts?.by_department?.length > 0 ? (
                             <ResponsiveContainer width="100%" height={220}>
-                                <BarChart data={charts.by_department} margin={{ top: 0, right: 10, left: -20, bottom: 0 }}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                                    <XAxis dataKey="name" tick={{ fontSize: 11 }} interval={0} angle={-30} textAnchor="end" height={50} />
-                                    <YAxis tick={{ fontSize: 11 }} />
-                                    <Tooltip formatter={(v) => [fmt(v), 'Jumlah Aset']} />
-                                    <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                                        {charts.by_department.map((_, i) => (
-                                            <Cell key={i} fill={barColors[(i + 2) % barColors.length]} />
-                                        ))}
-                                    </Bar>
+                                <BarChart data={charts.by_department.slice(0,6)} layout="vertical" margin={{ top: 0, right: 20, left: 10, bottom: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
+                                    <XAxis type="number" tick={{ fontSize: 11 }} allowDecimals={false} />
+                                    <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={80} />
+                                    <Tooltip />
+                                    <Bar dataKey="count" radius={[0, 6, 6, 0]} fill="#18181b" />
                                 </BarChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div className="flex items-center justify-center h-[220px] text-gray-400 text-sm">
-                                Belum ada data departemen
-                            </div>
+                            <div className="flex items-center justify-center h-[220px] text-gray-400 text-sm">Belum ada data departemen</div>
                         )}
                     </div>
                 </div>
 
                 {/* Charts Row 2 */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Condition Pie */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    {/* Condition Donut */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                         <h3 className="font-bold text-gray-900 mb-4">Kondisi Aset</h3>
                         {charts?.by_condition?.length > 0 ? (
                             <ResponsiveContainer width="100%" height={200}>
                                 <PieChart>
-                                    <Pie
-                                        data={charts.by_condition}
-                                        dataKey="count"
-                                        nameKey="name"
-                                        cx="50%"
-                                        cy="50%"
-                                        outerRadius={80}
-                                        labelLine={false}
-                                        label={renderCustomLabel}
-                                    >
+                                    <Pie data={charts.by_condition} dataKey="count" nameKey="name"
+                                        cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3}>
                                         {charts.by_condition.map((entry, i) => (
-                                            <Cell key={i} fill={entry.color || barColors[i % barColors.length]} />
+                                            <Cell key={i} fill={entry.color || DONUT_COLORS[i % DONUT_COLORS.length]} />
                                         ))}
                                     </Pie>
                                     <Tooltip formatter={(v, name) => [fmt(v), name]} />
@@ -287,24 +318,16 @@ export default function Dashboard({ stats, charts, recentActivity, alerts }) {
                         )}
                     </div>
 
-                    {/* Status Pie */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    {/* Status Donut */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                         <h3 className="font-bold text-gray-900 mb-4">Status Aset</h3>
                         {charts?.by_status?.length > 0 ? (
                             <ResponsiveContainer width="100%" height={200}>
                                 <PieChart>
-                                    <Pie
-                                        data={charts.by_status}
-                                        dataKey="count"
-                                        nameKey="name"
-                                        cx="50%"
-                                        cy="50%"
-                                        outerRadius={80}
-                                        labelLine={false}
-                                        label={renderCustomLabel}
-                                    >
+                                    <Pie data={charts.by_status} dataKey="count" nameKey="name"
+                                        cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3}>
                                         {charts.by_status.map((entry, i) => (
-                                            <Cell key={i} fill={entry.color || barColors[i % barColors.length]} />
+                                            <Cell key={i} fill={entry.color || DONUT_COLORS[i % DONUT_COLORS.length]} />
                                         ))}
                                     </Pie>
                                     <Tooltip formatter={(v, name) => [fmt(v), name]} />

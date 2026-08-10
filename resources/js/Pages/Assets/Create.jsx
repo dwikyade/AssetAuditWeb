@@ -55,18 +55,20 @@ export default function AssetCreate({ categories, departments, locations, status
         <AppLayout>
             <Head title="Tambah Aset" />
             
-            <div className="p-6 md:p-8 w-full max-w-4xl mx-auto space-y-4">
-                <div className="flex items-center gap-4 mb-6">
-                    <Button variant="ghost" size="icon" onClick={() => window.history.back()}>
-                        <ArrowLeft size={18} />
-                    </Button>
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Tambah Aset Baru</h1>
-                        <p className="text-sm text-gray-500">Isi formulir di bawah untuk menambahkan aset ke dalam sistem.</p>
-                    </div>
-                </div>
+            <div className="p-6 md:p-8 w-full max-w-7xl mx-auto">
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                    <div className="xl:col-span-2 space-y-4">
+                        <div className="flex items-center gap-4 mb-6">
+                            <Button variant="ghost" size="icon" onClick={() => window.history.back()}>
+                                <ArrowLeft size={18} />
+                            </Button>
+                            <div>
+                                <h1 className="text-2xl font-bold text-gray-900">Tambah Aset Baru</h1>
+                                <p className="text-sm text-gray-500">Isi formulir di bawah untuk menambahkan aset ke dalam sistem.</p>
+                            </div>
+                        </div>
 
-                <form onSubmit={submit} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <form onSubmit={submit} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <div className="p-6 space-y-6">
                         {/* Identitas Aset */}
                         <section>
@@ -317,6 +319,31 @@ export default function AssetCreate({ categories, departments, locations, status
                     </div>
                 </form>
             </div>
-        </AppLayout>
+
+            <div className="xl:col-span-1 space-y-6 pt-2 xl:pt-20">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 sticky top-6">
+                    <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                        <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Panduan Pengisian
+                    </h3>
+                    <div className="space-y-4 text-sm text-gray-600">
+                        <div>
+                            <strong className="text-gray-900 block mb-1">Mode Penomoran</strong>
+                            <p>Gunakan <b>Otomatis</b> untuk menghasilkan kode unik berdasarkan prefix (contoh: LPT-0001). Gunakan <b>Manual</b> jika Anda memiliki kode referensi sendiri.</p>
+                        </div>
+                        <div>
+                            <strong className="text-gray-900 block mb-1">Status & Kondisi</strong>
+                            <p>Pastikan memilih status awal dan kondisi fisik dengan benar, karena ini sangat krusial untuk sesi audit kedepannya.</p>
+                        </div>
+                        <div>
+                            <strong className="text-gray-900 block mb-1">Data Finansial</strong>
+                            <p>Nilai perolehan akan digunakan untuk perhitungan depresiasi. Kosongkan jika bukan aset bernilai finansial terukur.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</AppLayout>
     );
 }

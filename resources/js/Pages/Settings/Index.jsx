@@ -4,7 +4,7 @@ import { Button , Select} from '@/Components/UI';
 import { Save, Settings, Building2, DollarSign, ClipboardList } from 'lucide-react';
 
 export default function SettingsIndex({ settings }) {
-    const getSetting = (key, fallback = '') => settings[key]?.value ?? fallback;
+    const getSetting = (key, fallback = '') => settings?.[key] ?? fallback;
 
     const { data, setData, post, processing } = useForm({
         settings: {
@@ -47,35 +47,35 @@ export default function SettingsIndex({ settings }) {
             <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Pengaturan Sistem</h1>
-                    <p className="text-sm text-gray-500">Konfigurasi umum aplikasi Hotel Asset Audit.</p>
+                    <p className="text-sm text-gray-500">Konfigurasi umum aplikasi Asset Audit.</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* Hotel Info */}
+                    {/* Company Info */}
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <SectionHeader icon={Building2} title="Informasi Hotel" description="Data perusahaan/hotel yang tampil di laporan." />
+                        <SectionHeader icon={Building2} title="Informasi Perusahaan / Organisasi" description="Data organisasi yang tampil di laporan dan watermark." />
                         <div className="space-y-4">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Nama Aplikasi</label>
-                                    <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                                    <input className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 transition-all"
                                         value={data.settings.app_name} onChange={e => setData('settings', {...data.settings, app_name: e.target.value})} />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Nama Hotel</label>
-                                    <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Nama Perusahaan / Organisasi</label>
+                                    <input className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 transition-all"
                                         value={data.settings.hotel_name} onChange={e => setData('settings', {...data.settings, hotel_name: e.target.value})}
-                                        placeholder="contoh: Grand Hyatt Jakarta" />
+                                        placeholder="contoh: Dual Gate" />
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Alamat Hotel</label>
-                                <textarea className="flex min-h-[80px] w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 shadow-sm resize-none"
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+                                <textarea className="flex min-h-[80px] w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 transition-all resize-none"
                                     rows={2} value={data.settings.hotel_address} onChange={e => setData('settings', {...data.settings, hotel_address: e.target.value})} />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">No. Telepon</label>
-                                <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                                <input className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 transition-all"
                                     value={data.settings.hotel_phone} onChange={e => setData('settings', {...data.settings, hotel_phone: e.target.value})} />
                             </div>
                         </div>

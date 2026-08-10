@@ -138,6 +138,18 @@ export const Textarea = forwardRef(({ className, error, ...props }, ref) => {
 Textarea.displayName = 'Textarea';
 
 export const Label = forwardRef(({ className, children, ...props }, ref) => {
+    let content = children;
+    
+    // Automatically make trailing asterisks red for required fields
+    if (typeof children === 'string' && children.trim().endsWith('*')) {
+        const text = children.trim().slice(0, -1);
+        content = (
+            <>
+                {text} <span className="text-red-500 ml-0.5">*</span>
+            </>
+        );
+    }
+
     return (
         <label
             ref={ref}
@@ -147,7 +159,7 @@ export const Label = forwardRef(({ className, children, ...props }, ref) => {
             )}
             {...props}
         >
-            {children}
+            {content}
         </label>
     );
 });

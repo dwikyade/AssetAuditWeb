@@ -4,10 +4,36 @@ import {
     LayoutDashboard, Package, ClipboardList, FileUp,
     BarChart3, Users, Settings, LogOut, ChevronLeft,
     Bell, ChevronDown, Building2, Tag, MapPin, Hash,
-    Activity, Shield, X
+    Activity, Shield
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { cn, getInitials, formatRole } from '@/lib/utils';
+import React, { useState, useEffect } from 'react';
+import { cn, getInitials } from '@/lib/utils';
+import { ConfirmDialogProvider } from '@/Components/ConfirmDialog';
+
+class ErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null, info: null };
+    }
+    static getDerivedStateFromError(error) {
+        return { hasError: true };
+    }
+    componentDidCatch(error, info) {
+        this.setState({ error, info });
+    }
+    render() {
+        if (this.state.hasError) {
+            return (
+                <div className="p-8 m-8 bg-red-50 border border-red-200 rounded-xl text-red-700">
+                    <h1 className="text-xl font-bold mb-4">React Runtime Error</h1>
+                    <pre className="whitespace-pre-wrap text-sm mb-4">{this.state.error?.toString()}</pre>
+                    <pre className="whitespace-pre-wrap text-xs bg-red-100 p-4 rounded">{this.state.info?.componentStack}</pre>
+                </div>
+            );
+        }
+        return this.props.children;
+    }
+}
 
 const navItems = [
     {
@@ -85,7 +111,6 @@ const navItems = [
         icon: Users,
         href: '/users',
         permission: 'user.view',
-        roles: ['super_admin'],
     },
     {
         label: 'Roles & Permissions',
@@ -109,7 +134,7 @@ const navItems = [
 ];
 
 export default function AppLayout({ children }) {
-    const { auth, app, flash } = usePage().props;
+    const { auth, app, flash, settings } = usePage().props;
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [openMenus, setOpenMenus] = useState({});
     const [toasts, setToasts] = useState([]);
@@ -146,9 +171,24 @@ export default function AppLayout({ children }) {
         return true;
     };
 
-    const isActive = (href) => {
-        return window.location.pathname === href || window.location.pathname.startsWith(href + '/');
+    const path = window.location.pathname;
+    const getActiveHref = () => {
+        let match = '';
+        navItems.forEach(item => {
+            if (item.href && (path === item.href || path.startsWith(item.href + '/'))) {
+                if (item.href.length > match.length) match = item.href;
+            }
+            if (item.children) {
+                item.children.forEach(child => {
+                    if (child.href && (path === child.href || path.startsWith(child.href + '/'))) {
+                        if (child.href.length > match.length) match = child.href;
+                    }
+                });
+            }
+        });
+        return match;
     };
+    const activeHref = getActiveHref();
 
     const toggleMenu = (label) => {
         setOpenMenus(prev => ({ ...prev, [label]: !prev[label] }));
@@ -159,13 +199,15 @@ export default function AppLayout({ children }) {
     };
 
     return (
-        <div className="flex h-screen bg-gray-50 overflow-hidden">
+        <ErrorBoundary>
+            <div className="flex h-screen bg-gray-50 overflow-hidden">
             {/* Sidebar */}
             <motion.aside
                 initial={false}
                 animate={{ width: sidebarCollapsed ? 64 : 256 }}
                 transition={{ duration: 0.2, ease: 'easeInOut' }}
-                className="flex flex-col flex-shrink-0 h-full rounded-r-[1.5rem] shadow-xl bg-gradient-to-b from-black to-gray-800"
+                className="flex flex-col flex-shrink-0 h-full"
+                style={{ backgroundColor: 'var(--color-sidebar-bg)' }}
             >
                 {/* Logo area */}
                 <div className="flex items-center justify-between px-4 py-4 border-b" style={{ borderColor: 'var(--color-sidebar-border)' }}>
@@ -222,7 +264,7 @@ export default function AppLayout({ children }) {
                         if (!canSee(item)) return null;
 
                         const Icon = item.icon;
-                        const active = isActive(item.href);
+                        const active = item.href === activeHref || (item.children && item.children.some(c => c.href === activeHref));
                         const hasChildren = item.children?.filter(c => !c.permission || permissions.includes(c.permission)).length > 0;
                         const isOpen = openMenus[item.label];
 
@@ -258,7 +300,7 @@ export default function AppLayout({ children }) {
                                                         <Link
                                                             key={j}
                                                             href={child.href}
-                                                            className={cn('sidebar-item text-xs', isActive(child.href) && 'active')}
+                                                            className={cn('sidebar-item text-xs', child.href === activeHref && 'active')}
                                                         >
                                                             {child.label}
                                                         </Link>
@@ -291,7 +333,7 @@ export default function AppLayout({ children }) {
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-white truncate">{user?.name}</p>
-                                <p className="text-xs truncate" style={{ color: 'var(--color-sidebar-text)' }}>{user?.roles?.[0] ? formatRole(user.roles[0]) : ''}</p>
+                                <p className="text-xs truncate" style={{ color: 'var(--color-sidebar-text)' }}>{user?.roles?.[0]}</p>
                             </div>
                             <button
                                 onClick={handleLogout}
@@ -303,7 +345,7 @@ export default function AppLayout({ children }) {
                         </div>
                     ) : (
                         <div className="flex flex-col items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-white text-xs font-semibold">
+                            <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-white text-xs font-semibold">
                                 {getInitials(user?.name ?? 'U')}
                             </div>
                             <button
@@ -324,7 +366,7 @@ export default function AppLayout({ children }) {
                 <header className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-6 shrink-0">
                     <div className="flex items-center gap-2">
                         <nav className="flex items-center text-sm text-gray-500">
-                            <Link href="/" className="hover:text-gray-700 transition-colors">Home</Link>
+                            <Link href="/" className="hover:text-gray-700">Home</Link>
                         </nav>
                     </div>
                     <div className="flex items-center gap-3">
@@ -343,38 +385,44 @@ export default function AppLayout({ children }) {
                 {/* Page content */}
                 <main className="flex-1 overflow-y-auto">
                     {children}
+                    <ConfirmDialogProvider />
                 </main>
             </div>
 
             {/* Toast notifications */}
-            <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none">
-                {/* Need to add pointer-events-auto to the children */}
+            <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
                 <AnimatePresence>
                     {toasts.map(toast => (
                         <motion.div
                             key={toast.id}
-                            initial={{ opacity: 0, y: -20, scale: 0.9 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: -20, scale: 0.9 }}
-                            transition={{ type: 'spring', bounce: 0.3 }}
+                            initial={{ opacity: 0, x: 100, scale: 0.9 }}
+                            animate={{ opacity: 1, x: 0, scale: 1 }}
+                            exit={{ opacity: 0, x: 100, scale: 0.9 }}
                             className={cn(
-                                'flex items-center gap-3 px-5 py-3.5 rounded-full shadow-2xl text-sm min-w-[320px] border pointer-events-auto',
-                                toast.type === 'success' && 'bg-gray-900 text-white border-gray-800',
-                                toast.type === 'error' && 'bg-red-600 text-white border-red-700',
-                                toast.type === 'warning' && 'bg-yellow-500 text-white border-yellow-600',
-                                toast.type === 'info' && 'bg-blue-600 text-white border-blue-700',
+                                'flex items-start gap-3 px-4 py-3 rounded-xl shadow-lg text-sm max-w-sm',
+                                toast.type === 'success' && 'bg-green-50 text-green-800 border border-green-200',
+                                toast.type === 'error' && 'bg-red-50 text-red-800 border border-red-200',
+                                toast.type === 'warning' && 'bg-yellow-50 text-yellow-800 border border-yellow-200',
+                                toast.type === 'info' && 'bg-blue-50 text-blue-800 border border-blue-200',
                             )}
                         >
-                            <div className="flex-1 flex items-center gap-2 pointer-events-auto">
-                                {toast.type === "success" && <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>}
-                                {toast.type === "error" && <svg className="w-5 h-5 text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>}
-                                <span className="font-medium tracking-wide">{toast.msg}</span>
-                            </div>
-                            <button onClick={() => dismissToast(toast.id)} className="text-gray-400 hover:text-white shrink-0 pointer-events-auto ml-2"><X size={16} /></button>
+                            <span className="flex-1">{toast.msg}</span>
+                            <button onClick={() => dismissToast(toast.id)} className="text-gray-400 hover:text-gray-600 shrink-0">×</button>
                         </motion.div>
                     ))}
                 </AnimatePresence>
             </div>
         </div>
+
+            {/* Watermark */}
+            <div className="fixed bottom-4 right-6 z-10 pointer-events-none select-none text-right" style={{ filter: 'blur(0.5px)', opacity: 0.08 }}>
+                <p className="text-gray-900 font-black text-2xl tracking-widest uppercase leading-tight">
+                    {settings?.company_name || settings?.hotel_name || 'Dual Gate'}
+                </p>
+                <p className="text-gray-900 font-semibold text-sm tracking-wider">
+                    {settings?.app_name || app?.name || 'Asset Audit'}
+                </p>
+            </div>
+        </ErrorBoundary>
     );
 }

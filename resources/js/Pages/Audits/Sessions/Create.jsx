@@ -79,20 +79,22 @@ export default function AuditSessionCreate({ departments, locations, categories 
 
     return (
         <AppLayout>
-            <Head title="Buat Sesi Audit" />
-            
-            <div className="p-6 md:p-8 w-full max-w-3xl mx-auto space-y-4">
-                <div className="flex items-center gap-4 mb-6">
-                    <Button variant="ghost" size="icon" onClick={() => window.history.back()}>
-                        <ArrowLeft size={18} />
-                    </Button>
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Buat Sesi Audit Baru</h1>
-                        <p className="text-sm text-gray-500">Jadwalkan kegiatan pengecekan fisik/stock opname aset.</p>
-                    </div>
-                </div>
+            <Head title="Buat Sesi Audit Baru" />
 
-                <form onSubmit={submit} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="p-6 md:p-8 w-full max-w-7xl mx-auto">
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                    <div className="xl:col-span-2 space-y-4">
+                        <div className="flex items-center gap-4 mb-6">
+                            <Button variant="ghost" size="icon" onClick={() => window.history.back()}>
+                                <ArrowLeft size={18} />
+                            </Button>
+                            <div>
+                                <h1 className="text-2xl font-bold text-gray-900">Buat Sesi Audit Baru</h1>
+                                <p className="text-sm text-gray-500">Tentukan ruang lingkup dan target audit Anda di sini.</p>
+                            </div>
+                        </div>
+
+                        <form onSubmit={submit} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <div className="p-6 space-y-4">
                         {/* Informasi Dasar */}
                         <div>
@@ -217,6 +219,31 @@ export default function AuditSessionCreate({ departments, locations, categories 
                     </div>
                 </form>
             </div>
-        </AppLayout>
+
+            <div className="xl:col-span-1 space-y-6 pt-2 xl:pt-20">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 sticky top-6">
+                    <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                        <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Panduan Pengisian Audit
+                    </h3>
+                    <div className="space-y-4 text-sm text-gray-600">
+                        <div>
+                            <strong className="text-gray-900 block mb-1">Jadwal Pelaksanaan</strong>
+                            <p>Tentukan batas tanggal awal dan akhir penyelesaian. Ini hanya sebagai target indikator performa staf auditor Anda.</p>
+                        </div>
+                        <div>
+                            <strong className="text-gray-900 block mb-1">Ruang Lingkup (Scope)</strong>
+                            <p>Scope berfungsi untuk membatasi aset mana yang akan masuk ke daftar target audit. Anda dapat menargetkan seluruh hotel, atau menyortirnya secara spesifik (misal: Hanya IT Department).</p>
+                        </div>
+                        <div>
+                            <strong className="text-gray-900 block mb-1">Mode Strict vs Flexible</strong>
+                            <p>Pilih mode <b>Strict</b> jika audit mutlak mengharuskan tim mencari seluruh barang yang hilang hingga ketemu, dan <b>Flexible</b> untuk audit acak (random check).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</AppLayout>
     );
 }

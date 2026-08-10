@@ -289,7 +289,7 @@ class AssetController extends Controller
 
         $url = route('qr.redirect', $asset->qr_token);
 
-        $qrSvg = QrCode::format('svg')->size(300)->generate($url);
+        $qrSvg = (string) QrCode::format('svg')->size(300)->generate($url);
 
         return Inertia::render('Assets/Qr', [
             'asset'  => $asset->load(['category', 'department', 'location']),
