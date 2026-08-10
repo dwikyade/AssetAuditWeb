@@ -21,16 +21,16 @@ export default function AssetIndex({ assets, filters, categories, departments, l
         return () => clearTimeout(timer);
     }, [search, filters]);
 
-    const handleFilterChange = (key, value) => {
+    const handleFilterChange = async (key, value) => {
         router.get('/assets', { ...filters, [key]: value }, { preserveState: true });
     };
 
-    const clearFilters = () => {
+    const clearFilters = async () => {
         router.get('/assets');
     };
 
-    const deleteAsset = (id, name) => {
-        if (confirm(`Apakah Anda yakin ingin menghapus aset ${name}?`)) {
+    const deleteAsset = async (id, name) => {
+        if (await window.confirmUI(`Apakah Anda yakin ingin menghapus aset ${name}?`)) {
             router.delete(`/assets/${id}`);
         }
     };

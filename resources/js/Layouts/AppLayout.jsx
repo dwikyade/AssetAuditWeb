@@ -7,7 +7,7 @@ import {
     Activity, Shield
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { cn, getInitials } from '@/lib/utils';
+import { cn, getInitials, formatRole } from '@/lib/utils';
 
 const navItems = [
     {
@@ -165,8 +165,7 @@ export default function AppLayout({ children }) {
                 initial={false}
                 animate={{ width: sidebarCollapsed ? 64 : 256 }}
                 transition={{ duration: 0.2, ease: 'easeInOut' }}
-                className="flex flex-col flex-shrink-0 h-full"
-                style={{ backgroundColor: 'var(--color-sidebar-bg)' }}
+                className="flex flex-col flex-shrink-0 h-full rounded-r-[1.5rem] shadow-xl bg-gradient-to-b from-black to-gray-800"
             >
                 {/* Logo area */}
                 <div className="flex items-center justify-between px-4 py-4 border-b" style={{ borderColor: 'var(--color-sidebar-border)' }}>
@@ -292,7 +291,7 @@ export default function AppLayout({ children }) {
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-white truncate">{user?.name}</p>
-                                <p className="text-xs truncate" style={{ color: 'var(--color-sidebar-text)' }}>{user?.roles?.[0]}</p>
+                                <p className="text-xs truncate" style={{ color: 'var(--color-sidebar-text)' }}>{user?.roles?.[0] ? formatRole(user.roles[0]) : ''}</p>
                             </div>
                             <button
                                 onClick={handleLogout}
@@ -304,7 +303,7 @@ export default function AppLayout({ children }) {
                         </div>
                     ) : (
                         <div className="flex flex-col items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-white text-xs font-semibold">
+                            <div className="w-8 h-8 rounded-full bg-gray-800 border border-gray-700 flex items-center justify-center text-white text-xs font-semibold">
                                 {getInitials(user?.name ?? 'U')}
                             </div>
                             <button
@@ -325,7 +324,7 @@ export default function AppLayout({ children }) {
                 <header className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-6 shrink-0">
                     <div className="flex items-center gap-2">
                         <nav className="flex items-center text-sm text-gray-500">
-                            <Link href="/" className="hover:text-gray-700">Home</Link>
+                            <Link href="/" className="hover:text-gray-700 transition-colors">Home</Link>
                         </nav>
                     </div>
                     <div className="flex items-center gap-3">

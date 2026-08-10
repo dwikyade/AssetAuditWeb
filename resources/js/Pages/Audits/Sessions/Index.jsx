@@ -32,7 +32,7 @@ export default function AuditSessionIndex({ sessions, filters }) {
         <AppLayout>
             <Head title="Sesi Audit / Stock Opname" />
             
-            <div className="p-6 md:p-8 w-full space-y-4">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Sesi Audit / Stock Opname</h1>

@@ -115,7 +115,7 @@ export default function AuditConduct({ session, conditions, locations, audited_i
         <AppLayout>
             <Head title={`Conduct Audit: ${session.name}`} />
             
-            <div className="p-4 md:p-4 w-full space-y-4">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 {/* Header & Progress */}
                 <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
                     <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-4">

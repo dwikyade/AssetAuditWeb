@@ -17,8 +17,8 @@ export default function UsersIndex({ users, filters }) {
         return () => clearTimeout(timer);
     }, [search, filters.search]);
 
-    const handleDelete = (id, name) => {
-        if (confirm(`Hapus pengguna "${name}"? Tindakan ini tidak dapat dibatalkan.`)) {
+    const handleDelete = async (id, name) => {
+        if (await window.confirmUI(`Hapus pengguna "${name}"? Tindakan ini tidak dapat dibatalkan.`)) {
             router.delete(`/users/${id}`);
         }
     };
@@ -33,7 +33,7 @@ export default function UsersIndex({ users, filters }) {
     return (
         <AppLayout>
             <Head title="Manajemen Pengguna" />
-            <div className="p-6 md:p-8 w-full space-y-4">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Pengguna</h1>

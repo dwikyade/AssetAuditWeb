@@ -30,7 +30,7 @@ function LocationForm({ isOpen, onClose, initialData = null, parents = [] }) {
         }
     }, [isOpen, initialData]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (initialData) {
             put(`/locations/${initialData.id}`, {
@@ -145,18 +145,18 @@ export default function LocationsIndex({ locations, filters, parents }) {
         return () => clearTimeout(timer);
     }, [search, filters.search]);
 
-    const openCreateModal = () => {
+    const openCreateModal = async () => {
         setEditData(null);
         setIsModalOpen(true);
     };
 
-    const openEditModal = (loc) => {
+    const openEditModal = async (loc) => {
         setEditData(loc);
         setIsModalOpen(true);
     };
 
-    const handleDelete = (id, name) => {
-        if (confirm(`Hapus lokasi "${name}"? Hanya lokasi tanpa aset & sub-lokasi yang bisa dihapus.`)) {
+    const handleDelete = async (id, name) => {
+        if (await window.confirmUI(`Hapus lokasi "${name}"? Hanya lokasi tanpa aset & sub-lokasi yang bisa dihapus.`)) {
             router.delete(`/locations/${id}`);
         }
     };
@@ -164,7 +164,7 @@ export default function LocationsIndex({ locations, filters, parents }) {
     return (
         <AppLayout>
             <Head title="Manajemen Lokasi" />
-            <div className="p-6 md:p-8 w-full space-y-4">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Lokasi</h1>

@@ -18,7 +18,7 @@ function StatusForm({ onSave, onCancel, initial = null }) {
         sort_order: initial?.sort_order || 0,
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (initial) {
             put(`/asset-statuses/${initial.id}`, {
@@ -75,8 +75,8 @@ export default function StatusesIndex({ statuses }) {
     const [showCreate, setShowCreate] = useState(false);
     const [editId, setEditId] = useState(null);
 
-    const handleDelete = (id, name) => {
-        if (confirm(`Hapus status "${name}"?`)) {
+    const handleDelete = async (id, name) => {
+        if (await window.confirmUI(`Hapus status "${name}"?`)) {
             router.delete(`/asset-statuses/${id}`);
         }
     };

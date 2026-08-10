@@ -7,7 +7,7 @@ import { useRef } from 'react';
 export default function Qr({ asset, qr_svg, qr_url }) {
     const printRef = useRef(null);
 
-    const handlePrint = () => {
+    const handlePrint = async () => {
         const content = printRef.current;
         const printWindow = window.open('', '', 'width=600,height=600');
         printWindow.document.write(`
@@ -46,8 +46,8 @@ export default function Qr({ asset, qr_svg, qr_url }) {
         printWindow.document.close();
     };
 
-    const handleRegenerate = () => {
-        if (confirm('Regenerate akan membuat QR code lama menjadi tidak valid (jika dicetak, harus cetak ulang). Lanjutkan?')) {
+    const handleRegenerate = async () => {
+        if (await window.confirmUI('Regenerate akan membuat QR code lama menjadi tidak valid (jika dicetak, harus cetak ulang). Lanjutkan?')) {
             router.post(`/assets/${asset.id}/qr/regenerate`);
         }
     };

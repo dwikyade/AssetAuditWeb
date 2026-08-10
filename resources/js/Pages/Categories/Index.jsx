@@ -28,7 +28,7 @@ function CategoryForm({ isOpen, onClose, initialData = null }) {
         }
     }, [isOpen, initialData]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (initialData) {
             put(`/categories/${initialData.id}`, {
@@ -130,18 +130,18 @@ export default function CategoryIndex({ categories, filters }) {
         return () => clearTimeout(timer);
     }, [search, filters.search]);
 
-    const openCreateModal = () => {
+    const openCreateModal = async () => {
         setEditData(null);
         setIsModalOpen(true);
     };
 
-    const openEditModal = (cat) => {
+    const openEditModal = async (cat) => {
         setEditData(cat);
         setIsModalOpen(true);
     };
 
-    const deleteCategory = (id, name) => {
-        if (confirm(`Apakah Anda yakin ingin menghapus kategori ${name}?`)) {
+    const deleteCategory = async (id, name) => {
+        if (await window.confirmUI(`Apakah Anda yakin ingin menghapus kategori ${name}?`)) {
             router.delete(`/categories/${id}`);
         }
     };
@@ -150,7 +150,7 @@ export default function CategoryIndex({ categories, filters }) {
         <AppLayout>
             <Head title="Manajemen Kategori" />
             
-            <div className="p-6 md:p-8 w-full space-y-4">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Kategori Aset</h1>

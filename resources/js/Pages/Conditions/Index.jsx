@@ -18,7 +18,7 @@ function ConditionForm({ onSave, onCancel, initial = null }) {
         sort_order: initial?.sort_order || 0,
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (initial) {
             put(`/asset-conditions/${initial.id}`, {
@@ -75,8 +75,8 @@ export default function ConditionsIndex({ conditions }) {
     const [showCreate, setShowCreate] = useState(false);
     const [editId, setEditId] = useState(null);
 
-    const handleDelete = (id, name) => {
-        if (confirm(`Hapus kondisi "${name}"?`)) {
+    const handleDelete = async (id, name) => {
+        if (await window.confirmUI(`Hapus kondisi "${name}"?`)) {
             router.delete(`/asset-conditions/${id}`);
         }
     };

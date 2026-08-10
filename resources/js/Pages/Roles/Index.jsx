@@ -21,7 +21,7 @@ function RoleCard({ role, permissions, onDelete }) {
         permissions: role.permissions.map(p => p.name),
     });
 
-    const togglePermission = (perm) => {
+    const togglePermission = async (perm) => {
         setData('permissions',
             data.permissions.includes(perm)
                 ? data.permissions.filter(p => p !== perm)
@@ -29,7 +29,7 @@ function RoleCard({ role, permissions, onDelete }) {
         );
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         put(`/roles/${role.id}`, {
             onSuccess: () => { setEditing(false); router.reload(); },
         });
@@ -118,12 +118,12 @@ function CreateRoleForm({ permissions, onSave, onCancel }) {
         permissions: [],
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         post('/roles', { onSuccess: () => { reset(); onSave(); } });
     };
 
-    const togglePerm = (perm) => {
+    const togglePerm = async (perm) => {
         setData('permissions', data.permissions.includes(perm)
             ? data.permissions.filter(p => p !== perm)
             : [...data.permissions, perm]
@@ -169,8 +169,8 @@ function CreateRoleForm({ permissions, onSave, onCancel }) {
 export default function RolesIndex({ roles, permissions }) {
     const [showCreate, setShowCreate] = useState(false);
 
-    const handleDelete = (id, name) => {
-        if (confirm(`Hapus role "${name}"?`)) router.delete(`/roles/${id}`);
+    const handleDelete = async (id, name) => {
+        if (await window.confirmUI(`Hapus role "${name}"?`)) router.delete(`/roles/${id}`);
     };
 
     return (

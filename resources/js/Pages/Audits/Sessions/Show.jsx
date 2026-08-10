@@ -5,20 +5,20 @@ import { Play, StopCircle, ArrowLeft, XCircle, CheckCircle, Clock } from 'lucide
 
 export default function AuditSessionShow({ session, stats }) {
     
-    const startSession = () => {
-        if (confirm('Mulai sesi audit ini sekarang?')) {
+    const startSession = async () => {
+        if (await window.confirmUI('Mulai sesi audit ini sekarang?')) {
             router.post(`/audit-sessions/${session.id}/start`);
         }
     };
     
-    const completeSession = () => {
-        if (confirm('Selesaikan sesi audit? Pastikan semua aset sudah diperiksa.')) {
+    const completeSession = async () => {
+        if (await window.confirmUI('Selesaikan sesi audit? Pastikan semua aset sudah diperiksa.')) {
             router.post(`/audit-sessions/${session.id}/complete`);
         }
     };
 
-    const cancelSession = () => {
-        if (confirm('Yakin ingin membatalkan sesi audit ini?')) {
+    const cancelSession = async () => {
+        if (await window.confirmUI('Yakin ingin membatalkan sesi audit ini?')) {
             router.post(`/audit-sessions/${session.id}/cancel`);
         }
     };

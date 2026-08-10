@@ -37,7 +37,7 @@ function AssetCodePrefixForm({ isOpen, onClose, initialData = null }) {
         }
     }, [isOpen, initialData]);
 
-    const generatePreview = () => {
+    const generatePreview = async () => {
         if (!data.prefix || !data.format) return;
         const number = String(data.next_number || 1).padStart(data.number_length || 4, '0');
         const code = data.format
@@ -46,7 +46,7 @@ function AssetCodePrefixForm({ isOpen, onClose, initialData = null }) {
         setPreviewCode(code);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (initialData) {
             put(`/asset-code-prefixes/${initialData.id}`, {
@@ -211,8 +211,8 @@ export default function AssetCodesIndex({ prefixes, filters }) {
         }
     };
 
-    const handleDeactivate = (id, name) => {
-        if (confirm(`Nonaktifkan prefix "${name}"? Prefix tidak dapat dihapus, hanya dinonaktifkan.`)) {
+    const handleDeactivate = async (id, name) => {
+        if (await window.confirmUI(`Nonaktifkan prefix "${name}"? Prefix tidak dapat dihapus, hanya dinonaktifkan.`)) {
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
             fetch(`/asset-code-prefixes/${id}/deactivate`, {
                 method: 'POST',
@@ -221,12 +221,12 @@ export default function AssetCodesIndex({ prefixes, filters }) {
         }
     };
 
-    const openCreateModal = () => {
+    const openCreateModal = async () => {
         setEditData(null);
         setIsModalOpen(true);
     };
 
-    const openEditModal = (prefix) => {
+    const openEditModal = async (prefix) => {
         setEditData(prefix);
         setIsModalOpen(true);
     };

@@ -128,7 +128,7 @@ export default function ImportIndex({ default_mapping }) {
         <AppLayout>
             <Head title="Import Aset" />
             
-            <div className="p-6 md:p-8 w-full space-y-4">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Import Aset via Excel</h1>
