@@ -30,7 +30,9 @@ class SettingController extends Controller
             );
         }
 
-        return back()->with('success', 'Pengaturan berhasil disimpan.');
+        \Illuminate\Support\Facades\Cache::forget('system_settings');
+
+        return back()->with('success', 'Pengaturan sistem berhasil diperbarui dan diterapkan!');
     }
 }
 

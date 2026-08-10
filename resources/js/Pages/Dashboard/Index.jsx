@@ -26,6 +26,22 @@ const timeAgo = (dateStr) => {
     return `${Math.floor(diff / 86400)} hari lalu`;
 };
 
+const COLORS = {
+    Good: '#10b981', // emerald-500
+    Fair: '#f59e0b', // amber-500
+    Poor: '#f43f5e', // rose-500
+    Active: '#10b981',
+    Inactive: '#64748b',
+    Lost: '#f43f5e',
+    Broken: '#f59e0b',
+    Default: ['#18181b', '#3f3f46', '#71717a', '#a1a1aa']
+};
+
+const getColor = (name, index) => {
+    if (COLORS[name]) return COLORS[name];
+    return COLORS.Default[index % COLORS.Default.length];
+};
+
 // ─── Stat Card ───────────────────────────────────────────────────────────────
 const StatCard = ({ title, value, sub, icon: Icon, gradient, delay = 0 }) => (
     <motion.div
@@ -304,11 +320,11 @@ export default function Dashboard({ stats, charts, recentActivity, alerts }) {
                                     <Pie data={charts.by_condition} dataKey="count" nameKey="name"
                                         cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3}>
                                         {charts.by_condition.map((entry, i) => (
-                                            <Cell key={i} fill={entry.color || DONUT_COLORS[i % DONUT_COLORS.length]} />
+                                            <Cell key={i} fill={getColor(entry.name, i)} stroke="transparent" />
                                         ))}
                                     </Pie>
-                                    <Tooltip formatter={(v, name) => [fmt(v), name]} />
-                                    <Legend iconSize={10} iconType="circle" wrapperStyle={{ fontSize: 11 }} />
+                                    <Tooltip formatter={(v) => [fmt(v), 'Total']} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                                    <Legend iconSize={8} iconType="circle" wrapperStyle={{ fontSize: 12, paddingTop: '10px' }} />
                                 </PieChart>
                             </ResponsiveContainer>
                         ) : (
@@ -327,11 +343,11 @@ export default function Dashboard({ stats, charts, recentActivity, alerts }) {
                                     <Pie data={charts.by_status} dataKey="count" nameKey="name"
                                         cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3}>
                                         {charts.by_status.map((entry, i) => (
-                                            <Cell key={i} fill={entry.color || DONUT_COLORS[i % DONUT_COLORS.length]} />
+                                            <Cell key={i} fill={getColor(entry.name, i)} stroke="transparent" />
                                         ))}
                                     </Pie>
-                                    <Tooltip formatter={(v, name) => [fmt(v), name]} />
-                                    <Legend iconSize={10} iconType="circle" wrapperStyle={{ fontSize: 11 }} />
+                                    <Tooltip formatter={(v) => [fmt(v), 'Total']} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                                    <Legend iconSize={8} iconType="circle" wrapperStyle={{ fontSize: 12, paddingTop: '10px' }} />
                                 </PieChart>
                             </ResponsiveContainer>
                         ) : (

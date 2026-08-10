@@ -6,34 +6,8 @@ import {
     Bell, ChevronDown, Building2, Tag, MapPin, Hash,
     Activity, Shield
 } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { cn, getInitials } from '@/lib/utils';
-import { ConfirmDialogProvider } from '@/Components/ConfirmDialog';
-
-class ErrorBoundary extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { hasError: false, error: null, info: null };
-    }
-    static getDerivedStateFromError(error) {
-        return { hasError: true };
-    }
-    componentDidCatch(error, info) {
-        this.setState({ error, info });
-    }
-    render() {
-        if (this.state.hasError) {
-            return (
-                <div className="p-8 m-8 bg-red-50 border border-red-200 rounded-xl text-red-700">
-                    <h1 className="text-xl font-bold mb-4">React Runtime Error</h1>
-                    <pre className="whitespace-pre-wrap text-sm mb-4">{this.state.error?.toString()}</pre>
-                    <pre className="whitespace-pre-wrap text-xs bg-red-100 p-4 rounded">{this.state.info?.componentStack}</pre>
-                </div>
-            );
-        }
-        return this.props.children;
-    }
-}
 
 const navItems = [
     {
@@ -111,6 +85,7 @@ const navItems = [
         icon: Users,
         href: '/users',
         permission: 'user.view',
+        roles: ['super_admin'],
     },
     {
         label: 'Roles & Permissions',
@@ -134,7 +109,7 @@ const navItems = [
 ];
 
 export default function AppLayout({ children }) {
-    const { auth, app, flash, settings } = usePage().props;
+    const { auth, app, flash } = usePage().props;
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [openMenus, setOpenMenus] = useState({});
     const [toasts, setToasts] = useState([]);
@@ -171,24 +146,9 @@ export default function AppLayout({ children }) {
         return true;
     };
 
-    const path = window.location.pathname;
-    const getActiveHref = () => {
-        let match = '';
-        navItems.forEach(item => {
-            if (item.href && (path === item.href || path.startsWith(item.href + '/'))) {
-                if (item.href.length > match.length) match = item.href;
-            }
-            if (item.children) {
-                item.children.forEach(child => {
-                    if (child.href && (path === child.href || path.startsWith(child.href + '/'))) {
-                        if (child.href.length > match.length) match = child.href;
-                    }
-                });
-            }
-        });
-        return match;
+    const isActive = (href) => {
+        return window.location.pathname === href || window.location.pathname.startsWith(href + '/');
     };
-    const activeHref = getActiveHref();
 
     const toggleMenu = (label) => {
         setOpenMenus(prev => ({ ...prev, [label]: !prev[label] }));
@@ -199,8 +159,7 @@ export default function AppLayout({ children }) {
     };
 
     return (
-        <ErrorBoundary>
-            <div className="flex h-screen bg-gray-50 overflow-hidden">
+        <div className="flex h-screen bg-gray-50 overflow-hidden">
             {/* Sidebar */}
             <motion.aside
                 initial={false}
@@ -264,7 +223,7 @@ export default function AppLayout({ children }) {
                         if (!canSee(item)) return null;
 
                         const Icon = item.icon;
-                        const active = item.href === activeHref || (item.children && item.children.some(c => c.href === activeHref));
+                        const active = isActive(item.href);
                         const hasChildren = item.children?.filter(c => !c.permission || permissions.includes(c.permission)).length > 0;
                         const isOpen = openMenus[item.label];
 
@@ -300,7 +259,7 @@ export default function AppLayout({ children }) {
                                                         <Link
                                                             key={j}
                                                             href={child.href}
-                                                            className={cn('sidebar-item text-xs', child.href === activeHref && 'active')}
+                                                            className={cn('sidebar-item text-xs', isActive(child.href) && 'active')}
                                                         >
                                                             {child.label}
                                                         </Link>
@@ -385,7 +344,6 @@ export default function AppLayout({ children }) {
                 {/* Page content */}
                 <main className="flex-1 overflow-y-auto">
                     {children}
-                    <ConfirmDialogProvider />
                 </main>
             </div>
 
@@ -413,16 +371,5 @@ export default function AppLayout({ children }) {
                 </AnimatePresence>
             </div>
         </div>
-
-            {/* Watermark */}
-            <div className="fixed bottom-4 right-6 z-10 pointer-events-none select-none text-right" style={{ filter: 'blur(0.5px)', opacity: 0.08 }}>
-                <p className="text-gray-900 font-black text-2xl tracking-widest uppercase leading-tight">
-                    {settings?.company_name || settings?.hotel_name || 'Dual Gate'}
-                </p>
-                <p className="text-gray-900 font-semibold text-sm tracking-wider">
-                    {settings?.app_name || app?.name || 'Asset Audit'}
-                </p>
-            </div>
-        </ErrorBoundary>
     );
 }
