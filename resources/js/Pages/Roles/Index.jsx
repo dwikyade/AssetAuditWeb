@@ -3,6 +3,7 @@ import AppLayout from '@/Layouts/AppLayout';
 import { Button } from '@/Components/UI';
 import { Shield, ChevronDown, ChevronUp, Users, Trash, Plus, X, Save } from 'lucide-react';
 import { useState } from 'react';
+import { formatRole } from '@/lib/utils';
 
 const PERMISSION_GROUPS = {
     'Aset': ['asset.view', 'asset.create', 'asset.update', 'asset.delete', 'asset.import', 'asset.export'],
@@ -44,7 +45,7 @@ function RoleCard({ role, permissions, onDelete }) {
                         <Shield size={20} />
                     </div>
                     <div>
-                        <h3 className="font-bold text-gray-900">{role.name}</h3>
+                        <h3 className="font-bold text-gray-900">{formatRole(role.name)}</h3>
                         <p className="text-xs text-gray-500 flex items-center gap-1"><Users size={12} />{role.users_count} pengguna</p>
                     </div>
                 </div>

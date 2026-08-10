@@ -3,7 +3,7 @@ import AppLayout from '@/Layouts/AppLayout';
 import { Button, Input } from '@/Components/UI';
 import { Search, Plus, Edit, Trash, Users, Shield } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { getInitials } from '@/lib/utils';
+import { getInitials, formatRole } from '@/lib/utils';
 
 export default function UsersIndex({ users, filters }) {
     const [search, setSearch] = useState(filters.search || '');
@@ -95,7 +95,7 @@ export default function UsersIndex({ users, filters }) {
                                                 <div className="flex flex-wrap gap-1">
                                                     {user.roles.map((role) => (
                                                         <span key={role.id} className={`px-2 py-0.5 rounded-full text-xs font-medium border ${roleColors[role.name] || roleColors.viewer}`}>
-                                                            {role.name}
+                                                            {formatRole(role.name)}
                                                         </span>
                                                     ))}
                                                     {user.roles.length === 0 && <span className="text-gray-400 italic text-xs">Belum ada role</span>}

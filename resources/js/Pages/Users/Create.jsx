@@ -3,6 +3,7 @@ import AppLayout from '@/Layouts/AppLayout';
 import { Button, Input, Label } from '@/Components/UI';
 import { ArrowLeft, Save, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
+import { formatRole } from '@/lib/utils';
 
 export default function UsersCreate({ roles }) {
     const [showPassword, setShowPassword] = useState(false);
@@ -52,7 +53,7 @@ export default function UsersCreate({ roles }) {
                             <Label htmlFor="role">Role / Hak Akses <span className="text-red-500">*</span></Label>
                             <select id="role" value={data.role} onChange={e => setData('role', e.target.value)}
                                 className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
-                                {roles.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
+                                {roles.map(r => <option key={r.id} value={r.name}>{formatRole(r.name)}</option>)}
                             </select>
                             {errors.role && <p className="text-red-500 text-xs mt-1">{errors.role}</p>}
                         </div>

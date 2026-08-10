@@ -152,3 +152,11 @@ export function debounce(func, wait) {
         timeout = setTimeout(later, wait);
     };
 }
+
+/**
+ * Format role name (e.g., super_admin -> Super Admin)
+ */
+export function formatRole(name) {
+    if (!name) return '';
+    return name.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+}
