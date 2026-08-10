@@ -9,7 +9,7 @@ export default function AuditReport({ sessions }) {
         const map = {
             draft: { bg: 'bg-gray-100', text: 'text-gray-700', label: 'Draft' },
             scheduled: { bg: 'bg-blue-100', text: 'text-blue-700', label: 'Dijadwalkan' },
-            in_progress: { bg: 'bg-indigo-100', text: 'text-indigo-700', label: 'Sedang Berjalan' },
+            in_progress: { bg: 'bg-gray-100', text: 'text-gray-900', label: 'Sedang Berjalan' },
             completed: { bg: 'bg-green-100', text: 'text-green-700', label: 'Selesai' },
             cancelled: { bg: 'bg-red-100', text: 'text-red-700', label: 'Dibatalkan' }
         };
@@ -21,7 +21,7 @@ export default function AuditReport({ sessions }) {
         <AppLayout>
             <Head title="Laporan Hasil Audit" />
             
-            <div className="p-6 max-w-7xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
                     <div className="flex items-center gap-3">
                         <Button variant="ghost" size="icon" onClick={() => window.location.href = '/reports'}>
@@ -50,7 +50,7 @@ export default function AuditReport({ sessions }) {
                                     <tr key={session.id} className="hover:bg-gray-50">
                                         <td className="px-6 py-4">
                                             <div className="font-bold text-gray-900">{session.name}</div>
-                                            <div className="text-xs text-indigo-600 font-mono mt-0.5">{session.code}</div>
+                                            <div className="text-xs text-black font-mono mt-0.5">{session.code}</div>
                                         </td>
                                         <td className="px-6 py-4 text-gray-700">{session.creator?.name || '-'}</td>
                                         <td className="px-6 py-4">
@@ -65,7 +65,7 @@ export default function AuditReport({ sessions }) {
                                             <form method="POST" action="/export/audit" className="inline-block">
                                                 <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')} />
                                                 <input type="hidden" name="session_id" value={session.id} />
-                                                <Button type="submit" variant="secondary" size="sm" className="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border-indigo-200">
+                                                <Button type="submit" variant="secondary" size="sm" className="bg-gray-50 text-gray-900 hover:bg-gray-100 border-gray-200">
                                                     <Download size={14} className="mr-2" />
                                                     Unduh Rekap Audit
                                                 </Button>

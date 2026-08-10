@@ -17,7 +17,7 @@ export default function MismatchReport({ audits, sessions, filters }) {
         <AppLayout>
             <Head title="Aset Mismatch" />
             
-            <div className="p-6 max-w-7xl mx-auto space-y-6">
+            <div className="p-6 md:p-8 w-full space-y-4">
                 <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
                     <div className="flex items-center gap-3">
                         <Button variant="ghost" size="icon" onClick={() => window.location.href = '/reports'}>
@@ -37,7 +37,7 @@ export default function MismatchReport({ audits, sessions, filters }) {
                             Total Mismatch: {audits.total} Aset
                         </div>
                         <select 
-                            className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-500 bg-white min-w-[250px]"
+                            className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-gray-900 bg-white min-w-[250px]"
                             value={sessionId}
                             onChange={handleFilterChange}
                         >
@@ -63,7 +63,7 @@ export default function MismatchReport({ audits, sessions, filters }) {
                                     <tr key={audit.id} className="hover:bg-gray-50">
                                         <td className="px-6 py-4">
                                             <div className="font-bold text-gray-900">{audit.asset?.asset_name}</div>
-                                            <div className="text-xs text-indigo-600 font-mono mt-0.5">{audit.asset?.asset_code}</div>
+                                            <div className="text-xs text-black font-mono mt-0.5">{audit.asset?.asset_code}</div>
                                             <div className="text-xs text-gray-500 mt-1">Sesi: {audit.audit_session?.code}</div>
                                         </td>
                                         <td className="px-6 py-4">
@@ -101,7 +101,7 @@ export default function MismatchReport({ audits, sessions, filters }) {
                                     key={k}
                                     onClick={() => link.url && router.get(link.url, { session_id: sessionId }, { preserveState: true })}
                                     disabled={!link.url}
-                                    className={`px-3 py-1 rounded text-sm ${link.active ? 'bg-indigo-600 text-white font-medium' : link.url ? 'bg-white border hover:bg-gray-50 text-gray-700' : 'text-gray-400'}`}
+                                    className={`px-3 py-1 rounded text-sm ${link.active ? 'bg-black text-white font-medium' : link.url ? 'bg-white border hover:bg-gray-50 text-gray-700' : 'text-gray-400'}`}
                                     dangerouslySetInnerHTML={{ __html: link.label }}
                                 />
                             ))}

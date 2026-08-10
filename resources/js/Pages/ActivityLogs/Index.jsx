@@ -8,7 +8,7 @@ const actionColors = {
     create: 'bg-green-100 text-green-700',
     update: 'bg-blue-100 text-blue-700',
     delete: 'bg-red-100 text-red-700',
-    login: 'bg-indigo-100 text-indigo-700',
+    login: 'bg-gray-100 text-gray-900',
     logout: 'bg-gray-100 text-gray-700',
     import: 'bg-amber-100 text-amber-700',
     export: 'bg-cyan-100 text-cyan-700',
@@ -35,7 +35,7 @@ export default function ActivityLogsIndex({ logs, filters, modules }) {
     return (
         <AppLayout>
             <Head title="Activity Log" />
-            <div className="p-6 max-w-6xl mx-auto space-y-6">
+            <div className="p-6 md:p-8 w-full space-y-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Activity Log</h1>
@@ -61,7 +61,7 @@ export default function ActivityLogsIndex({ logs, filters, modules }) {
                             <Input type="text" placeholder="Cari deskripsi..." className="pl-8 text-sm h-9" value={search} onChange={e => setSearch(e.target.value)} />
                         </div>
                         <select
-                            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white h-9"
+                            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 bg-white h-9"
                             value={module}
                             onChange={e => setModule(e.target.value)}
                         >
@@ -127,7 +127,7 @@ export default function ActivityLogsIndex({ logs, filters, modules }) {
                             {logs.links.map((link, i) => (
                                 link.url === null
                                     ? <div key={i} className="px-3 py-1 text-sm border border-gray-200 text-gray-400 rounded-md bg-gray-50" dangerouslySetInnerHTML={{ __html: link.label }} />
-                                    : <button key={i} onClick={() => router.get(link.url)} className={`px-3 py-1 text-sm border rounded-md transition-colors ${link.active ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`} dangerouslySetInnerHTML={{ __html: link.label }} />
+                                    : <button key={i} onClick={() => router.get(link.url)} className={`px-3 py-1 text-sm border rounded-md transition-colors ${link.active ? 'bg-black border-black text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`} dangerouslySetInnerHTML={{ __html: link.label }} />
                             ))}
                         </div>
                     )}

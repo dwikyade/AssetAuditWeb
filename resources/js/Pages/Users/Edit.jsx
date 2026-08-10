@@ -24,20 +24,20 @@ export default function UsersEdit({ user, roles }) {
     return (
         <AppLayout>
             <Head title={`Edit Pengguna — ${user.name}`} />
-            <div className="p-6 max-w-2xl mx-auto space-y-6">
+            <div className="p-6 md:p-8 w-full max-w-3xl mx-auto space-y-4">
                 <div className="flex items-center gap-3">
                     <Button variant="ghost" size="icon" onClick={() => router.get('/users')}>
                         <ArrowLeft size={18} />
                     </Button>
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Edit Pengguna</h1>
-                        <p className="text-sm text-gray-500">Perbarui data akun pengguna <span className="font-semibold text-indigo-600">{user.name}</span>.</p>
+                        <p className="text-sm text-gray-500">Perbarui data akun pengguna <span className="font-semibold text-black">{user.name}</span>.</p>
                     </div>
                 </div>
 
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <div className="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100">
-                        <div className="w-14 h-14 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xl">
+                        <div className="w-14 h-14 rounded-full bg-gray-100 text-gray-900 flex items-center justify-center font-bold text-xl">
                             {getInitials(user.name)}
                         </div>
                         <div>
@@ -60,7 +60,7 @@ export default function UsersEdit({ user, roles }) {
                         <div>
                             <Label htmlFor="role">Role / Hak Akses <span className="text-red-500">*</span></Label>
                             <select id="role" value={data.role} onChange={e => setData('role', e.target.value)}
-                                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 bg-white">
                                 {roles.map(r => <option key={r.id} value={r.name}>{formatRole(r.name)}</option>)}
                             </select>
                             {errors.role && <p className="text-red-500 text-xs mt-1">{errors.role}</p>}

@@ -52,7 +52,7 @@ export default function ImportShow({ job }) {
         <AppLayout>
             <Head title="Proses Import" />
             
-            <div className="p-6 max-w-4xl mx-auto space-y-6">
+            <div className="p-6 md:p-8 w-full space-y-4">
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" size="icon" onClick={() => window.location.href = '/import'}>
                         <ArrowLeft size={18} />
@@ -67,7 +67,7 @@ export default function ImportShow({ job }) {
                     <div className="p-8 text-center border-b border-gray-100">
                         {progressData.status === 'queued' && (
                             <div className="flex flex-col items-center">
-                                <Loader2 size={48} className="text-indigo-500 animate-spin mb-4" />
+                                <Loader2 size={48} className="text-gray-900 animate-spin mb-4" />
                                 <h2 className="text-xl font-bold text-gray-900">Menunggu Antrean...</h2>
                                 <p className="text-gray-500">File Anda sedang dalam antrean dan akan segera diproses.</p>
                             </div>
@@ -108,11 +108,11 @@ export default function ImportShow({ job }) {
                         <div className="mt-8 max-w-lg mx-auto">
                             <div className="flex justify-between text-sm mb-2">
                                 <span className="font-medium text-gray-700">Progres Keseluruhan</span>
-                                <span className="text-indigo-600 font-bold">{progressData.progress_percent}%</span>
+                                <span className="text-black font-bold">{progressData.progress_percent}%</span>
                             </div>
                             <div className="w-full bg-gray-200 rounded-full h-3 mb-2 overflow-hidden">
                                 <div 
-                                    className={`h-3 rounded-full transition-all duration-500 ${progressData.status === 'failed' ? 'bg-red-500' : 'bg-indigo-600'}`} 
+                                    className={`h-3 rounded-full transition-all duration-500 ${progressData.status === 'failed' ? 'bg-red-500' : 'bg-black'}`} 
                                     style={{ width: `${progressData.progress_percent}%` }}
                                 ></div>
                             </div>

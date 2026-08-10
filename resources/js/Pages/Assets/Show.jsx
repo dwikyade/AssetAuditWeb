@@ -21,7 +21,7 @@ const fmtDateTime = (d) => d ? new Date(d).toLocaleString('id-ID') : '-';
 const SectionCard = ({ title, icon: Icon, children }) => (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="flex items-center gap-2 px-5 py-3 bg-gray-50 border-b border-gray-200">
-            {Icon && <Icon size={16} className="text-indigo-600 shrink-0" />}
+            {Icon && <Icon size={16} className="text-black shrink-0" />}
             <h3 className="font-semibold text-gray-800 text-sm">{title}</h3>
         </div>
         <div className="p-5">{children}</div>
@@ -74,7 +74,7 @@ export default function AssetShow({ asset }) {
             label: `Audit: ${resultMap[a.result]?.label ?? a.result}`,
             sub: `Kondisi: ${a.condition?.name ?? '-'} · Auditor: ${a.auditor?.name ?? '-'}`,
             icon: ClipboardCheck,
-            color: 'bg-indigo-100 text-indigo-600',
+            color: 'bg-gray-100 text-black',
         })),
     ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
@@ -82,7 +82,7 @@ export default function AssetShow({ asset }) {
         <AppLayout>
             <Head title={`Aset: ${asset.asset_code}`} />
 
-            <div className="p-6 max-w-7xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
@@ -91,7 +91,7 @@ export default function AssetShow({ asset }) {
                         </Button>
                         <div>
                             <h1 className="text-2xl font-bold text-gray-900">{asset.asset_name}</h1>
-                            <p className="text-sm font-mono text-indigo-600">{asset.asset_code}</p>
+                            <p className="text-sm font-mono text-black">{asset.asset_code}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -108,7 +108,7 @@ export default function AssetShow({ asset }) {
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Left Column */}
-                    <div className="lg:col-span-2 space-y-6">
+                    <div className="lg:col-span-2 space-y-4">
                         {/* Identity */}
                         <SectionCard title="Informasi Identitas" icon={Package}>
                             <dl className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-4">
@@ -145,9 +145,9 @@ export default function AssetShow({ asset }) {
                                 <Field label="Akum. Susut Sebelum" value={fmtCurrency(asset.previous_accumulated_depreciation)} />
                                 <Field label="Akum. Susut Total" value={fmtCurrency(asset.accumulated_depreciation)} />
                                 <Field label="Susut / Periode" value={fmtCurrency(asset.depreciation_per_period)} />
-                                <div className="col-span-2 md:col-span-3 bg-indigo-50 border border-indigo-100 rounded-lg p-3 flex items-center justify-between">
-                                    <span className="text-sm font-medium text-indigo-700">Nilai Buku Saat Ini</span>
-                                    <span className="text-xl font-bold text-indigo-700">{fmtCurrency(asset.book_value)}</span>
+                                <div className="col-span-2 md:col-span-3 bg-gray-50 border border-gray-100 rounded-lg p-3 flex items-center justify-between">
+                                    <span className="text-sm font-medium text-gray-900">Nilai Buku Saat Ini</span>
+                                    <span className="text-xl font-bold text-gray-900">{fmtCurrency(asset.book_value)}</span>
                                 </div>
                             </dl>
                         </SectionCard>
@@ -192,7 +192,7 @@ export default function AssetShow({ asset }) {
                     </div>
 
                     {/* Right Column */}
-                    <div className="space-y-6">
+                    <div className="space-y-4">
                         {/* Status & Condition */}
                         <SectionCard title="Status & Kondisi" icon={Activity}>
                             <div className="space-y-3">

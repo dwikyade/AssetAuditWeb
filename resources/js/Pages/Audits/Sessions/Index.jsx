@@ -20,7 +20,7 @@ export default function AuditSessionIndex({ sessions, filters }) {
         const map = {
             draft: { bg: 'bg-gray-100', text: 'text-gray-700', label: 'Draft' },
             scheduled: { bg: 'bg-blue-100', text: 'text-blue-700', label: 'Dijadwalkan' },
-            in_progress: { bg: 'bg-indigo-100', text: 'text-indigo-700', label: 'Sedang Berjalan' },
+            in_progress: { bg: 'bg-gray-100', text: 'text-gray-900', label: 'Sedang Berjalan' },
             completed: { bg: 'bg-green-100', text: 'text-green-700', label: 'Selesai' },
             cancelled: { bg: 'bg-red-100', text: 'text-red-700', label: 'Dibatalkan' }
         };
@@ -32,7 +32,7 @@ export default function AuditSessionIndex({ sessions, filters }) {
         <AppLayout>
             <Head title="Sesi Audit / Stock Opname" />
             
-            <div className="p-6 max-w-7xl mx-auto space-y-6">
+            <div className="p-6 md:p-8 w-full space-y-4">
                 <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Sesi Audit / Stock Opname</h1>
@@ -59,7 +59,7 @@ export default function AuditSessionIndex({ sessions, filters }) {
                             />
                         </div>
                         <select 
-                            className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-500"
+                            className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-gray-900"
                             value={filters.status || ''}
                             onChange={(e) => router.get('/audit-sessions', { ...filters, status: e.target.value })}
                         >
@@ -94,7 +94,7 @@ export default function AuditSessionIndex({ sessions, filters }) {
                                         <tr key={session.id} className="hover:bg-gray-50 transition-colors">
                                             <td className="px-6 py-4">
                                                 <div className="font-bold text-gray-900">{session.name}</div>
-                                                <div className="text-xs text-indigo-600 font-mono mt-0.5">{session.code}</div>
+                                                <div className="text-xs text-black font-mono mt-0.5">{session.code}</div>
                                                 <div className="text-xs text-gray-500 mt-1">
                                                     Scope: <span className="uppercase">{session.scope_type}</span>
                                                 </div>

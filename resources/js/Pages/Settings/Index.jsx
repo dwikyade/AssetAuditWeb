@@ -31,7 +31,7 @@ export default function SettingsIndex({ settings }) {
 
     const SectionHeader = ({ icon: Icon, title, description }) => (
         <div className="flex items-start gap-3 mb-5 pb-4 border-b border-gray-100">
-            <div className="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+            <div className="w-9 h-9 rounded-lg bg-gray-50 text-black flex items-center justify-center shrink-0">
                 <Icon size={18} />
             </div>
             <div>
@@ -44,13 +44,13 @@ export default function SettingsIndex({ settings }) {
     return (
         <AppLayout>
             <Head title="Pengaturan Sistem" />
-            <div className="p-6 max-w-3xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Pengaturan Sistem</h1>
                     <p className="text-sm text-gray-500">Konfigurasi umum aplikasi Hotel Asset Audit.</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Hotel Info */}
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                         <SectionHeader icon={Building2} title="Informasi Hotel" description="Data perusahaan/hotel yang tampil di laporan." />
@@ -58,24 +58,24 @@ export default function SettingsIndex({ settings }) {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Nama Aplikasi</label>
-                                    <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                         value={data.settings.app_name} onChange={e => setData('settings', {...data.settings, app_name: e.target.value})} />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Nama Hotel</label>
-                                    <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                         value={data.settings.hotel_name} onChange={e => setData('settings', {...data.settings, hotel_name: e.target.value})}
                                         placeholder="contoh: Grand Hyatt Jakarta" />
                                 </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Alamat Hotel</label>
-                                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                                <textarea className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none"
                                     rows={2} value={data.settings.hotel_address} onChange={e => setData('settings', {...data.settings, hotel_address: e.target.value})} />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">No. Telepon</label>
-                                <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                <input className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                     value={data.settings.hotel_phone} onChange={e => setData('settings', {...data.settings, hotel_phone: e.target.value})} />
                             </div>
                         </div>
@@ -88,7 +88,7 @@ export default function SettingsIndex({ settings }) {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Mata Uang</label>
-                                    <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                                    <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 bg-white"
                                         value={data.settings.currency} onChange={e => setData('settings', {...data.settings, currency: e.target.value})}>
                                         <option value="IDR">IDR - Rupiah</option>
                                         <option value="USD">USD - Dollar</option>
@@ -97,7 +97,7 @@ export default function SettingsIndex({ settings }) {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Metode Depresiasi</label>
-                                    <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                                    <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 bg-white"
                                         value={data.settings.depreciation_method} onChange={e => setData('settings', {...data.settings, depreciation_method: e.target.value})}>
                                         <option value="straight_line">Garis Lurus (Straight Line)</option>
                                         <option value="declining_balance">Saldo Menurun (Declining Balance)</option>
@@ -106,7 +106,7 @@ export default function SettingsIndex({ settings }) {
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Bulan Awal Tahun Fiskal</label>
-                                <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                                <select className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 bg-white"
                                     value={data.settings.fiscal_year_start} onChange={e => setData('settings', {...data.settings, fiscal_year_start: e.target.value})}>
                                     {['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'].map((m, i) => (
                                         <option key={i} value={String(i+1).padStart(2,'0')}>{m}</option>
@@ -133,8 +133,8 @@ export default function SettingsIndex({ settings }) {
                                     <button
                                         type="button"
                                         onClick={() => setData('settings', {...data.settings, [item.key]: data.settings[item.key] === 'true' ? 'false' : 'true'})}
-                                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
-                                            ${data.settings[item.key] === 'true' ? 'bg-indigo-600' : 'bg-gray-200'}`}
+                                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2
+                                            ${data.settings[item.key] === 'true' ? 'bg-black' : 'bg-gray-200'}`}
                                     >
                                         <span className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition duration-200 ease-in-out
                                             ${data.settings[item.key] === 'true' ? 'translate-x-5' : 'translate-x-0'}`} />

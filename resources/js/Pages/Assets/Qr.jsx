@@ -56,14 +56,14 @@ export default function Qr({ asset, qr_svg, qr_url }) {
         <AppLayout>
             <Head title={`QR Code: ${asset.asset_code}`} />
 
-            <div className="p-6 max-w-4xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex items-center gap-3 mb-6">
                     <Button variant="ghost" size="icon" onClick={() => router.visit(`/assets/${asset.id}`)}>
                         <ArrowLeft size={18} />
                     </Button>
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">QR Code Aset</h1>
-                        <p className="text-sm font-mono text-indigo-600">{asset.asset_code}</p>
+                        <p className="text-sm font-mono text-black">{asset.asset_code}</p>
                     </div>
                 </div>
 
@@ -91,10 +91,10 @@ export default function Qr({ asset, qr_svg, qr_url }) {
                     </div>
 
                     {/* QR Details & Actions */}
-                    <div className="space-y-6">
+                    <div className="space-y-4">
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                             <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                <Scan size={18} className="text-indigo-600" />
+                                <Scan size={18} className="text-black" />
                                 Informasi Tautan
                             </h3>
                             <div className="space-y-4">

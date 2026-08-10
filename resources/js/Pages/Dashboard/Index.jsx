@@ -97,13 +97,13 @@ const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 export default function Dashboard({ stats, charts, recentActivity, alerts }) {
     const progress = stats?.audit_progress ?? 0;
-    const barColors = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#14b8a6'];
+    const barColors = ['#000000', '#27272a', '#52525b', '#71717a', '#a1a1aa', '#d4d4d8', '#18181b', '#3f3f46'];
 
     return (
         <AppLayout>
             <Head title="Dashboard" />
 
-            <div className="p-6 max-w-7xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div>
@@ -113,7 +113,7 @@ export default function Dashboard({ stats, charts, recentActivity, alerts }) {
                     {stats?.active_session && (
                         <Link
                             href={`/audit-sessions/${stats.active_session.id}/conduct`}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-900 transition-colors"
                         >
                             <Loader2 size={15} className="animate-spin" />
                             Audit Berjalan: {stats.active_session.name}
@@ -128,7 +128,7 @@ export default function Dashboard({ stats, charts, recentActivity, alerts }) {
                 {/* Stats Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                     <StatCard title="Total Aset" value={fmt(stats?.total_assets)} icon={Package}
-                        colorClass="bg-indigo-100 text-indigo-600" delay={0.05} />
+                        colorClass="bg-gray-100 text-black" delay={0.05} />
                     <StatCard title="Aset Aktif" value={fmt(stats?.active_assets)} icon={CheckCircle2}
                         colorClass="bg-emerald-100 text-emerald-600" delay={0.1} />
                     <StatCard title="Tidak Aktif" value={fmt(stats?.inactive_assets)} icon={ShieldAlert}
@@ -142,7 +142,7 @@ export default function Dashboard({ stats, charts, recentActivity, alerts }) {
                 {/* Financial + Audit Progress */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                     {/* Financial */}
-                    <div className="lg:col-span-1 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-xl p-6 text-white">
+                    <div className="lg:col-span-1 bg-gradient-to-br from-gray-900 to-black rounded-xl p-6 text-white">
                         <div className="flex items-center gap-2 mb-4">
                             <TrendingUp size={20} className="opacity-80" />
                             <p className="font-semibold text-sm opacity-80">Ringkasan Finansial</p>
@@ -162,10 +162,10 @@ export default function Dashboard({ stats, charts, recentActivity, alerts }) {
                     {/* Audit Progress */}
                     <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                         <div className="flex items-center gap-2 mb-4">
-                            <ClipboardCheck size={20} className="text-indigo-600" />
+                            <ClipboardCheck size={20} className="text-black" />
                             <h3 className="font-bold text-gray-900">Progres Audit</h3>
                             {stats?.active_session && (
-                                <span className="ml-auto text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-medium">
+                                <span className="ml-auto text-xs bg-gray-100 text-gray-900 px-2 py-0.5 rounded-full font-medium">
                                     {stats.active_session.name}
                                 </span>
                             )}
@@ -175,11 +175,11 @@ export default function Dashboard({ stats, charts, recentActivity, alerts }) {
                             <span className="text-sm text-gray-600">
                                 {fmt(stats?.audited_count)} dari {fmt(stats?.total_assets)} aset diaudit
                             </span>
-                            <span className="text-2xl font-bold text-indigo-600">{progress}%</span>
+                            <span className="text-2xl font-bold text-black">{progress}%</span>
                         </div>
                         <div className="w-full bg-gray-100 rounded-full h-3 mb-4 overflow-hidden">
                             <motion.div
-                                className="bg-indigo-600 h-3 rounded-full"
+                                className="bg-black h-3 rounded-full"
                                 initial={{ width: 0 }}
                                 animate={{ width: `${progress}%` }}
                                 transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -187,9 +187,9 @@ export default function Dashboard({ stats, charts, recentActivity, alerts }) {
                         </div>
 
                         <div className="grid grid-cols-3 gap-4 text-center">
-                            <div className="bg-indigo-50 rounded-lg p-3">
-                                <p className="text-xs text-indigo-600 font-medium">Sudah Audit</p>
-                                <p className="text-xl font-bold text-indigo-700">{fmt(stats?.audited_count)}</p>
+                            <div className="bg-gray-50 rounded-lg p-3">
+                                <p className="text-xs text-black font-medium">Sudah Audit</p>
+                                <p className="text-xl font-bold text-gray-900">{fmt(stats?.audited_count)}</p>
                             </div>
                             <div className="bg-gray-50 rounded-lg p-3">
                                 <p className="text-xs text-gray-500 font-medium">Belum Audit</p>
@@ -321,14 +321,14 @@ export default function Dashboard({ stats, charts, recentActivity, alerts }) {
                     {/* Recent Activity */}
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                         <div className="flex items-center gap-2 mb-4">
-                            <Activity size={18} className="text-indigo-600" />
+                            <Activity size={18} className="text-black" />
                             <h3 className="font-bold text-gray-900">Aktivitas Terbaru</h3>
                         </div>
                         <div className="space-y-3">
                             {recentActivity && recentActivity.length > 0 ? (
                                 recentActivity.slice(0, 7).map((log) => (
                                     <div key={log.id} className="flex items-start gap-3">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-2 shrink-0" />
+                                        <div className="w-1.5 h-1.5 rounded-full bg-gray-400 mt-2 shrink-0" />
                                         <div className="min-w-0">
                                             <p className="text-sm text-gray-800 leading-snug line-clamp-2">{log.description}</p>
                                             <div className="flex items-center gap-1 mt-0.5 text-xs text-gray-400">
@@ -346,7 +346,7 @@ export default function Dashboard({ stats, charts, recentActivity, alerts }) {
                         {recentActivity && recentActivity.length > 0 && (
                             <Link
                                 href="/activity-logs"
-                                className="mt-4 flex items-center justify-center gap-1 text-xs text-indigo-600 hover:text-indigo-800 font-medium border-t border-gray-100 pt-3"
+                                className="mt-4 flex items-center justify-center gap-1 text-xs text-black hover:text-black font-medium border-t border-gray-100 pt-3"
                             >
                                 Lihat semua aktivitas <ArrowRight size={12} />
                             </Link>

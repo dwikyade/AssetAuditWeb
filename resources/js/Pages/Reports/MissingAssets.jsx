@@ -10,7 +10,7 @@ export default function MissingAssets({ missing_assets, session }) {
         <AppLayout>
             <Head title="Aset Hilang" />
             
-            <div className="p-6 max-w-7xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex items-center gap-3 mb-6">
                     <Button variant="ghost" size="icon" onClick={() => window.location.href = '/reports'}>
                         <ArrowLeft size={18} />
@@ -34,7 +34,7 @@ export default function MissingAssets({ missing_assets, session }) {
                         <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex items-center justify-between">
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Berdasarkan Sesi Audit Terakhir:</p>
-                                <p className="font-bold text-gray-900 mt-1">{session.name} <span className="text-indigo-600 font-mono font-normal">({session.code})</span></p>
+                                <p className="font-bold text-gray-900 mt-1">{session.name} <span className="text-black font-mono font-normal">({session.code})</span></p>
                             </div>
                             <div className="text-right">
                                 <p className="text-sm text-gray-500 font-medium">Total Aset Tidak Ditemukan</p>
@@ -98,7 +98,7 @@ export default function MissingAssets({ missing_assets, session }) {
                                             key={k}
                                             onClick={() => link.url && router.get(link.url)}
                                             disabled={!link.url}
-                                            className={`px-3 py-1 rounded text-sm ${link.active ? 'bg-indigo-600 text-white font-medium' : link.url ? 'bg-white border hover:bg-gray-50 text-gray-700' : 'text-gray-400'}`}
+                                            className={`px-3 py-1 rounded text-sm ${link.active ? 'bg-black text-white font-medium' : link.url ? 'bg-white border hover:bg-gray-50 text-gray-700' : 'text-gray-400'}`}
                                             dangerouslySetInnerHTML={{ __html: link.label }}
                                         />
                                     ))}

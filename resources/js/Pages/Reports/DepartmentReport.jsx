@@ -17,7 +17,7 @@ export default function DepartmentReport({ by_department }) {
         <AppLayout>
             <Head title="Laporan Departemen" />
             
-            <div className="p-6 max-w-7xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
                     <div className="flex items-center gap-3">
                         <Button variant="ghost" size="icon" onClick={() => window.location.href = '/reports'}>

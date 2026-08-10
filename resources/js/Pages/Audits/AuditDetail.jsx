@@ -39,7 +39,7 @@ export default function AuditDetail({ audit }) {
         <AppLayout>
             <Head title={`Detail Audit: ${asset?.asset_code}`} />
 
-            <div className="p-6 max-w-4xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex items-center gap-3">
                     <Button variant="ghost" size="icon" onClick={() => router.visit(`/audit-sessions/${session.id}`)}>
                         <ArrowLeft size={18} />
@@ -73,7 +73,7 @@ export default function AuditDetail({ audit }) {
                     </div>
 
                     {/* Data Audit */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-6">
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
                         <div>
                             <SectionTitle>Data Pengecekan</SectionTitle>
                             <dl className="grid grid-cols-2 gap-4">

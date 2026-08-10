@@ -61,7 +61,7 @@ export default function Login() {
                         name="remember"
                         checked={data.remember}
                         onChange={(e) => setData('remember', e.target.checked)}
-                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                        className="h-4 w-4 rounded border-gray-300 text-black focus:ring-gray-900"
                     />
                     <label htmlFor="remember" className="ml-2 block text-sm text-gray-700">
                         Ingat saya

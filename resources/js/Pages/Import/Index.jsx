@@ -128,7 +128,7 @@ export default function ImportIndex({ default_mapping }) {
         <AppLayout>
             <Head title="Import Aset" />
             
-            <div className="p-6 max-w-5xl mx-auto space-y-6">
+            <div className="p-6 md:p-8 w-full space-y-4">
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Import Aset via Excel</h1>
@@ -168,7 +168,7 @@ export default function ImportIndex({ default_mapping }) {
                                 onChange={handleFileChange}
                             />
                             
-                            <div className="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <div className="w-16 h-16 bg-gray-100 text-black rounded-full flex items-center justify-center mx-auto mb-4">
                                 <UploadCloud size={32} />
                             </div>
                             
@@ -192,7 +192,7 @@ export default function ImportIndex({ default_mapping }) {
                         </div>
                     </div>
                 ) : (
-                    <div className="space-y-6">
+                    <div className="space-y-4">
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                             <div className="flex items-center justify-between border-b pb-4 mb-4">
                                 <div>
@@ -218,7 +218,7 @@ export default function ImportIndex({ default_mapping }) {
                                                 </div>
                                                 <ArrowRight size={16} className="text-gray-400 shrink-0" />
                                                 <select
-                                                    className="w-1/2 p-2 border border-gray-300 rounded text-sm focus:ring-indigo-500 focus:border-indigo-500"
+                                                    className="w-1/2 p-2 border border-gray-300 rounded text-sm focus:ring-gray-900 focus:border-gray-900"
                                                     value={mapping[header] || ''}
                                                     onChange={(e) => handleMappingChange(header, e.target.value)}
                                                 >

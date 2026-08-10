@@ -25,7 +25,7 @@ export default function UsersCreate({ roles }) {
     return (
         <AppLayout>
             <Head title="Tambah Pengguna" />
-            <div className="p-6 max-w-2xl mx-auto space-y-6">
+            <div className="p-6 md:p-8 w-full max-w-3xl mx-auto space-y-4">
                 <div className="flex items-center gap-3">
                     <Button variant="ghost" size="icon" onClick={() => router.get('/users')}>
                         <ArrowLeft size={18} />
@@ -52,7 +52,7 @@ export default function UsersCreate({ roles }) {
                         <div>
                             <Label htmlFor="role">Role / Hak Akses <span className="text-red-500">*</span></Label>
                             <select id="role" value={data.role} onChange={e => setData('role', e.target.value)}
-                                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 bg-white">
                                 {roles.map(r => <option key={r.id} value={r.name}>{formatRole(r.name)}</option>)}
                             </select>
                             {errors.role && <p className="text-red-500 text-xs mt-1">{errors.role}</p>}

@@ -84,7 +84,7 @@ export default function ConditionsIndex({ conditions }) {
     return (
         <AppLayout>
             <Head title="Kondisi Aset" />
-            <div className="p-6 max-w-4xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Kondisi Aset</h1>

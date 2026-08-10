@@ -18,7 +18,7 @@ export default function FinancialReport({ summary, by_category }) {
         <AppLayout>
             <Head title="Laporan Keuangan & Depresiasi" />
             
-            <div className="p-6 max-w-7xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex items-center gap-3 mb-6">
                     <Button variant="ghost" size="icon" onClick={() => window.location.href = '/reports'}>
                         <ArrowLeft size={18} />
@@ -32,7 +32,7 @@ export default function FinancialReport({ summary, by_category }) {
                 {/* Top Metrics */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                        <div className="w-10 h-10 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center mb-3">
+                        <div className="w-10 h-10 rounded-lg bg-gray-100 text-black flex items-center justify-center mb-3">
                             <Wallet size={20} />
                         </div>
                         <p className="text-sm font-medium text-gray-500">Total Nilai Perolehan</p>

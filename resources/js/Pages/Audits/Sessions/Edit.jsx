@@ -5,7 +5,7 @@ import { ArrowLeft, Save, AlertCircle } from 'lucide-react';
 
 const Select = ({ children, ...props }) => (
     <select
-        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
         {...props}
     >
         {children}
@@ -14,7 +14,7 @@ const Select = ({ children, ...props }) => (
 
 const Textarea = ({ ...props }) => (
     <textarea
-        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none"
         rows={3}
         {...props}
     />
@@ -69,14 +69,14 @@ export default function AuditSessionEdit({ session, departments, locations, cate
         <AppLayout>
             <Head title={`Edit Sesi Audit: ${session.name}`} />
 
-            <div className="p-6 max-w-3xl mx-auto">
+            <div className="p-6 md:p-8 w-full max-w-3xl mx-auto">
                 <div className="flex items-center gap-3 mb-6">
                     <Button variant="ghost" size="icon" onClick={() => router.visit(`/audit-sessions/${session.id}`)}>
                         <ArrowLeft size={18} />
                     </Button>
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Edit Sesi Audit</h1>
-                        <p className="text-sm font-mono text-indigo-600">{session.code}</p>
+                        <p className="text-sm font-mono text-black">{session.code}</p>
                     </div>
                 </div>
 
@@ -92,7 +92,7 @@ export default function AuditSessionEdit({ session, departments, locations, cate
                     </div>
                 )}
 
-                <form onSubmit={submit} className="space-y-6">
+                <form onSubmit={submit} className="space-y-4">
                     {/* Basic Info */}
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-5">
                         <h3 className="text-sm font-semibold text-gray-700 pb-2 border-b border-gray-200">Informasi Sesi Audit</h3>
@@ -151,7 +151,7 @@ export default function AuditSessionEdit({ session, departments, locations, cate
                                                 type="checkbox"
                                                 checked={data.scope_ids.includes(opt.id)}
                                                 onChange={() => !isLocked && handleScopeIdToggle(opt.id)}
-                                                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                className="rounded border-gray-300 text-black focus:ring-gray-900"
                                                 disabled={isLocked}
                                             />
                                             <span className="text-sm text-gray-800">{opt.name}</span>
@@ -166,7 +166,7 @@ export default function AuditSessionEdit({ session, departments, locations, cate
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
                         <h3 className="text-sm font-semibold text-gray-700 pb-2 border-b border-gray-200">Mode Penyelesaian</h3>
 
-                        <label className={`flex items-start gap-3 p-4 border rounded-xl cursor-pointer transition-colors ${data.completion_mode === 'flexible' ? 'border-indigo-400 bg-indigo-50' : 'border-gray-200 hover:bg-gray-50'} ${isLocked ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                        <label className={`flex items-start gap-3 p-4 border rounded-xl cursor-pointer transition-colors ${data.completion_mode === 'flexible' ? 'border-gray-400 bg-gray-50' : 'border-gray-200 hover:bg-gray-50'} ${isLocked ? 'opacity-60 cursor-not-allowed' : ''}`}>
                             <input
                                 type="radio" name="completion_mode" value="flexible"
                                 checked={data.completion_mode === 'flexible'}
@@ -179,7 +179,7 @@ export default function AuditSessionEdit({ session, departments, locations, cate
                             </div>
                         </label>
 
-                        <label className={`flex items-start gap-3 p-4 border rounded-xl cursor-pointer transition-colors ${data.completion_mode === 'strict' ? 'border-indigo-400 bg-indigo-50' : 'border-gray-200 hover:bg-gray-50'} ${isLocked ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                        <label className={`flex items-start gap-3 p-4 border rounded-xl cursor-pointer transition-colors ${data.completion_mode === 'strict' ? 'border-gray-400 bg-gray-50' : 'border-gray-200 hover:bg-gray-50'} ${isLocked ? 'opacity-60 cursor-not-allowed' : ''}`}>
                             <input
                                 type="radio" name="completion_mode" value="strict"
                                 checked={data.completion_mode === 'strict'}

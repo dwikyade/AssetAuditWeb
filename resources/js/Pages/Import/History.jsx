@@ -5,7 +5,7 @@ export default function History(props) {
     return (
         <AppLayout>
             <Head title="$name" />
-            <div className="p-6 max-w-7xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex items-center justify-between">
                     <h1 className="text-2xl font-bold text-gray-900">$name</h1>
                 </div>

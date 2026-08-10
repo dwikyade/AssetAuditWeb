@@ -1,11 +1,121 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button, Input } from '@/Components/UI';
-import { Search, Plus, Edit, Trash, Building2 } from 'lucide-react';
+import { Button, Input, Label, Modal } from '@/Components/UI';
+import { Search, Plus, Edit, Trash, Building2, Save } from 'lucide-react';
 import { useState, useEffect } from 'react';
+
+function DepartmentForm({ isOpen, onClose, initialData = null }) {
+    const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({
+        code: '',
+        name: '',
+        description: '',
+        is_active: true,
+    });
+
+    useEffect(() => {
+        if (isOpen) {
+            if (initialData) {
+                setData({
+                    code: initialData.code || '',
+                    name: initialData.name || '',
+                    description: initialData.description || '',
+                    is_active: initialData.is_active ?? true,
+                });
+            } else {
+                reset();
+            }
+            clearErrors();
+        }
+    }, [isOpen, initialData]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (initialData) {
+            put(`/departments/${initialData.id}`, {
+                onSuccess: () => onClose(),
+            });
+        } else {
+            post('/departments', {
+                onSuccess: () => onClose(),
+            });
+        }
+    };
+
+    return (
+        <Modal 
+            isOpen={isOpen} 
+            onClose={onClose} 
+            title={initialData ? 'Edit Departemen' : 'Tambah Departemen'}
+            maxWidth="max-w-lg"
+        >
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <Label htmlFor="code">Kode Departemen *</Label>
+                        <Input
+                            id="code"
+                            value={data.code}
+                            onChange={e => setData('code', e.target.value.toUpperCase())}
+                            placeholder="contoh: FO, HK"
+                            className="uppercase"
+                            error={errors.code}
+                        />
+                    </div>
+                    <div>
+                        <Label htmlFor="name">Nama Departemen *</Label>
+                        <Input
+                            id="name"
+                            value={data.name}
+                            onChange={e => setData('name', e.target.value)}
+                            placeholder="contoh: Front Office"
+                            error={errors.name}
+                        />
+                    </div>
+                </div>
+
+                <div>
+                    <Label htmlFor="description">Deskripsi</Label>
+                    <textarea
+                        id="description"
+                        value={data.description}
+                        onChange={e => setData('description', e.target.value)}
+                        placeholder="Deskripsi singkat departemen ini..."
+                        className={`mt-1 w-full rounded-sm border ${errors.description ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-gray-900'} bg-white px-3 py-2 text-sm focus:outline-none focus:ring-1 min-h-[80px] transition-colors resize-none`}
+                    />
+                    {errors.description && <p className="mt-1 text-xs text-red-500 font-medium">{errors.description}</p>}
+                </div>
+
+                <div className="flex items-center gap-3">
+                    <input
+                        type="checkbox"
+                        id="is_active"
+                        checked={data.is_active}
+                        onChange={e => setData('is_active', e.target.checked)}
+                        className="w-4 h-4 rounded border-gray-300 text-black focus:ring-gray-900"
+                    />
+                    <Label htmlFor="is_active" className="cursor-pointer mb-0">Departemen Aktif</Label>
+                </div>
+
+                <div className="pt-4 flex justify-end gap-3 border-t border-gray-100">
+                    <Button type="button" variant="ghost" onClick={onClose}>
+                        Batal
+                    </Button>
+                    <Button type="submit" isLoading={processing}>
+                        {!processing && <Save size={16} className="mr-2" />}
+                        Simpan
+                    </Button>
+                </div>
+            </form>
+        </Modal>
+    );
+}
 
 export default function DepartmentsIndex({ departments, filters }) {
     const [search, setSearch] = useState(filters.search || '');
+
+    // Modal state
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editData, setEditData] = useState(null);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -16,6 +126,16 @@ export default function DepartmentsIndex({ departments, filters }) {
         return () => clearTimeout(timer);
     }, [search, filters.search]);
 
+    const openCreateModal = () => {
+        setEditData(null);
+        setIsModalOpen(true);
+    };
+
+    const openEditModal = (dept) => {
+        setEditData(dept);
+        setIsModalOpen(true);
+    };
+
     const handleDelete = (id, name) => {
         if (confirm(`Hapus departemen "${name}"? Hanya departemen tanpa aset yang bisa dihapus.`)) {
             router.delete(`/departments/${id}`);
@@ -25,13 +145,13 @@ export default function DepartmentsIndex({ departments, filters }) {
     return (
         <AppLayout>
             <Head title="Manajemen Departemen" />
-            <div className="p-6 max-w-5xl mx-auto space-y-6">
+            <div className="p-6 md:p-8 w-full space-y-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Departemen</h1>
                         <p className="text-sm text-gray-500">Kelola master data departemen hotel.</p>
                     </div>
-                    <Button onClick={() => router.get('/departments/create')}>
+                    <Button onClick={openCreateModal}>
                         <Plus size={16} className="mr-2" /> Tambah Departemen
                     </Button>
                 </div>
@@ -75,22 +195,22 @@ export default function DepartmentsIndex({ departments, filters }) {
                                 ) : (
                                     departments.data.map((dept) => (
                                         <tr key={dept.id} className="hover:bg-gray-50 transition-colors">
-                                            <td className="px-6 py-3 font-mono text-indigo-700 font-medium">{dept.code}</td>
+                                            <td className="px-6 py-3 font-mono text-gray-900 font-medium">{dept.code}</td>
                                             <td className="px-6 py-3 font-medium text-gray-900">{dept.name}</td>
                                             <td className="px-6 py-3 text-gray-500 max-w-xs truncate">{dept.description || '-'}</td>
                                             <td className="px-6 py-3 text-center">
-                                                <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-xs font-bold border border-blue-100">
+                                                <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs font-bold border border-blue-100">
                                                     {dept.assets_count}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-3 text-center">
-                                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${dept.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                                                <span className={`px-2 py-0.5 rounded text-xs font-medium border ${dept.is_active ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-50 text-gray-600 border-gray-200'}`}>
                                                     {dept.is_active ? 'Aktif' : 'Nonaktif'}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-3 text-right">
                                                 <div className="flex items-center justify-end gap-1">
-                                                    <Button variant="ghost" size="icon" onClick={() => router.get(`/departments/${dept.id}/edit`)} title="Edit">
+                                                    <Button variant="ghost" size="icon" onClick={() => openEditModal(dept)} title="Edit">
                                                         <Edit size={16} className="text-amber-500" />
                                                     </Button>
                                                     <Button variant="ghost" size="icon" onClick={() => handleDelete(dept.id, dept.name)} title="Hapus">
@@ -110,12 +230,18 @@ export default function DepartmentsIndex({ departments, filters }) {
                             {departments.links.map((link, i) => (
                                 link.url === null
                                     ? <div key={i} className="px-3 py-1 text-sm border border-gray-200 text-gray-400 rounded-md bg-gray-50" dangerouslySetInnerHTML={{ __html: link.label }} />
-                                    : <Link key={i} href={link.url} className={`px-3 py-1 text-sm border rounded-md transition-colors ${link.active ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`} dangerouslySetInnerHTML={{ __html: link.label }} />
+                                    : <Link key={i} href={link.url} className={`px-3 py-1 text-sm border rounded-md transition-colors ${link.active ? 'bg-black border-black text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`} dangerouslySetInnerHTML={{ __html: link.label }} />
                             ))}
                         </div>
                     )}
                 </div>
             </div>
+
+            <DepartmentForm 
+                isOpen={isModalOpen} 
+                onClose={() => setIsModalOpen(false)} 
+                initialData={editData} 
+            />
         </AppLayout>
     );
 }

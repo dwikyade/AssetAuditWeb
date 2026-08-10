@@ -19,7 +19,7 @@ const reportTypes = [
         description: 'Laporan hasil pelaksanaan audit/stock opname fisik.',
         icon: ClipboardList,
         href: '/reports/audit',
-        color: 'bg-indigo-100 text-indigo-600'
+        color: 'bg-gray-100 text-black'
     },
     {
         title: 'Aset Hilang (Missing)',
@@ -63,7 +63,7 @@ export default function ReportsIndex() {
         <AppLayout>
             <Head title="Laporan & Ekspor" />
             
-            <div className="p-6 max-w-7xl mx-auto space-y-8">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-6">
                 <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Laporan & Analitik</h1>
@@ -71,7 +71,7 @@ export default function ReportsIndex() {
                     </div>
                     <Link 
                         href="/export" 
-                        className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
+                        className="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-900 transition-colors"
                     >
                         <Download size={16} className="mr-2" />
                         Pusat Ekspor Data
@@ -91,13 +91,13 @@ export default function ReportsIndex() {
                                 <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 ${report.color}`}>
                                     <report.icon size={24} />
                                 </div>
-                                <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors">{report.title}</h3>
+                                <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-black transition-colors">{report.title}</h3>
                                 <p className="text-sm text-gray-500 leading-relaxed">{report.description}</p>
                             </div>
                             <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
                                 <Link 
                                     href={report.href}
-                                    className="text-sm font-medium text-indigo-600 hover:text-indigo-800 flex items-center"
+                                    className="text-sm font-medium text-black hover:text-black flex items-center"
                                 >
                                     Lihat Laporan
                                     <svg className="ml-1 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">

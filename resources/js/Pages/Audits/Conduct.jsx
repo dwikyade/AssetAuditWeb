@@ -115,7 +115,7 @@ export default function AuditConduct({ session, conditions, locations, audited_i
         <AppLayout>
             <Head title={`Conduct Audit: ${session.name}`} />
             
-            <div className="p-4 md:p-6 max-w-4xl mx-auto space-y-6">
+            <div className="p-4 md:p-4 w-full space-y-4">
                 {/* Header & Progress */}
                 <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
                     <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-4">
@@ -128,7 +128,7 @@ export default function AuditConduct({ session, conditions, locations, audited_i
                                 <p className="text-sm text-gray-500">Kode Sesi: {session.code}</p>
                             </div>
                         </div>
-                        <div className="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg text-sm font-medium border border-indigo-100 flex items-center justify-between gap-4">
+                        <div className="bg-gray-50 text-gray-900 px-4 py-2 rounded-lg text-sm font-medium border border-gray-100 flex items-center justify-between gap-4">
                             <span>Progres Audit</span>
                             <span className="text-lg font-bold">{audited_count} / {total_scope}</span>
                         </div>
@@ -136,7 +136,7 @@ export default function AuditConduct({ session, conditions, locations, audited_i
                     
                     <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
                         <div 
-                            className="bg-indigo-600 h-2.5 rounded-full transition-all duration-500" 
+                            className="bg-black h-2.5 rounded-full transition-all duration-500" 
                             style={{ width: `${progress}%` }}
                         ></div>
                     </div>
@@ -189,12 +189,12 @@ export default function AuditConduct({ session, conditions, locations, audited_i
                         <div className="p-6 md:p-8">
                             {/* Asset Info Card */}
                             <div className="flex flex-col md:flex-row gap-6 mb-8 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                <div className="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center shrink-0">
+                                <div className="w-16 h-16 bg-gray-100 text-black rounded-lg flex items-center justify-center shrink-0">
                                     <QrCode size={32} />
                                 </div>
                                 <div className="flex-1">
                                     <h2 className="text-xl font-bold text-gray-900 mb-1">{asset.asset_name}</h2>
-                                    <p className="text-sm font-mono text-indigo-600 font-medium mb-3">{asset.asset_code}</p>
+                                    <p className="text-sm font-mono text-black font-medium mb-3">{asset.asset_code}</p>
                                     
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                                         <div>
@@ -218,7 +218,7 @@ export default function AuditConduct({ session, conditions, locations, audited_i
                             </div>
 
                             {/* Audit Form */}
-                            <form onSubmit={submitAudit} className="space-y-6">
+                            <form onSubmit={submitAudit} className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     {/* Status Fisik */}
                                     <div className="md:col-span-3">
@@ -250,7 +250,7 @@ export default function AuditConduct({ session, conditions, locations, audited_i
                                                 <select
                                                     value={data.condition_id}
                                                     onChange={(e) => setData('condition_id', e.target.value)}
-                                                    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500"
+                                                    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-gray-900"
                                                     required
                                                 >
                                                     <option value="">-- Pilih Kondisi --</option>
@@ -262,7 +262,7 @@ export default function AuditConduct({ session, conditions, locations, audited_i
                                                 <select
                                                     value={data.location_id}
                                                     onChange={(e) => setData('location_id', e.target.value)}
-                                                    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500"
+                                                    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-gray-900"
                                                     required
                                                 >
                                                     <option value="">-- Pilih Lokasi --</option>
@@ -289,7 +289,7 @@ export default function AuditConduct({ session, conditions, locations, audited_i
                                         <textarea
                                             value={data.notes}
                                             onChange={(e) => setData('notes', e.target.value)}
-                                            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-indigo-500 min-h-[100px]"
+                                            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-gray-900 min-h-[100px]"
                                             placeholder="Tambahkan catatan jika ada perbedaan data, kerusakan fisik, atau informasi penting lainnya..."
                                         />
                                     </div>

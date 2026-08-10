@@ -177,7 +177,7 @@ export default function AppLayout({ children }) {
                             exit={{ opacity: 0 }}
                             className="flex items-center gap-2"
                         >
-                            <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                            <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-bold text-sm">
                                 HA
                             </div>
                             <div className="leading-tight">
@@ -187,7 +187,7 @@ export default function AppLayout({ children }) {
                         </motion.div>
                     )}
                     {sidebarCollapsed && (
-                        <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center text-white font-bold text-sm mx-auto">
+                        <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-bold text-sm mx-auto">
                             HA
                         </div>
                     )}
@@ -287,7 +287,7 @@ export default function AppLayout({ children }) {
                 <div className="p-3 border-t" style={{ borderColor: 'var(--color-sidebar-border)' }}>
                     {!sidebarCollapsed ? (
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-semibold shrink-0">
+                            <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-white text-xs font-semibold shrink-0">
                                 {getInitials(user?.name ?? 'U')}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -304,7 +304,7 @@ export default function AppLayout({ children }) {
                         </div>
                     ) : (
                         <div className="flex flex-col items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-semibold">
+                            <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-white text-xs font-semibold">
                                 {getInitials(user?.name ?? 'U')}
                             </div>
                             <button
@@ -333,7 +333,7 @@ export default function AppLayout({ children }) {
                             <Bell size={18} />
                         </button>
                         <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-semibold">
+                            <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-white text-xs font-semibold">
                                 {getInitials(user?.name ?? 'U')}
                             </div>
                             <span className="text-sm font-medium text-gray-700">{user?.name}</span>

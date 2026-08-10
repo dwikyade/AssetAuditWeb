@@ -1,5 +1,7 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X } from 'lucide-react';
 
 export const Input = forwardRef(({ className, type = 'text', error, ...props }, ref) => {
     return (
@@ -7,7 +9,7 @@ export const Input = forwardRef(({ className, type = 'text', error, ...props }, 
             <input
                 type={type}
                 className={cn(
-                    "flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:cursor-not-allowed disabled:opacity-50 transition-colors",
+                    "flex h-9 w-full rounded-sm border border-gray-300 bg-white px-2.5 py-1.5 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-900 focus:border-gray-900 disabled:cursor-not-allowed disabled:opacity-50 transition-colors",
                     error && "border-red-500 focus:ring-red-500 focus:border-red-500",
                     className
                 )}
@@ -40,17 +42,17 @@ Label.displayName = 'Label';
 
 export const Button = forwardRef(({ className, variant = 'primary', size = 'md', isLoading, children, ...props }, ref) => {
     const variants = {
-        primary: 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm',
-        secondary: 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 shadow-sm',
+        primary: 'bg-gray-900 text-white hover:bg-black shadow-sm',
+        secondary: 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 shadow-sm',
         danger: 'bg-red-600 text-white hover:bg-red-700 shadow-sm',
         ghost: 'bg-transparent text-gray-700 hover:bg-gray-100',
     };
     
     const sizes = {
-        sm: 'h-8 px-3 text-xs',
-        md: 'h-10 px-4 text-sm',
-        lg: 'h-12 px-6 text-base',
-        icon: 'h-10 w-10 justify-center p-0',
+        sm: 'h-7 px-2.5 text-xs',
+        md: 'h-9 px-3.5 text-sm',
+        lg: 'h-10 px-5 text-base',
+        icon: 'h-9 w-9 justify-center p-0',
     };
 
     return (
@@ -58,7 +60,7 @@ export const Button = forwardRef(({ className, variant = 'primary', size = 'md',
             ref={ref}
             disabled={isLoading || props.disabled}
             className={cn(
-                "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
+                "inline-flex items-center justify-center rounded-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
                 variants[variant],
                 sizes[size],
                 className
@@ -76,3 +78,50 @@ export const Button = forwardRef(({ className, variant = 'primary', size = 'md',
     );
 });
 Button.displayName = 'Button';
+
+export const Modal = ({ isOpen, onClose, title, children, maxWidth = 'max-w-md' }) => {
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => { document.body.style.overflow = 'unset'; };
+    }, [isOpen]);
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+                        onClick={onClose}
+                    />
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        transition={{ type: 'spring', duration: 0.4, bounce: 0.1 }}
+                        className={cn("bg-white w-full rounded-xl shadow-xl border border-gray-200 z-10 flex flex-col max-h-[90vh] overflow-hidden", maxWidth)}
+                    >
+                        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                            <h2 className="text-lg font-bold text-gray-900">{title}</h2>
+                            <button
+                                onClick={onClose}
+                                className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-md hover:bg-gray-100"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="p-5 overflow-y-auto">
+                            {children}
+                        </div>
+                    </motion.div>
+                </div>
+            )}
+        </AnimatePresence>
+    );
+};

@@ -27,7 +27,7 @@ export default function AuditSessionShow({ session, stats }) {
         <AppLayout>
             <Head title={`Sesi Audit: ${session.name}`} />
             
-            <div className="p-6 max-w-5xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <Button variant="ghost" size="icon" onClick={() => window.location.href = '/audit-sessions'}>
@@ -65,13 +65,13 @@ export default function AuditSessionShow({ session, stats }) {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Ringkasan & Info */}
-                    <div className="md:col-span-1 space-y-6">
+                    <div className="md:col-span-1 space-y-4">
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                             <h3 className="font-bold text-gray-900 mb-4 border-b pb-2">Informasi Sesi</h3>
                             <dl className="space-y-3 text-sm">
                                 <div>
                                     <dt className="text-gray-500">Status</dt>
-                                    <dd className="font-medium capitalize text-indigo-600">{session.status.replace('_', ' ')}</dd>
+                                    <dd className="font-medium capitalize text-black">{session.status.replace('_', ' ')}</dd>
                                 </div>
                                 <div>
                                     <dt className="text-gray-500">Mode Penyelesaian</dt>
@@ -94,16 +94,16 @@ export default function AuditSessionShow({ session, stats }) {
                     </div>
                     
                     {/* Statistik & Progres */}
-                    <div className="md:col-span-2 space-y-6">
+                    <div className="md:col-span-2 space-y-4">
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                             <h3 className="font-bold text-gray-900 mb-4 border-b pb-2">Progres Audit</h3>
                             
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-sm font-medium text-gray-700">Telah Diaudit: {stats.audited} dari {stats.total_scope} Aset</span>
-                                <span className="text-sm font-bold text-indigo-600">{stats.progress}%</span>
+                                <span className="text-sm font-bold text-black">{stats.progress}%</span>
                             </div>
                             <div className="w-full bg-gray-100 rounded-full h-3 mb-6">
-                                <div className="bg-indigo-600 h-3 rounded-full" style={{ width: `${stats.progress}%` }}></div>
+                                <div className="bg-black h-3 rounded-full" style={{ width: `${stats.progress}%` }}></div>
                             </div>
                             
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -148,7 +148,7 @@ export default function AuditSessionShow({ session, stats }) {
                                                 <tr key={audit.id} className="hover:bg-gray-50">
                                                     <td className="px-4 py-3">
                                                         <div className="font-medium text-gray-900">{audit.asset?.asset_name}</div>
-                                                        <div className="text-xs text-indigo-600 font-mono">{audit.asset?.asset_code}</div>
+                                                        <div className="text-xs text-black font-mono">{audit.asset?.asset_code}</div>
                                                     </td>
                                                     <td className="px-4 py-3 text-gray-700">{audit.auditor?.name}</td>
                                                     <td className="px-4 py-3 text-gray-500">{new Date(audit.audit_time).toLocaleString('id-ID')}</td>

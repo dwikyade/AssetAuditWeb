@@ -15,7 +15,7 @@ const FormField = ({ label, error, required, children }) => (
 
 const Textarea = ({ className = '', ...props }) => (
     <textarea
-        className={`w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none ${className}`}
+        className={`w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 resize-none ${className}`}
         rows={3}
         {...props}
     />
@@ -23,7 +23,7 @@ const Textarea = ({ className = '', ...props }) => (
 
 const Select = ({ className = '', children, ...props }) => (
     <select
-        className={`w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${className}`}
+        className={`w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 ${className}`}
         {...props}
     >
         {children}
@@ -72,18 +72,18 @@ export default function AssetEdit({ asset, categories, departments, locations, s
         <AppLayout>
             <Head title={`Edit Aset: ${asset.asset_code}`} />
 
-            <div className="p-6 max-w-5xl mx-auto">
+            <div className="p-6 md:p-8 w-full max-w-4xl mx-auto">
                 <div className="flex items-center gap-3 mb-6">
                     <Button variant="ghost" size="icon" onClick={() => router.visit(`/assets/${asset.id}`)}>
                         <ArrowLeft size={18} />
                     </Button>
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Edit Aset</h1>
-                        <p className="text-sm font-mono text-indigo-600">{asset.asset_code}</p>
+                        <p className="text-sm font-mono text-black">{asset.asset_code}</p>
                     </div>
                 </div>
 
-                <form onSubmit={submit} className="space-y-6">
+                <form onSubmit={submit} className="space-y-4">
                     {/* Asset Code (read only) */}
                     <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
                         <AlertCircle size={18} className="text-amber-600 shrink-0 mt-0.5" />

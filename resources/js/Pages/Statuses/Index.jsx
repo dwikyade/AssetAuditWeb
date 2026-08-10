@@ -32,8 +32,8 @@ function StatusForm({ onSave, onCancel, initial = null }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 space-y-4">
-            <h3 className="font-semibold text-indigo-900">{initial ? 'Edit Status' : 'Tambah Status Baru'}</h3>
+        <form onSubmit={handleSubmit} className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-4">
+            <h3 className="font-semibold text-black">{initial ? 'Edit Status' : 'Tambah Status Baru'}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {!initial && (
                     <div>
@@ -84,7 +84,7 @@ export default function StatusesIndex({ statuses }) {
     return (
         <AppLayout>
             <Head title="Status Aset" />
-            <div className="p-6 max-w-4xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Status Aset</h1>
@@ -122,7 +122,7 @@ export default function StatusesIndex({ statuses }) {
                                                 <span className="font-medium text-gray-900">{status.name}</span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-3 font-mono text-indigo-700 text-xs">{status.code}</td>
+                                        <td className="px-6 py-3 font-mono text-gray-900 text-xs">{status.code}</td>
                                         <td className="px-6 py-3 text-center">
                                             <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-xs font-bold border border-blue-100">{status.assets_count}</span>
                                         </td>

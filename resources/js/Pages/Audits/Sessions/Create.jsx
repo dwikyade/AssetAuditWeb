@@ -57,14 +57,14 @@ export default function AuditSessionCreate({ departments, locations, categories 
         if (items.length === 0) return null;
 
         return (
-            <div className="mt-4 p-4 border border-indigo-100 rounded-lg bg-indigo-50/30">
+            <div className="mt-4 p-4 border border-gray-100 rounded-lg bg-gray-50/30">
                 <Label className="mb-3 block">{title}</Label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-60 overflow-y-auto p-1">
                     {items.map(item => (
                         <label key={item.id} className="flex items-center gap-2 p-2 border border-gray-200 rounded-md bg-white cursor-pointer hover:bg-gray-50">
                             <input
                                 type="checkbox"
-                                className="rounded text-indigo-600 focus:ring-indigo-500"
+                                className="rounded text-black focus:ring-gray-900"
                                 checked={data.scope_ids.includes(item.id)}
                                 onChange={(e) => handleCheckboxChange(e, item.id)}
                             />
@@ -81,7 +81,7 @@ export default function AuditSessionCreate({ departments, locations, categories 
         <AppLayout>
             <Head title="Buat Sesi Audit" />
             
-            <div className="p-6 max-w-3xl mx-auto space-y-6">
+            <div className="p-6 md:p-8 w-full max-w-3xl mx-auto space-y-4">
                 <div className="flex items-center gap-4 mb-6">
                     <Button variant="ghost" size="icon" onClick={() => window.history.back()}>
                         <ArrowLeft size={18} />
@@ -93,7 +93,7 @@ export default function AuditSessionCreate({ departments, locations, categories 
                 </div>
 
                 <form onSubmit={submit} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div className="p-6 space-y-6">
+                    <div className="p-6 space-y-4">
                         {/* Informasi Dasar */}
                         <div>
                             <h3 className="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Informasi Dasar</h3>
@@ -115,7 +115,7 @@ export default function AuditSessionCreate({ departments, locations, categories 
                                         id="description"
                                         value={data.description}
                                         onChange={(e) => setData('description', e.target.value)}
-                                        className={`mt-1 block w-full rounded-md border ${errors.description ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 min-h-[100px]`}
+                                        className={`mt-1 block w-full rounded-md border ${errors.description ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 min-h-[100px]`}
                                         placeholder="Tujuan pelaksanaan audit..."
                                     />
                                     {errors.description && <p className="mt-1 text-xs text-red-500">{errors.description}</p>}
@@ -149,14 +149,14 @@ export default function AuditSessionCreate({ departments, locations, categories 
                         <div className="pt-4 border-t border-gray-200">
                             <h3 className="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Ruang Lingkup (Scope) & Aturan</h3>
                             
-                            <div className="space-y-6">
+                            <div className="space-y-4">
                                 <div>
                                     <Label htmlFor="scope_type">Tentukan Ruang Lingkup Audit *</Label>
                                     <select
                                         id="scope_type"
                                         value={data.scope_type}
                                         onChange={handleScopeChange}
-                                        className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                         required
                                     >
                                         <option value="all">Semua Aset (Seluruh Hotel)</option>
@@ -172,7 +172,7 @@ export default function AuditSessionCreate({ departments, locations, categories 
                                 <div>
                                     <Label>Mode Penyelesaian Audit *</Label>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
-                                        <label className={`border rounded-lg p-4 cursor-pointer hover:bg-gray-50 ${data.completion_mode === 'flexible' ? 'border-indigo-500 ring-1 ring-indigo-500 bg-indigo-50' : 'border-gray-200'}`}>
+                                        <label className={`border rounded-lg p-4 cursor-pointer hover:bg-gray-50 ${data.completion_mode === 'flexible' ? 'border-gray-900 ring-1 ring-gray-900 bg-gray-50' : 'border-gray-200'}`}>
                                             <div className="flex items-center gap-2 mb-1">
                                                 <input 
                                                     type="radio" 
@@ -180,13 +180,13 @@ export default function AuditSessionCreate({ departments, locations, categories 
                                                     value="flexible"
                                                     checked={data.completion_mode === 'flexible'}
                                                     onChange={(e) => setData('completion_mode', e.target.value)}
-                                                    className="text-indigo-600 focus:ring-indigo-500"
+                                                    className="text-black focus:ring-gray-900"
                                                 />
                                                 <span className="font-bold text-sm">Flexible</span>
                                             </div>
                                             <p className="text-xs text-gray-500 pl-6">Sesi dapat diselesaikan kapan saja, aset yang tidak diaudit akan dianggap hilang/tidak diverifikasi.</p>
                                         </label>
-                                        <label className={`border rounded-lg p-4 cursor-pointer hover:bg-gray-50 ${data.completion_mode === 'strict' ? 'border-indigo-500 ring-1 ring-indigo-500 bg-indigo-50' : 'border-gray-200'}`}>
+                                        <label className={`border rounded-lg p-4 cursor-pointer hover:bg-gray-50 ${data.completion_mode === 'strict' ? 'border-gray-900 ring-1 ring-gray-900 bg-gray-50' : 'border-gray-200'}`}>
                                             <div className="flex items-center gap-2 mb-1">
                                                 <input 
                                                     type="radio" 
@@ -194,7 +194,7 @@ export default function AuditSessionCreate({ departments, locations, categories 
                                                     value="strict"
                                                     checked={data.completion_mode === 'strict'}
                                                     onChange={(e) => setData('completion_mode', e.target.value)}
-                                                    className="text-indigo-600 focus:ring-indigo-500"
+                                                    className="text-black focus:ring-gray-900"
                                                 />
                                                 <span className="font-bold text-sm">Strict (Ketat)</span>
                                             </div>

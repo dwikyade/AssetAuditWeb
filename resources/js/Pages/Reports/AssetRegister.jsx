@@ -11,7 +11,7 @@ export default function AssetRegister({ assets, filters, totals }) {
         <AppLayout>
             <Head title="Register Aset" />
             
-            <div className="p-6 max-w-7xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
                     <div className="flex items-center gap-3">
                         <Button variant="ghost" size="icon" onClick={() => window.location.href = '/reports'}>
@@ -43,7 +43,7 @@ export default function AssetRegister({ assets, filters, totals }) {
                     </div>
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                         <p className="text-sm font-medium text-gray-500">Total Nilai Perolehan</p>
-                        <h3 className="text-2xl font-bold text-indigo-700 mt-1">{formatRp(totals.acquisition)}</h3>
+                        <h3 className="text-2xl font-bold text-gray-900 mt-1">{formatRp(totals.acquisition)}</h3>
                     </div>
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                         <p className="text-sm font-medium text-gray-500">Total Nilai Buku Saat Ini</p>
@@ -68,7 +68,7 @@ export default function AssetRegister({ assets, filters, totals }) {
                                     <tr key={asset.id} className="hover:bg-gray-50">
                                         <td className="px-6 py-4">
                                             <div className="font-medium text-gray-900">{asset.asset_name}</div>
-                                            <div className="text-xs text-indigo-600 font-mono mt-0.5">{asset.asset_code}</div>
+                                            <div className="text-xs text-black font-mono mt-0.5">{asset.asset_code}</div>
                                         </td>
                                         <td className="px-6 py-4 text-gray-700">{asset.category?.name || '-'}</td>
                                         <td className="px-6 py-4">
@@ -101,7 +101,7 @@ export default function AssetRegister({ assets, filters, totals }) {
                                     key={k}
                                     onClick={() => link.url && router.get(link.url)}
                                     disabled={!link.url}
-                                    className={`px-3 py-1 rounded text-sm ${link.active ? 'bg-indigo-600 text-white font-medium' : link.url ? 'bg-white border hover:bg-gray-50 text-gray-700' : 'text-gray-400'}`}
+                                    className={`px-3 py-1 rounded text-sm ${link.active ? 'bg-black text-white font-medium' : link.url ? 'bg-white border hover:bg-gray-50 text-gray-700' : 'text-gray-400'}`}
                                     dangerouslySetInnerHTML={{ __html: link.label }}
                                 />
                             ))}

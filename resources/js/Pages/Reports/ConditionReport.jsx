@@ -17,7 +17,7 @@ export default function ConditionReport({ by_condition, assets, filters }) {
         <AppLayout>
             <Head title="Laporan Kondisi Aset" />
             
-            <div className="p-6 max-w-7xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
                     <div className="flex items-center gap-3">
                         <Button variant="ghost" size="icon" onClick={() => window.location.href = '/reports'}>
@@ -49,7 +49,7 @@ export default function ConditionReport({ by_condition, assets, filters }) {
                             Daftar Aset
                         </h3>
                         <select 
-                            className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-500 bg-white min-w-[200px]"
+                            className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-gray-900 bg-white min-w-[200px]"
                             value={conditionId}
                             onChange={handleFilterChange}
                         >
@@ -75,7 +75,7 @@ export default function ConditionReport({ by_condition, assets, filters }) {
                                     <tr key={asset.id} className="hover:bg-gray-50">
                                         <td className="px-6 py-4">
                                             <div className="font-bold text-gray-900">{asset.asset_name}</div>
-                                            <div className="text-xs text-indigo-600 font-mono mt-0.5">{asset.asset_code}</div>
+                                            <div className="text-xs text-black font-mono mt-0.5">{asset.asset_code}</div>
                                         </td>
                                         <td className="px-6 py-4 text-gray-700">{asset.category?.name || '-'}</td>
                                         <td className="px-6 py-4 text-gray-700">{asset.location?.name || '-'}</td>
@@ -115,7 +115,7 @@ export default function ConditionReport({ by_condition, assets, filters }) {
                                     key={k}
                                     onClick={() => link.url && router.get(link.url, { condition_id: conditionId }, { preserveState: true })}
                                     disabled={!link.url}
-                                    className={`px-3 py-1 rounded text-sm ${link.active ? 'bg-indigo-600 text-white font-medium' : link.url ? 'bg-white border hover:bg-gray-50 text-gray-700' : 'text-gray-400'}`}
+                                    className={`px-3 py-1 rounded text-sm ${link.active ? 'bg-black text-white font-medium' : link.url ? 'bg-white border hover:bg-gray-50 text-gray-700' : 'text-gray-400'}`}
                                     dangerouslySetInnerHTML={{ __html: link.label }}
                                 />
                             ))}

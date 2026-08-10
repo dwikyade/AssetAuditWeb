@@ -55,7 +55,7 @@ export default function AssetCreate({ categories, departments, locations, status
         <AppLayout>
             <Head title="Tambah Aset" />
             
-            <div className="p-6 max-w-4xl mx-auto space-y-6">
+            <div className="p-6 md:p-8 w-full max-w-4xl mx-auto space-y-4">
                 <div className="flex items-center gap-4 mb-6">
                     <Button variant="ghost" size="icon" onClick={() => window.history.back()}>
                         <ArrowLeft size={18} />
@@ -67,7 +67,7 @@ export default function AssetCreate({ categories, departments, locations, status
                 </div>
 
                 <form onSubmit={submit} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div className="p-6 space-y-8">
+                    <div className="p-6 space-y-6">
                         {/* Identitas Aset */}
                         <section>
                             <h3 className="text-lg font-medium text-gray-900 border-b pb-2 mb-4">Identitas Aset</h3>
@@ -83,7 +83,7 @@ export default function AssetCreate({ categories, departments, locations, status
                                                 value="manual"
                                                 checked={data.code_mode === 'manual'}
                                                 onChange={(e) => setData('code_mode', e.target.value)}
-                                                className="text-indigo-600 focus:ring-indigo-500"
+                                                className="text-black focus:ring-gray-900"
                                             />
                                             <span className="text-sm">Manual</span>
                                         </label>
@@ -94,7 +94,7 @@ export default function AssetCreate({ categories, departments, locations, status
                                                 value="auto"
                                                 checked={data.code_mode === 'auto'}
                                                 onChange={(e) => setData('code_mode', e.target.value)}
-                                                className="text-indigo-600 focus:ring-indigo-500"
+                                                className="text-black focus:ring-gray-900"
                                             />
                                             <span className="text-sm">Otomatis (Prefix)</span>
                                         </label>
@@ -120,7 +120,7 @@ export default function AssetCreate({ categories, departments, locations, status
                                             id="prefix_id"
                                             value={data.prefix_id}
                                             onChange={handlePrefixChange}
-                                            className={`flex h-10 w-full rounded-md border ${errors.prefix_id ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500`}
+                                            className={`flex h-10 w-full rounded-md border ${errors.prefix_id ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900`}
                                             required
                                         >
                                             <option value="">-- Pilih Prefix --</option>
@@ -129,7 +129,7 @@ export default function AssetCreate({ categories, departments, locations, status
                                             ))}
                                         </select>
                                         {errors.prefix_id && <p className="mt-1 text-xs text-red-500 font-medium">{errors.prefix_id}</p>}
-                                        {previewCode && <p className="mt-1 text-xs text-indigo-600">Preview: {previewCode}</p>}
+                                        {previewCode && <p className="mt-1 text-xs text-black">Preview: {previewCode}</p>}
                                     </div>
                                 )}
 
@@ -150,7 +150,7 @@ export default function AssetCreate({ categories, departments, locations, status
                                         id="category_id"
                                         value={data.category_id}
                                         onChange={(e) => setData('category_id', e.target.value)}
-                                        className={`flex h-10 w-full rounded-md border ${errors.category_id ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500`}
+                                        className={`flex h-10 w-full rounded-md border ${errors.category_id ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900`}
                                         required
                                     >
                                         <option value="">-- Pilih Kategori --</option>
@@ -165,7 +165,7 @@ export default function AssetCreate({ categories, departments, locations, status
                                         id="department_id"
                                         value={data.department_id}
                                         onChange={(e) => setData('department_id', e.target.value)}
-                                        className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
                                     >
                                         <option value="">-- Tidak Ada --</option>
                                         {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
@@ -178,7 +178,7 @@ export default function AssetCreate({ categories, departments, locations, status
                                         id="location_id"
                                         value={data.location_id}
                                         onChange={(e) => setData('location_id', e.target.value)}
-                                        className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
                                     >
                                         <option value="">-- Tidak Ada --</option>
                                         {locations.map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
@@ -250,7 +250,7 @@ export default function AssetCreate({ categories, departments, locations, status
                                         id="status_id"
                                         value={data.status_id}
                                         onChange={(e) => setData('status_id', e.target.value)}
-                                        className={`flex h-10 w-full rounded-md border ${errors.status_id ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500`}
+                                        className={`flex h-10 w-full rounded-md border ${errors.status_id ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900`}
                                         required
                                     >
                                         <option value="">-- Pilih Status --</option>
@@ -264,7 +264,7 @@ export default function AssetCreate({ categories, departments, locations, status
                                         id="condition_id"
                                         value={data.condition_id}
                                         onChange={(e) => setData('condition_id', e.target.value)}
-                                        className={`flex h-10 w-full rounded-md border ${errors.condition_id ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500`}
+                                        className={`flex h-10 w-full rounded-md border ${errors.condition_id ? 'border-red-500' : 'border-gray-300'} bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900`}
                                         required
                                     >
                                         <option value="">-- Pilih Kondisi --</option>

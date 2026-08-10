@@ -25,7 +25,7 @@ export default function UsersIndex({ users, filters }) {
 
     const roleColors = {
         super_admin: 'bg-red-100 text-red-700 border-red-200',
-        admin: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+        admin: 'bg-gray-100 text-gray-900 border-gray-200',
         auditor: 'bg-emerald-100 text-emerald-700 border-emerald-200',
         viewer: 'bg-gray-100 text-gray-700 border-gray-200',
     };
@@ -33,7 +33,7 @@ export default function UsersIndex({ users, filters }) {
     return (
         <AppLayout>
             <Head title="Manajemen Pengguna" />
-            <div className="p-6 max-w-5xl mx-auto space-y-6">
+            <div className="p-6 md:p-8 w-full space-y-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Pengguna</h1>
@@ -84,7 +84,7 @@ export default function UsersIndex({ users, filters }) {
                                         <tr key={user.id} className="hover:bg-gray-50 transition-colors">
                                             <td className="px-6 py-3">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-9 h-9 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shrink-0">
+                                                    <div className="w-9 h-9 rounded-full bg-gray-100 text-gray-900 flex items-center justify-center font-bold text-sm shrink-0">
                                                         {getInitials(user.name)}
                                                     </div>
                                                     <span className="font-medium text-gray-900">{user.name}</span>
@@ -126,7 +126,7 @@ export default function UsersIndex({ users, filters }) {
                             {users.links.map((link, i) => (
                                 link.url === null
                                     ? <div key={i} className="px-3 py-1 text-sm border border-gray-200 text-gray-400 rounded-md bg-gray-50" dangerouslySetInnerHTML={{ __html: link.label }} />
-                                    : <Link key={i} href={link.url} className={`px-3 py-1 text-sm border rounded-md transition-colors ${link.active ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`} dangerouslySetInnerHTML={{ __html: link.label }} />
+                                    : <Link key={i} href={link.url} className={`px-3 py-1 text-sm border rounded-md transition-colors ${link.active ? 'bg-black border-black text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`} dangerouslySetInnerHTML={{ __html: link.label }} />
                             ))}
                         </div>
                     )}

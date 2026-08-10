@@ -41,7 +41,7 @@ function RoleCard({ role, permissions, onDelete }) {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div className="p-4 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isSuperAdmin ? 'bg-red-100 text-red-600' : 'bg-indigo-100 text-indigo-600'}`}>
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isSuperAdmin ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-black'}`}>
                         <Shield size={20} />
                     </div>
                     <div>
@@ -85,9 +85,9 @@ function RoleCard({ role, permissions, onDelete }) {
                                                     onClick={() => editing && togglePermission(perm)}
                                                     className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors
                                                         ${has
-                                                            ? 'bg-indigo-100 text-indigo-700 border-indigo-200'
+                                                            ? 'bg-gray-100 text-gray-900 border-gray-200'
                                                             : 'bg-white text-gray-400 border-gray-200'}
-                                                        ${editing ? 'cursor-pointer hover:border-indigo-400' : 'cursor-default'}`}
+                                                        ${editing ? 'cursor-pointer hover:border-gray-400' : 'cursor-default'}`}
                                                 >
                                                     {perm}
                                                 </button>
@@ -131,11 +131,11 @@ function CreateRoleForm({ permissions, onSave, onCancel }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-indigo-50 border border-indigo-200 rounded-xl p-5 space-y-4">
-            <h3 className="font-bold text-indigo-900">Buat Role Baru</h3>
+        <form onSubmit={handleSubmit} className="bg-gray-50 border border-gray-200 rounded-xl p-5 space-y-4">
+            <h3 className="font-bold text-black">Buat Role Baru</h3>
             <div>
                 <input
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                     placeholder="Nama role (contoh: manager)"
                     value={data.name}
                     onChange={e => setData('name', e.target.value.toLowerCase().replace(/\s+/g, '_'))}
@@ -150,7 +150,7 @@ function CreateRoleForm({ permissions, onSave, onCancel }) {
                             {perms.map(perm => (
                                 <button key={perm} type="button" onClick={() => togglePerm(perm)}
                                     className={`px-2.5 py-1 rounded-full text-xs font-medium border cursor-pointer transition-colors
-                                        ${data.permissions.includes(perm) ? 'bg-indigo-100 text-indigo-700 border-indigo-200' : 'bg-white text-gray-400 border-gray-200 hover:border-indigo-400'}`}>
+                                        ${data.permissions.includes(perm) ? 'bg-gray-100 text-gray-900 border-gray-200' : 'bg-white text-gray-400 border-gray-200 hover:border-gray-400'}`}>
                                     {perm}
                                 </button>
                             ))}
@@ -176,7 +176,7 @@ export default function RolesIndex({ roles, permissions }) {
     return (
         <AppLayout>
             <Head title="Roles & Permissions" />
-            <div className="p-6 max-w-4xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Roles & Permissions</h1>

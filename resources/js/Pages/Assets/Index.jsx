@@ -39,7 +39,7 @@ export default function AssetIndex({ assets, filters, categories, departments, l
         <AppLayout>
             <Head title="Manajemen Aset" />
             
-            <div className="p-6 max-w-7xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Manajemen Aset</h1>
@@ -75,7 +75,7 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                         <Button 
                             variant="secondary" 
                             onClick={() => setIsFilterOpen(!isFilterOpen)}
-                            className={Object.keys(filters).length > 1 ? 'border-indigo-500 text-indigo-600 bg-indigo-50' : ''}
+                            className={Object.keys(filters).length > 1 ? 'border-gray-900 text-black bg-gray-50' : ''}
                         >
                             <Filter size={16} className="mr-2" />
                             Filter
@@ -88,7 +88,7 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                             <div>
                                 <label className="block text-xs font-medium text-gray-700 mb-1">Kategori</label>
                                 <select 
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                     value={filters.category_id || ''}
                                     onChange={(e) => handleFilterChange('category_id', e.target.value)}
                                 >
@@ -99,7 +99,7 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                             <div>
                                 <label className="block text-xs font-medium text-gray-700 mb-1">Departemen</label>
                                 <select 
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                     value={filters.department_id || ''}
                                     onChange={(e) => handleFilterChange('department_id', e.target.value)}
                                 >
@@ -110,7 +110,7 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                             <div>
                                 <label className="block text-xs font-medium text-gray-700 mb-1">Lokasi</label>
                                 <select 
-                                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                     value={filters.location_id || ''}
                                     onChange={(e) => handleFilterChange('location_id', e.target.value)}
                                 >
@@ -122,7 +122,7 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                                 <label className="block text-xs font-medium text-gray-700 mb-1">Status & Kondisi</label>
                                 <div className="flex gap-2">
                                     <select 
-                                        className="w-1/2 rounded-md border border-gray-300 px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        className="w-1/2 rounded-md border border-gray-300 px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                         value={filters.status_id || ''}
                                         onChange={(e) => handleFilterChange('status_id', e.target.value)}
                                     >
@@ -130,7 +130,7 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                                         {statuses.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                                     </select>
                                     <select 
-                                        className="w-1/2 rounded-md border border-gray-300 px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                        className="w-1/2 rounded-md border border-gray-300 px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                         value={filters.condition_id || ''}
                                         onChange={(e) => handleFilterChange('condition_id', e.target.value)}
                                     >
@@ -171,7 +171,7 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                                     assets.data.map((asset) => (
                                         <tr key={asset.id} className="hover:bg-gray-50 transition-colors">
                                             <td className="px-6 py-3">
-                                                <div className="font-medium text-indigo-600">{asset.asset_code}</div>
+                                                <div className="font-medium text-black">{asset.asset_code}</div>
                                                 <div className="text-xs text-gray-400">
                                                     Qty: {asset.quantity} {asset.unit}
                                                 </div>
@@ -239,7 +239,7 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                                         <Link 
                                             key={i} 
                                             href={link.url}
-                                            className={`px-3 py-1 text-sm border rounded-md transition-colors ${link.active ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}
+                                            className={`px-3 py-1 text-sm border rounded-md transition-colors ${link.active ? 'bg-black border-black text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}
                                             dangerouslySetInnerHTML={{ __html: link.label }}
                                         />
                                     );

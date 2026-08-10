@@ -47,7 +47,7 @@ export default function ExportIndex() {
             title: 'Ekspor Rekap Audit',
             description: 'Unduh semua data hasil audit dari seluruh sesi dalam format Excel — mencakup auditor, waktu audit, hasil temuan, kondisi, dan lokasi.',
             icon: ClipboardList,
-            color: 'bg-indigo-100 text-indigo-600',
+            color: 'bg-gray-100 text-black',
             action: handleExportAudit,
             label: 'Unduh Excel Audit',
         },
@@ -56,7 +56,7 @@ export default function ExportIndex() {
     return (
         <AppLayout>
             <Head title="Pusat Ekspor Data" />
-            <div className="p-6 max-w-3xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Pusat Ekspor Data</h1>
                     <p className="text-sm text-gray-500">Unduh seluruh data sistem dalam format spreadsheet Excel yang siap diolah.</p>
