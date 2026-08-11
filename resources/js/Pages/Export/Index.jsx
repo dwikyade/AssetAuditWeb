@@ -1,7 +1,7 @@
 import { Head, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import { Button } from '@/Components/UI';
-import { Download, FileSpreadsheet, ClipboardList } from 'lucide-react';
+import { Download, FileSpreadsheet, ClipboardList, QrCode } from 'lucide-react';
 import { useState } from 'react';
 
 export default function ExportIndex() {
@@ -42,6 +42,7 @@ export default function ExportIndex() {
             color: 'bg-emerald-100 text-emerald-600',
             action: handleExportAssets,
             label: 'Unduh Excel Aset',
+            navigate: false,
         },
         {
             title: 'Ekspor Rekap Audit',
@@ -50,6 +51,16 @@ export default function ExportIndex() {
             color: 'bg-gray-100 text-black',
             action: handleExportAudit,
             label: 'Unduh Excel Audit',
+            navigate: false,
+        },
+        {
+            title: 'Export QR Code Massal',
+            description: 'Cetak atau unduh QR code untuk banyak aset sekaligus. Gunakan filter untuk memilih aset berdasarkan kategori, lokasi, departemen, status, dan kondisi.',
+            icon: QrCode,
+            color: 'bg-blue-100 text-blue-600',
+            action: () => router.visit('/export/qr'),
+            label: 'Buka Export QR',
+            navigate: true,
         },
     ];
 

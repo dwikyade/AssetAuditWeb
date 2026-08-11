@@ -42,6 +42,11 @@ const navItems = [
         icon: FileUp,
         href: '/import',
         permission: 'asset.import',
+        children: [
+            { label: 'Import Aset', href: '/import', permission: 'asset.import' },
+            { label: 'Export Data', href: '/export', permission: 'asset.import' },
+            { label: 'Export QR Code', href: '/export/qr', permission: 'asset.view' },
+        ],
     },
     {
         label: 'Laporan',
@@ -160,6 +165,20 @@ export default function AppLayout({ children }) {
         return window.location.pathname === href || window.location.pathname.startsWith(href + '/');
     };
 
+    const isParentActive = (item) => {
+        if (!item.children) return isActive(item.href);
+        return item.children.some(c => isActive(c.href));
+    };
+
+    // Auto-open parent menu if a child is currently active
+    useEffect(() => {
+        navItems.forEach(item => {
+            if (item.children && item.children.some(c => isActive(c.href))) {
+                setOpenMenus(prev => ({ ...prev, [item.label]: true }));
+            }
+        });
+    }, []);
+
     const toggleMenu = (label) => {
         setOpenMenus(prev => ({ ...prev, [label]: !prev[label] }));
     };
@@ -233,7 +252,7 @@ export default function AppLayout({ children }) {
                         if (!canSee(item)) return null;
 
                         const Icon = item.icon;
-                        const active = isActive(item.href);
+                        const active = isParentActive(item);
                         const hasChildren = item.children?.filter(c => !c.permission || permissions.includes(c.permission)).length > 0;
                         const isOpen = openMenus[item.label];
 

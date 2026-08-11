@@ -75,6 +75,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('import/template/download', [ImportController::class, 'downloadTemplate'])->name('import.template');
 
     Route::get('export', [ReportController::class, 'exportIndex'])->name('export.index');
+    Route::get('export/qr', [ReportController::class, 'qrExportPage'])->name('export.qr');
+    Route::post('export/qr-bulk', [ReportController::class, 'qrBulk'])->name('export.qr.bulk');
     Route::post('export/assets', [ReportController::class, 'exportAssets'])->name('export.assets');
     Route::post('export/audit', [ReportController::class, 'exportAudit'])->name('export.audit');
 

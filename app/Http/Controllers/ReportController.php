@@ -4,11 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Asset;
 use App\Models\AssetAudit;
+use App\Models\AssetCategory;
+use App\Models\AssetCondition;
+use App\Models\AssetStatus;
 use App\Models\AuditSession;
+use App\Models\Department;
+use App\Models\Location;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Rap2hpoutre\FastExcel\FastExcel;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
 
 class ReportController extends Controller
 {
@@ -140,6 +148,35 @@ class ReportController extends Controller
         return Inertia::render('Export/Index');
     }
 
+    public function qrExportPage(Request $request): Response
+    {
+        $query = Asset::query()->with(['category', 'department', 'location', 'status', 'condition']);
+
+        if ($search = $request->get('search')) {
+            $query->search($search);
+        }
+        if ($v = $request->get('category_id'))  $query->where('category_id', $v);
+        if ($v = $request->get('department_id')) $query->where('department_id', $v);
+        if ($v = $request->get('location_id'))  $query->where('location_id', $v);
+        if ($v = $request->get('status_id'))    $query->where('status_id', $v);
+        if ($v = $request->get('condition_id')) $query->where('condition_id', $v);
+
+        $assets = $query->orderBy('asset_code')->limit(500)->get([
+            'id', 'asset_code', 'asset_name', 'qr_token',
+            'category_id', 'department_id', 'location_id', 'status_id', 'condition_id',
+        ]);
+
+        return Inertia::render('Export/QrExport', [
+            'assets'      => $assets,
+            'categories'  => AssetCategory::where('is_active', true)->orderBy('name')->get(['id', 'name']),
+            'departments' => Department::where('is_active', true)->orderBy('name')->get(['id', 'name']),
+            'locations'   => Location::where('is_active', true)->orderBy('name')->get(['id', 'name']),
+            'statuses'    => AssetStatus::where('is_active', true)->orderBy('sort_order')->get(['id', 'name', 'color']),
+            'conditions'  => AssetCondition::where('is_active', true)->orderBy('sort_order')->get(['id', 'name', 'color']),
+            'filters'     => $request->only(['search', 'category_id', 'department_id', 'location_id', 'status_id', 'condition_id']),
+        ]);
+    }
+
     public function exportAssets(Request $request)
     {
         $assets = Asset::with(['category', 'department', 'location', 'status', 'condition'])
@@ -185,6 +222,44 @@ class ReportController extends Controller
             ]);
 
         return (new FastExcel($audits))->download('audit-report-' . now()->format('Y-m-d') . '.xlsx');
+    }
+
+    public function qrBulk(Request $request): JsonResponse
+    {
+        $this->authorize('asset.view');
+
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            return response()->json(['error' => 'Tidak ada aset dipilih'], 422);
+        }
+
+        // Cap at 100 to avoid timeout
+        $ids = array_slice((array) $ids, 0, 100);
+
+        $assets = Asset::whereIn('id', $ids)
+            ->orderBy('asset_code')
+            ->with(['category', 'location'])
+            ->get(['id', 'asset_code', 'asset_name', 'qr_token', 'category_id', 'location_id']);
+
+        $result = $assets->map(function ($asset) {
+            try {
+                $url   = route('qr.redirect', $asset->qr_token);
+                $qrSvg = (string) QrCode::format('svg')->size(200)->generate($url);
+            } catch (\Throwable $e) {
+                $qrSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><text y="100" x="50" fill="red">Error</text></svg>';
+            }
+            return [
+                'id'         => $asset->id,
+                'asset_code' => $asset->asset_code,
+                'asset_name' => $asset->asset_name,
+                'category'   => $asset->category?->name,
+                'location'   => $asset->location?->name,
+                'qr_svg'     => $qrSvg,
+            ];
+        });
+
+        return response()->json($result);
     }
 }
 
