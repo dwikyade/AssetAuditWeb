@@ -298,6 +298,89 @@ class AssetController extends Controller
         ]);
     }
 
+    public function qrJson(Asset $asset): JsonResponse
+    {
+        $this->authorize('asset.view');
+
+        $url = route('qr.redirect', $asset->qr_token);
+        $qrSvg = (string) QrCode::format('svg')->size(256)->generate($url);
+
+        return response()->json([
+            'qr_svg' => $qrSvg,
+            'qr_url' => $url,
+        ]);
+    }
+
+    public function qrExport(Request $request): Response
+    {
+        $this->authorize('asset.view');
+
+        $query = Asset::query()->with(['category', 'department', 'location', 'status', 'condition']);
+
+        if ($search = $request->get('search')) {
+            $query->search($search);
+        }
+        if ($categoryId = $request->get('category_id')) {
+            $query->where('category_id', $categoryId);
+        }
+        if ($departmentId = $request->get('department_id')) {
+            $query->where('department_id', $departmentId);
+        }
+        if ($locationId = $request->get('location_id')) {
+            $query->where('location_id', $locationId);
+        }
+        if ($statusId = $request->get('status_id')) {
+            $query->where('status_id', $statusId);
+        }
+        if ($conditionId = $request->get('condition_id')) {
+            $query->where('condition_id', $conditionId);
+        }
+
+        $assets = $query->orderBy('asset_code')->limit(500)->get([
+            'id', 'asset_code', 'asset_name', 'qr_token',
+            'category_id', 'department_id', 'location_id', 'status_id', 'condition_id',
+        ]);
+
+        return Inertia::render('Assets/QrExport', [
+            'assets'      => $assets,
+            'categories'  => AssetCategory::where('is_active', true)->orderBy('name')->get(['id', 'name']),
+            'departments' => Department::where('is_active', true)->orderBy('name')->get(['id', 'name']),
+            'locations'   => Location::where('is_active', true)->orderBy('name')->get(['id', 'name']),
+            'statuses'    => AssetStatus::where('is_active', true)->orderBy('sort_order')->get(['id', 'name', 'color']),
+            'conditions'  => AssetCondition::where('is_active', true)->orderBy('sort_order')->get(['id', 'name', 'color']),
+            'filters'     => $request->only(['search', 'category_id', 'department_id', 'location_id', 'status_id', 'condition_id']),
+        ]);
+    }
+
+    public function qrBulk(Request $request): JsonResponse
+    {
+        $this->authorize('asset.view');
+
+        $ids = $request->input('ids', []);
+        if (empty($ids) || count($ids) > 200) {
+            return response()->json(['error' => 'Invalid selection'], 400);
+        }
+
+        $assets = Asset::whereIn('id', $ids)->orderBy('asset_code')
+            ->with(['category', 'location'])
+            ->get(['id', 'asset_code', 'asset_name', 'qr_token', 'category_id', 'location_id']);
+
+        $result = $assets->map(function ($asset) {
+            $url    = route('qr.redirect', $asset->qr_token);
+            $qrSvg  = (string) QrCode::format('svg')->size(200)->generate($url);
+            return [
+                'id'         => $asset->id,
+                'asset_code' => $asset->asset_code,
+                'asset_name' => $asset->asset_name,
+                'category'   => $asset->category?->name,
+                'location'   => $asset->location?->name,
+                'qr_svg'     => $qrSvg,
+            ];
+        });
+
+        return response()->json($result);
+    }
+
     public function regenerateQr(Asset $asset): RedirectResponse
     {
         $this->authorize('asset.update');

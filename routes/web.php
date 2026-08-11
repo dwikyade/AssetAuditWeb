@@ -38,6 +38,7 @@ Route::middleware(['auth'])->group(function () {
     // Assets
     Route::resource('assets', AssetController::class);
     Route::get('assets/{asset}/qr', [AssetController::class, 'qr'])->name('assets.qr');
+    Route::get('assets/{asset}/qr/json', [AssetController::class, 'qrJson'])->name('assets.qr.json');
     Route::post('assets/{asset}/qr/regenerate', [AssetController::class, 'regenerateQr'])->name('assets.qr.regenerate');
 
     // Master Data

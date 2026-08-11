@@ -188,7 +188,7 @@ export default function AppLayout({ children }) {
                             className="flex items-center gap-2"
                         >
                             <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white font-bold text-sm">
-                                HA
+                                AS
                             </div>
                             <div className="leading-tight">
                                 <p className="text-white font-semibold text-sm">{app?.name ?? 'Asset Audit'}</p>

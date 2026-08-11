@@ -15,7 +15,7 @@ export default function AuthLayout({ children, title, subtitle }) {
                         <Building2 size={24} />
                     </div>
                     <div>
-                        <h1 className="text-xl font-bold tracking-tight">Hotel Asset Audit</h1>
+                        <h1 className="text-xl font-bold tracking-tight">Asset Sync</h1>
                         <p className="text-gray-400 text-sm font-medium">Management System</p>
                     </div>
                 </div>
@@ -28,7 +28,7 @@ export default function AuthLayout({ children, title, subtitle }) {
                 </div>
 
                 <div className="relative z-10 text-gray-400 text-sm">
-                    &copy; {new Date().getFullYear()} Hotel Asset Audit System.
+                    &copy; {new Date().getFullYear()} Asset Sync.
                 </div>
             </div>
 
@@ -45,7 +45,7 @@ export default function AuthLayout({ children, title, subtitle }) {
                             <Building2 size={20} />
                         </div>
                         <div>
-                            <h1 className="text-lg font-bold text-gray-900">Hotel Asset Audit</h1>
+                            <h1 className="text-lg font-bold text-gray-900">Asset Sync</h1>
                         </div>
                     </div>
 
