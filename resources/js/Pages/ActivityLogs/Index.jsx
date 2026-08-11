@@ -54,12 +54,7 @@ export default function ActivityLogsIndex({ logs, filters, modules }) {
                         Filter Log
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Search size={14} className="text-gray-400" />
-                            </div>
-                            <Input type="text" placeholder="Cari deskripsi..." className="pl-8 text-sm h-9" value={search} onChange={e => setSearch(e.target.value)} />
-                        </div>
+                        <Input type="text" placeholder="Cari deskripsi..." icon={Search} className="text-sm h-9" value={search} onChange={e => setSearch(e.target.value)} />
                         <Select
                             className="flex min-h-[40px] w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200 shadow-sm h-9"
                             value={module}

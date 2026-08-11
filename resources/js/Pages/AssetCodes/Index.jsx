@@ -251,14 +251,11 @@ export default function AssetCodesIndex({ prefixes, filters }) {
 
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <div className="p-4 border-b border-gray-200 bg-gray-50">
-                        <div className="relative w-full max-w-md">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                                <Search size={16} className="text-gray-400" />
-                            </div>
+                        <div className="w-full max-w-md">
                             <Input
                                 type="text"
                                 placeholder="Cari prefix atau nama..."
-                                className="pl-10 w-full"
+                                icon={Search}
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                             />

@@ -145,15 +145,13 @@ export default function AuditConduct({ session, conditions, locations, audited_i
                 {/* Search / Scan Box */}
                 <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                     <form onSubmit={searchAsset} className="flex gap-3">
-                        <div className="relative flex-1">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <QrCode size={18} className="text-gray-400" />
-                            </div>
+                        <div className="flex-1">
                             <Input
                                 ref={searchInputRef}
                                 type="text"
                                 placeholder="Scan QR Code atau ketik kode aset..."
-                                className="pl-10 py-6 text-lg w-full bg-gray-50 focus:bg-white"
+                                icon={QrCode}
+                                className="py-6 text-lg w-full bg-gray-50 focus:bg-white"
                                 value={searchCode}
                                 onChange={(e) => setSearchCode(e.target.value)}
                                 autoFocus

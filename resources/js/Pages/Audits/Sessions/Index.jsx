@@ -66,14 +66,11 @@ export default function AuditSessionIndex({ sessions, filters }) {
 
                 {/* Filters */}
                 <div className="flex flex-col sm:flex-row gap-3">
-                    <div className="relative flex-1 max-w-md">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                            <Search size={16} className="text-gray-400" />
-                        </div>
+                    <div className="flex-1 max-w-md">
                         <Input
                             type="text"
                             placeholder="Cari nama atau kode sesi..."
-                            className="pl-10 w-full"
+                            icon={Search}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />

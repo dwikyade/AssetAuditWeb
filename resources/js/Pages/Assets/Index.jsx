@@ -60,14 +60,11 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     {/* Toolbar */}
                     <div className="p-4 border-b border-gray-200 bg-gray-50 flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div className="relative w-full sm:w-96">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Search size={16} className="text-gray-400" />
-                            </div>
+                        <div className="w-full sm:w-96">
                             <Input
                                 type="text"
                                 placeholder="Cari kode, nama aset..."
-                                className="pl-10 w-full"
+                                icon={Search}
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                             />
@@ -120,27 +117,31 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                             </div>
                             <div>
                                 <label className="block text-xs font-medium text-gray-700 mb-1">Status & Kondisi</label>
-                                <div className="flex gap-2">
-                                    <Select
-                                        className="w-1/2 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-                                        value={filters.status_id || ''}
-                                        onChange={(e) => handleFilterChange('status_id', e.target.value)}
-                                    >
-                                        <option value="">Status</option>
-                                        {statuses.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                                    </Select>
-                                    <Select
-                                        className="w-1/2 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
-                                        value={filters.condition_id || ''}
-                                        onChange={(e) => handleFilterChange('condition_id', e.target.value)}
-                                    >
-                                        <option value="">Kondisi</option>
-                                        {conditions.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                                    </Select>
+                                <div className="flex gap-2 w-full">
+                                    <div className="flex-1 min-w-0">
+                                        <Select
+                                            className="w-full rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                                            value={filters.status_id || ''}
+                                            onChange={(e) => handleFilterChange('status_id', e.target.value)}
+                                        >
+                                            <option value="">Status</option>
+                                            {statuses.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                                        </Select>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <Select
+                                            className="w-full rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
+                                            value={filters.condition_id || ''}
+                                            onChange={(e) => handleFilterChange('condition_id', e.target.value)}
+                                        >
+                                            <option value="">Kondisi</option>
+                                            {conditions.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                        </Select>
+                                    </div>
                                 </div>
                             </div>
                             <div className="flex items-end">
-                                <Button variant="ghost" onClick={clearFilters} className="w-full text-gray-500">
+                                <Button variant="secondary" onClick={clearFilters} className="w-full">
                                     Reset Filter
                                 </Button>
                             </div>
