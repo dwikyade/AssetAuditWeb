@@ -9,7 +9,7 @@ export default function MissingAssets({ missing_assets, session }) {
     return (
         <AppLayout>
             <Head title="Aset Hilang" />
-            
+
             <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex items-center gap-3 mb-6">
                     <Button variant="ghost" size="icon" onClick={() => window.location.href = '/reports'}>

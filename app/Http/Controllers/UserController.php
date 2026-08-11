@@ -26,13 +26,7 @@ class UserController extends Controller
         return Inertia::render('Users/Index', [
             'users'   => $users,
             'filters' => $request->only(['search']),
-        ]);
-    }
-
-    public function create(): Response
-    {
-        return Inertia::render('Users/Create', [
-            'roles' => Role::all(['id', 'name']),
+            'roles'   => Role::all(['id', 'name']),
         ]);
     }
 
@@ -56,14 +50,6 @@ class UserController extends Controller
         ActivityLogService::log('create', 'user', get_class($user), $user->id, description: "User {$user->name} dibuat");
 
         return redirect()->route('users.index')->with('success', "User {$user->name} berhasil ditambahkan.");
-    }
-
-    public function edit(User $user): Response
-    {
-        return Inertia::render('Users/Edit', [
-            'user'  => $user->load('roles'),
-            'roles' => Role::all(['id', 'name']),
-        ]);
     }
 
     public function update(Request $request, User $user): RedirectResponse

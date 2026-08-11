@@ -60,9 +60,9 @@ function AssetCodePrefixForm({ isOpen, onClose, initialData = null }) {
     };
 
     return (
-        <Modal 
-            isOpen={isOpen} 
-            onClose={onClose} 
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
             title={initialData ? 'Edit Prefix Kode Aset' : 'Tambah Prefix Kode Aset'}
             maxWidth="max-w-2xl"
         >
@@ -104,7 +104,7 @@ function AssetCodePrefixForm({ isOpen, onClose, initialData = null }) {
                         error={errors.format}
                     />
                     <p className="text-xs text-gray-400 mt-1">
-                        Gunakan <code className="bg-gray-100 px-1 rounded">{'{'+'PREFIX'+'}'}</code> dan <code className="bg-gray-100 px-1 rounded">{'{'+'NUMBER'+'}'}</code>
+                        Gunakan <code className="bg-gray-100 px-1 rounded">{'{' + 'PREFIX' + '}'}</code> dan <code className="bg-gray-100 px-1 rounded">{'{' + 'NUMBER' + '}'}</code>
                     </p>
                 </div>
 
@@ -195,7 +195,7 @@ export default function AssetCodesIndex({ prefixes, filters }) {
 
     const handlePreview = async (prefix) => {
         if (previews[prefix.id]) {
-            setPreviews(prev => { const p = {...prev}; delete p[prefix.id]; return p; });
+            setPreviews(prev => { const p = { ...prev }; delete p[prefix.id]; return p; });
             return;
         }
         try {
@@ -252,7 +252,7 @@ export default function AssetCodesIndex({ prefixes, filters }) {
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                     <div className="p-4 border-b border-gray-200 bg-gray-50">
                         <div className="relative w-full max-w-md">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
                                 <Search size={16} className="text-gray-400" />
                             </div>
                             <Input
@@ -367,10 +367,10 @@ export default function AssetCodesIndex({ prefixes, filters }) {
                 </div>
             </div>
 
-            <AssetCodePrefixForm 
-                isOpen={isModalOpen} 
-                onClose={() => setIsModalOpen(false)} 
-                initialData={editData} 
+            <AssetCodePrefixForm
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                initialData={editData}
             />
         </AppLayout>
     );

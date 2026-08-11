@@ -1,9 +1,9 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button, Input, Label , Select} from '@/Components/UI';
-import { 
-    Search, QrCode, ArrowLeft, CheckCircle2, 
-    XCircle, AlertTriangle, Save, Loader2 
+import { Button, Input, Label, Select } from '@/Components/UI';
+import {
+    Search, QrCode, ArrowLeft, CheckCircle2,
+    XCircle, AlertTriangle, Save, Loader2
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
@@ -13,10 +13,10 @@ export default function AuditConduct({ session, conditions, locations, audited_i
     const [searching, setSearching] = useState(false);
     const [asset, setAsset] = useState(null);
     const [searchError, setSearchError] = useState('');
-    
+
     // Status if asset is already audited in this session
     const isAlreadyAudited = asset && audited_ids.includes(asset.id);
-    
+
     const searchInputRef = useRef(null);
 
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -33,17 +33,17 @@ export default function AuditConduct({ session, conditions, locations, audited_i
     const searchAsset = async (e) => {
         if (e) e.preventDefault();
         if (!searchCode.trim()) return;
-        
+
         setSearching(true);
         setSearchError('');
         setAsset(null);
         reset();
-        
+
         try {
             const res = await axios.get(`/api/assets/lookup?code=${encodeURIComponent(searchCode)}`);
             const foundAsset = res.data;
             setAsset(foundAsset);
-            
+
             // Pre-fill form
             setData({
                 asset_id: foundAsset.id,
@@ -55,7 +55,7 @@ export default function AuditConduct({ session, conditions, locations, audited_i
                 verification_method: searchCode.length > 8 ? 'qr_scan' : 'manual', // Simple heuristic
                 notes: '',
             });
-            
+
         } catch (err) {
             setSearchError(err.response?.data?.error || 'Aset tidak ditemukan dengan kode tersebut.');
         } finally {
@@ -71,28 +71,28 @@ export default function AuditConduct({ session, conditions, locations, audited_i
     // Intelligent result logic
     useEffect(() => {
         if (!asset) return;
-        
+
         if (data.found_status === 'not_found') {
             setData('result', 'issue');
             return;
         }
-        
+
         if (data.found_status === 'partially_found') {
             setData('result', 'mismatch');
             return;
         }
-        
+
         // If found, check if condition changed from normal to broken, etc.
         // Or if location changed
         const locationChanged = asset.location_id && data.location_id && asset.location_id != data.location_id;
         const conditionChanged = asset.condition_id && data.condition_id && asset.condition_id != data.condition_id;
-        
+
         if (locationChanged || conditionChanged) {
             setData('result', 'mismatch');
         } else {
             setData('result', 'match');
         }
-        
+
     }, [data.found_status, data.location_id, data.condition_id, asset]);
 
     const submitAudit = (e) => {
@@ -103,7 +103,7 @@ export default function AuditConduct({ session, conditions, locations, audited_i
                 setSearchCode('');
                 reset();
                 searchInputRef.current?.focus();
-                
+
                 // If the user submits, inertia will reload the page and update the `audited_count` prop.
             }
         });
@@ -114,7 +114,7 @@ export default function AuditConduct({ session, conditions, locations, audited_i
     return (
         <AppLayout>
             <Head title={`Conduct Audit: ${session.name}`} />
-            
+
             <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 {/* Header & Progress */}
                 <div className="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-200">
@@ -133,10 +133,10 @@ export default function AuditConduct({ session, conditions, locations, audited_i
                             <span className="text-lg font-bold">{audited_count} / {total_scope}</span>
                         </div>
                     </div>
-                    
+
                     <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
-                        <div 
-                            className="bg-black h-2.5 rounded-full transition-all duration-500" 
+                        <div
+                            className="bg-black h-2.5 rounded-full transition-all duration-500"
                             style={{ width: `${progress}%` }}
                         ></div>
                     </div>
@@ -164,7 +164,7 @@ export default function AuditConduct({ session, conditions, locations, audited_i
                             <span className="hidden md:inline">Cari Aset</span>
                         </Button>
                     </form>
-                    
+
                     {searchError && (
                         <div className="mt-4 p-3 bg-red-50 text-red-600 rounded-lg flex items-center gap-2 text-sm border border-red-100">
                             <AlertTriangle size={16} />
@@ -185,7 +185,7 @@ export default function AuditConduct({ session, conditions, locations, audited_i
                                 </div>
                             </div>
                         )}
-                        
+
                         <div className="p-6 md:p-8">
                             {/* Asset Info Card */}
                             <div className="flex flex-col md:flex-row gap-6 mb-8 bg-gray-50 p-4 rounded-xl border border-gray-100">
@@ -195,7 +195,7 @@ export default function AuditConduct({ session, conditions, locations, audited_i
                                 <div className="flex-1">
                                     <h2 className="text-xl font-bold text-gray-900 mb-1">{asset.asset_name}</h2>
                                     <p className="text-sm font-mono text-black font-medium mb-3">{asset.asset_code}</p>
-                                    
+
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                                         <div>
                                             <p className="text-gray-500 mb-1">Kategori</p>

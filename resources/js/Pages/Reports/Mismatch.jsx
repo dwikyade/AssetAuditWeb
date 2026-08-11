@@ -1,6 +1,6 @@
 import { Head, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button , Select} from '@/Components/UI';
+import { Button, Select } from '@/Components/UI';
 import { ArrowLeft, AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
 
@@ -16,7 +16,7 @@ export default function MismatchReport({ audits, sessions, filters }) {
     return (
         <AppLayout>
             <Head title="Aset Mismatch" />
-            
+
             <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
                     <div className="flex items-center gap-3">
@@ -36,7 +36,7 @@ export default function MismatchReport({ audits, sessions, filters }) {
                             <AlertTriangle size={16} />
                             Total Mismatch: {audits.total} Aset
                         </div>
-                        <Select 
+                        <Select
                             className="rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-3 py-2 text-sm focus:ring-gray-900 bg-white min-w-[250px]"
                             value={sessionId}
                             onChange={handleFilterChange}

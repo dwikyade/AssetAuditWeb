@@ -4,13 +4,13 @@ import { Button } from '@/Components/UI';
 import { Play, StopCircle, ArrowLeft, XCircle, CheckCircle, Clock } from 'lucide-react';
 
 export default function AuditSessionShow({ session, stats }) {
-    
+
     const startSession = async () => {
         if (await window.confirmUI('Mulai sesi audit ini sekarang?')) {
             router.post(`/audit-sessions/${session.id}/start`);
         }
     };
-    
+
     const completeSession = async () => {
         if (await window.confirmUI('Selesaikan sesi audit? Pastikan semua aset sudah diperiksa.')) {
             router.post(`/audit-sessions/${session.id}/complete`);
@@ -26,7 +26,7 @@ export default function AuditSessionShow({ session, stats }) {
     return (
         <AppLayout>
             <Head title={`Sesi Audit: ${session.name}`} />
-            
+
             <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -38,7 +38,7 @@ export default function AuditSessionShow({ session, stats }) {
                             <p className="text-sm text-gray-500">Kode Sesi: {session.code} | Dibuat oleh: {session.creator?.name}</p>
                         </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-3">
                         {session.status === 'draft' || session.status === 'scheduled' ? (
                             <Button onClick={startSession}>
@@ -92,12 +92,12 @@ export default function AuditSessionShow({ session, stats }) {
                             </dl>
                         </div>
                     </div>
-                    
+
                     {/* Statistik & Progres */}
                     <div className="md:col-span-2 space-y-4">
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                             <h3 className="font-bold text-gray-900 mb-4 border-b pb-2">Progres Audit</h3>
-                            
+
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-sm font-medium text-gray-700">Telah Diaudit: {stats.audited} dari {stats.total_scope} Aset</span>
                                 <span className="text-sm font-bold text-black">{stats.progress}%</span>
@@ -105,7 +105,7 @@ export default function AuditSessionShow({ session, stats }) {
                             <div className="w-full bg-gray-100 rounded-full h-3 mb-6">
                                 <div className="bg-black h-3 rounded-full" style={{ width: `${stats.progress}%` }}></div>
                             </div>
-                            
+
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                                 <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 text-center">
                                     <p className="text-xs text-gray-500 font-medium mb-1">Total Target</p>
@@ -125,7 +125,7 @@ export default function AuditSessionShow({ session, stats }) {
                                 </div>
                             </div>
                         </div>
-                        
+
                         {/* List of Audited Items */}
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                             <div className="p-4 border-b border-gray-200 bg-gray-50">
@@ -153,14 +153,14 @@ export default function AuditSessionShow({ session, stats }) {
                                                     <td className="px-4 py-3 text-gray-700">{audit.auditor?.name}</td>
                                                     <td className="px-4 py-3 text-gray-500">{new Date(audit.audit_time).toLocaleString('id-ID')}</td>
                                                     <td className="px-4 py-3 capitalize">
-                                                        {audit.found_status === 'found' ? <span className="text-green-600 font-medium">Ditemukan</span> : 
-                                                         audit.found_status === 'not_found' ? <span className="text-red-600 font-medium">Hilang</span> : 
-                                                         <span className="text-amber-600 font-medium">Sebagian</span>}
+                                                        {audit.found_status === 'found' ? <span className="text-green-600 font-medium">Ditemukan</span> :
+                                                            audit.found_status === 'not_found' ? <span className="text-red-600 font-medium">Hilang</span> :
+                                                                <span className="text-amber-600 font-medium">Sebagian</span>}
                                                     </td>
                                                     <td className="px-4 py-3 font-medium uppercase">
-                                                        {audit.result === 'match' ? <span className="text-green-600">Match</span> : 
-                                                         audit.result === 'mismatch' ? <span className="text-amber-600">Mismatch</span> : 
-                                                         <span className="text-red-600">Issue</span>}
+                                                        {audit.result === 'match' ? <span className="text-green-600">Match</span> :
+                                                            audit.result === 'mismatch' ? <span className="text-amber-600">Mismatch</span> :
+                                                                <span className="text-red-600">Issue</span>}
                                                     </td>
                                                 </tr>
                                             ))

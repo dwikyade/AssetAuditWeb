@@ -45,14 +45,14 @@ const StatusBadge = ({ name, color }) => (
 );
 
 const foundStatusMap = {
-    found:           { label: 'Ditemukan',       color: 'text-green-700',  bg: 'bg-green-50 border-green-200' },
-    not_found:       { label: 'Tidak Ditemukan', color: 'text-red-700',    bg: 'bg-red-50 border-red-200' },
-    partially_found: { label: 'Sebagian',        color: 'text-amber-700',  bg: 'bg-amber-50 border-amber-200' },
+    found: { label: 'Ditemukan', color: 'text-green-700', bg: 'bg-green-50 border-green-200' },
+    not_found: { label: 'Tidak Ditemukan', color: 'text-red-700', bg: 'bg-red-50 border-red-200' },
+    partially_found: { label: 'Sebagian', color: 'text-amber-700', bg: 'bg-amber-50 border-amber-200' },
 };
 const resultMap = {
-    match:    { label: 'Match',    color: 'text-green-700' },
+    match: { label: 'Match', color: 'text-green-700' },
     mismatch: { label: 'Mismatch', color: 'text-amber-700' },
-    issue:    { label: 'Issue',    color: 'text-red-700' },
+    issue: { label: 'Issue', color: 'text-red-700' },
 };
 
 export default function AssetShow({ asset }) {

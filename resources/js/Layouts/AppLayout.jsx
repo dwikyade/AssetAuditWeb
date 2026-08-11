@@ -4,7 +4,8 @@ import {
     LayoutDashboard, Package, ClipboardList, FileUp,
     BarChart3, Users, Settings, LogOut, ChevronLeft,
     Bell, ChevronDown, Building2, Tag, MapPin, Hash,
-    Activity, Shield
+    Activity, Shield, CheckCircle2, XCircle, AlertTriangle,
+    Info, X
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn, getInitials } from '@/lib/utils';
@@ -108,6 +109,15 @@ const navItems = [
     },
 ];
 
+const TOAST_DURATION = 5000;
+
+const toastStyles = {
+    success: { title: 'Berhasil', icon: CheckCircle2 },
+    error:   { title: 'Gagal', icon: XCircle },
+    warning: { title: 'Perhatian', icon: AlertTriangle },
+    info:    { title: 'Informasi', icon: Info },
+};
+
 export default function AppLayout({ children }) {
     const { auth, app, flash } = usePage().props;
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -135,7 +145,7 @@ export default function AppLayout({ children }) {
 
     useEffect(() => {
         toasts.forEach(t => {
-            const timer = setTimeout(() => dismissToast(t.id), 5000);
+            const timer = setTimeout(() => dismissToast(t.id), TOAST_DURATION);
             return () => clearTimeout(timer);
         });
     }, [toasts]);
@@ -348,26 +358,41 @@ export default function AppLayout({ children }) {
             </div>
 
             {/* Toast notifications */}
-            <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
+            <div className="pointer-events-none fixed inset-x-0 top-12 z-50 flex flex-col items-center gap-3 px-4">
                 <AnimatePresence>
-                    {toasts.map(toast => (
-                        <motion.div
-                            key={toast.id}
-                            initial={{ opacity: 0, x: 100, scale: 0.9 }}
-                            animate={{ opacity: 1, x: 0, scale: 1 }}
-                            exit={{ opacity: 0, x: 100, scale: 0.9 }}
-                            className={cn(
-                                'flex items-start gap-3 px-4 py-3 rounded-xl shadow-lg text-sm max-w-sm',
-                                toast.type === 'success' && 'bg-green-50 text-green-800 border border-green-200',
-                                toast.type === 'error' && 'bg-red-50 text-red-800 border border-red-200',
-                                toast.type === 'warning' && 'bg-yellow-50 text-yellow-800 border border-yellow-200',
-                                toast.type === 'info' && 'bg-blue-50 text-blue-800 border border-blue-200',
-                            )}
-                        >
-                            <span className="flex-1">{toast.msg}</span>
-                            <button onClick={() => dismissToast(toast.id)} className="text-gray-400 hover:text-gray-600 shrink-0">×</button>
-                        </motion.div>
-                    ))}
+                    {toasts.map(toast => {
+                        const s = toastStyles[toast.type] ?? toastStyles.info;
+                        const Icon = s.icon;
+                        return (
+                            <motion.div
+                                key={toast.id}
+                                initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: -10, scale: 0.95, filter: 'blur(2px)' }}
+                                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                                className="pointer-events-auto flex items-center gap-3 rounded-full bg-white/95 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)] backdrop-blur-md px-4 py-3"
+                            >
+                                <div className={cn(
+                                    "flex items-center justify-center shrink-0",
+                                    toast.type === 'success' ? 'text-emerald-500' :
+                                    toast.type === 'error' ? 'text-rose-500' :
+                                    toast.type === 'warning' ? 'text-amber-500' :
+                                    'text-blue-500'
+                                )}>
+                                    <Icon size={18} strokeWidth={2.5} />
+                                </div>
+                                <div className="text-sm font-medium text-gray-800 mr-2">
+                                    {toast.msg}
+                                </div>
+                                <button
+                                    onClick={() => dismissToast(toast.id)}
+                                    className="shrink-0 p-1 text-gray-300 transition-colors hover:text-gray-500"
+                                >
+                                    <X size={14} strokeWidth={2.5} />
+                                </button>
+                            </motion.div>
+                        );
+                    })}
                 </AnimatePresence>
             </div>
         </div>

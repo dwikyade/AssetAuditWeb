@@ -10,7 +10,7 @@ export default function AssetRegister({ assets, filters, totals }) {
     return (
         <AppLayout>
             <Head title="Register Aset" />
-            
+
             <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
                     <div className="flex items-center gap-3">

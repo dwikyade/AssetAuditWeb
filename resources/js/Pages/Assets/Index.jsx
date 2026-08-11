@@ -1,8 +1,8 @@
 import { Head, Link, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button, Input , Select} from '@/Components/UI';
-import { 
-    Search, Plus, Filter, MoreVertical, Edit, 
+import { Button, Input, Select } from '@/Components/UI';
+import {
+    Search, Plus, Filter, MoreVertical, Edit,
     Trash, Eye, Download, FileSpreadsheet, QrCode
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -38,7 +38,7 @@ export default function AssetIndex({ assets, filters, categories, departments, l
     return (
         <AppLayout>
             <Head title="Manajemen Aset" />
-            
+
             <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
@@ -72,8 +72,8 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                                 onChange={(e) => setSearch(e.target.value)}
                             />
                         </div>
-                        <Button 
-                            variant="secondary" 
+                        <Button
+                            variant="secondary"
                             onClick={() => setIsFilterOpen(!isFilterOpen)}
                             className={Object.keys(filters).length > 1 ? 'border-gray-900 text-black bg-gray-50' : ''}
                         >
@@ -87,7 +87,7 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                         <div className="p-4 border-b border-gray-200 bg-white grid grid-cols-1 md:grid-cols-5 gap-4">
                             <div>
                                 <label className="block text-xs font-medium text-gray-700 mb-1">Kategori</label>
-                                <Select 
+                                <Select
                                     className="w-full rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                     value={filters.category_id || ''}
                                     onChange={(e) => handleFilterChange('category_id', e.target.value)}
@@ -98,7 +98,7 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                             </div>
                             <div>
                                 <label className="block text-xs font-medium text-gray-700 mb-1">Departemen</label>
-                                <Select 
+                                <Select
                                     className="w-full rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                     value={filters.department_id || ''}
                                     onChange={(e) => handleFilterChange('department_id', e.target.value)}
@@ -109,7 +109,7 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                             </div>
                             <div>
                                 <label className="block text-xs font-medium text-gray-700 mb-1">Lokasi</label>
-                                <Select 
+                                <Select
                                     className="w-full rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                     value={filters.location_id || ''}
                                     onChange={(e) => handleFilterChange('location_id', e.target.value)}
@@ -121,7 +121,7 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                             <div>
                                 <label className="block text-xs font-medium text-gray-700 mb-1">Status & Kondisi</label>
                                 <div className="flex gap-2">
-                                    <Select 
+                                    <Select
                                         className="w-1/2 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                         value={filters.status_id || ''}
                                         onChange={(e) => handleFilterChange('status_id', e.target.value)}
@@ -129,7 +129,7 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                                         <option value="">Status</option>
                                         {statuses.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                                     </Select>
-                                    <Select 
+                                    <Select
                                         className="w-1/2 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900"
                                         value={filters.condition_id || ''}
                                         onChange={(e) => handleFilterChange('condition_id', e.target.value)}
@@ -221,7 +221,7 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                             </tbody>
                         </table>
                     </div>
-                    
+
                     {/* Pagination */}
                     {assets.links && assets.links.length > 3 && (
                         <div className="p-4 border-t border-gray-200 flex items-center justify-between">
@@ -236,8 +236,8 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                                         );
                                     }
                                     return (
-                                        <Link 
-                                            key={i} 
+                                        <Link
+                                            key={i}
                                             href={link.url}
                                             className={`px-3 py-1 text-sm border rounded-md transition-colors ${link.active ? 'bg-black border-black text-white' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}
                                             dangerouslySetInnerHTML={{ __html: link.label }}

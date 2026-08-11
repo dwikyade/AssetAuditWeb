@@ -16,17 +16,17 @@ export default function ImportShow({ job }) {
         error_rows: job.error_rows || 0,
         skipped_rows: job.skipped_rows || 0,
     });
-    
+
     // Polling mechanism for progress
     useEffect(() => {
         let interval;
-        
+
         if (progressData.status === 'pending' || progressData.status === 'queued' || progressData.status === 'processing') {
             interval = setInterval(async () => {
                 try {
                     const res = await axios.get(`/import/${job.id}/progress`);
                     setProgressData(res.data);
-                    
+
                     if (res.data.status === 'completed' || res.data.status === 'completed_with_errors' || res.data.status === 'failed') {
                         clearInterval(interval);
                         // Refresh page to load errors if any
@@ -39,7 +39,7 @@ export default function ImportShow({ job }) {
                 }
             }, 2000); // Poll every 2 seconds
         }
-        
+
         return () => {
             if (interval) clearInterval(interval);
         };
@@ -51,7 +51,7 @@ export default function ImportShow({ job }) {
     return (
         <AppLayout>
             <Head title="Proses Import" />
-            
+
             <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex items-center gap-4">
                     <Button variant="ghost" size="icon" onClick={() => window.location.href = '/import'}>
@@ -72,7 +72,7 @@ export default function ImportShow({ job }) {
                                 <p className="text-gray-500">File Anda sedang dalam antrean dan akan segera diproses.</p>
                             </div>
                         )}
-                        
+
                         {progressData.status === 'processing' && (
                             <div className="flex flex-col items-center">
                                 <Loader2 size={48} className="text-blue-500 animate-spin mb-4" />
@@ -80,7 +80,7 @@ export default function ImportShow({ job }) {
                                 <p className="text-gray-500">Mohon jangan tutup halaman ini meskipun proses berjalan di latar belakang.</p>
                             </div>
                         )}
-                        
+
                         {progressData.status === 'completed' && (
                             <div className="flex flex-col items-center">
                                 <CheckCircle size={56} className="text-green-500 mb-4" />
@@ -88,7 +88,7 @@ export default function ImportShow({ job }) {
                                 <p className="text-gray-500">Semua baris berhasil diimpor tanpa kesalahan.</p>
                             </div>
                         )}
-                        
+
                         {progressData.status === 'completed_with_errors' && (
                             <div className="flex flex-col items-center">
                                 <AlertTriangle size={56} className="text-amber-500 mb-4" />
@@ -96,7 +96,7 @@ export default function ImportShow({ job }) {
                                 <p className="text-gray-500">Sebagian data berhasil diimpor, namun terdapat beberapa baris yang gagal atau dilewati.</p>
                             </div>
                         )}
-                        
+
                         {progressData.status === 'failed' && (
                             <div className="flex flex-col items-center">
                                 <XCircle size={56} className="text-red-500 mb-4" />
@@ -111,8 +111,8 @@ export default function ImportShow({ job }) {
                                 <span className="text-black font-bold">{progressData.progress_percent}%</span>
                             </div>
                             <div className="w-full bg-gray-200 rounded-full h-3 mb-2 overflow-hidden">
-                                <div 
-                                    className={`h-3 rounded-full transition-all duration-500 ${progressData.status === 'failed' ? 'bg-red-500' : 'bg-black'}`} 
+                                <div
+                                    className={`h-3 rounded-full transition-all duration-500 ${progressData.status === 'failed' ? 'bg-red-500' : 'bg-black'}`}
                                     style={{ width: `${progressData.progress_percent}%` }}
                                 ></div>
                             </div>

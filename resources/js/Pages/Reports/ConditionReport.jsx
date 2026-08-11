@@ -1,6 +1,6 @@
 import { Head, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
-import { Button , Select} from '@/Components/UI';
+import { Button, Select } from '@/Components/UI';
 import { ArrowLeft, FileText } from 'lucide-react';
 import { useState } from 'react';
 
@@ -16,7 +16,7 @@ export default function ConditionReport({ by_condition, assets, filters }) {
     return (
         <AppLayout>
             <Head title="Laporan Kondisi Aset" />
-            
+
             <div className="p-6 lg:p-8 w-full max-w-7xl mx-auto space-y-4">
                 <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 mb-6">
                     <div className="flex items-center gap-3">
@@ -48,7 +48,7 @@ export default function ConditionReport({ by_condition, assets, filters }) {
                             <FileText size={18} className="text-gray-400" />
                             Daftar Aset
                         </h3>
-                        <Select 
+                        <Select
                             className="rounded-xl border border-gray-200 bg-gray-50 focus:bg-white transition-all duration-200 shadow-sm px-3 py-2 text-sm focus:ring-gray-900 bg-white min-w-[200px]"
                             value={conditionId}
                             onChange={handleFilterChange}
@@ -81,10 +81,10 @@ export default function ConditionReport({ by_condition, assets, filters }) {
                                         <td className="px-6 py-4 text-gray-700">{asset.location?.name || '-'}</td>
                                         <td className="px-6 py-4 text-right">
                                             {asset.condition ? (
-                                                <span 
+                                                <span
                                                     className="px-2 py-1 rounded-full text-xs font-medium border"
-                                                    style={{ 
-                                                        backgroundColor: asset.condition.color ? `${asset.condition.color}15` : '#f3f4f6', 
+                                                    style={{
+                                                        backgroundColor: asset.condition.color ? `${asset.condition.color}15` : '#f3f4f6',
                                                         color: asset.condition.color || '#4b5563',
                                                         borderColor: asset.condition.color ? `${asset.condition.color}30` : '#e5e7eb'
                                                     }}

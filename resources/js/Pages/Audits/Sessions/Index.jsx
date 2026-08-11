@@ -67,7 +67,7 @@ export default function AuditSessionIndex({ sessions, filters }) {
                 {/* Filters */}
                 <div className="flex flex-col sm:flex-row gap-3">
                     <div className="relative flex-1 max-w-md">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
                             <Search size={16} className="text-gray-400" />
                         </div>
                         <Input
@@ -78,17 +78,19 @@ export default function AuditSessionIndex({ sessions, filters }) {
                             onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
-                    <Select
-                        className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:ring-gray-900 min-w-[180px]"
-                        value={filters?.status || ''}
-                        onChange={(e) => router.get('/audit-sessions', { ...filters, status: e.target.value })}
-                    >
-                        <option value="">Semua Status</option>
-                        <option value="draft">Draft</option>
-                        <option value="scheduled">Dijadwalkan</option>
-                        <option value="in_progress">Sedang Berjalan</option>
-                        <option value="completed">Selesai</option>
-                    </Select>
+                    <div className="w-full sm:w-auto shrink-0">
+                        <Select
+                            className="rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:ring-gray-900 min-w-[180px]"
+                            value={filters?.status || ''}
+                            onChange={(e) => router.get('/audit-sessions', { ...filters, status: e.target.value })}
+                        >
+                            <option value="">Semua Status</option>
+                            <option value="draft">Draft</option>
+                            <option value="scheduled">Dijadwalkan</option>
+                            <option value="in_progress">Sedang Berjalan</option>
+                            <option value="completed">Selesai</option>
+                        </Select>
+                    </div>
                 </div>
 
                 {/* Sessions List */}
