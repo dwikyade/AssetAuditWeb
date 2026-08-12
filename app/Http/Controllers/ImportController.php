@@ -57,11 +57,9 @@ class ImportController extends Controller
             ->latest()
             ->first();
 
+        $duplicateWarning = null;
         if ($duplicateJob) {
-            return response()->json([
-                'warning' => "File dengan isi identik pernah diimport pada {$duplicateJob->created_at->diffForHumans()}.",
-                'previous_job_id' => $duplicateJob->id,
-            ]);
+            $duplicateWarning = "File dengan isi identik pernah diimport pada {$duplicateJob->created_at->diffForHumans()}. Anda tetap dapat melanjutkan import jika diperlukan.";
         }
 
         // Store file
@@ -97,6 +95,8 @@ class ImportController extends Controller
             'headers' => $headers,
             'preview' => $rows,
             'default_mapping' => self::DEFAULT_MAPPING,
+            'warning' => $duplicateWarning,
+            'previous_job_id' => $duplicateJob?->id,
         ]);
     }
 
@@ -136,14 +136,11 @@ class ImportController extends Controller
             return back()->with('error', 'Import sudah diproses atau sedang berjalan.');
         }
 
-        $job->update(['status' => 'queued']);
-
-        // Dispatch to queue
-        ProcessAssetImport::dispatch($job);
-
         ActivityLogService::log('start', 'import', get_class($job), $job->id, description: "Import {$job->file_name} dimulai (mode: {$job->mode})");
 
-        return redirect()->route('import.show', $job)->with('info', 'Import sedang diproses di latar belakang.');
+        (new ProcessAssetImport($job->fresh()))->handle();
+
+        return redirect()->route('import.show', $job)->with('info', 'Import selesai diproses.');
     }
 
     public function show(ImportJob $job): Response
@@ -159,7 +156,7 @@ class ImportController extends Controller
             'status'          => $job->status,
             'total_rows'      => $job->total_rows,
             'processed_rows'  => $job->processed_rows,
-            'progress_percent'=> $job->progress_percent_attribute,
+            'progress_percent'=> $job->progress_percent,
             'created_rows'    => $job->created_rows,
             'updated_rows'    => $job->updated_rows,
             'error_rows'      => $job->error_rows,

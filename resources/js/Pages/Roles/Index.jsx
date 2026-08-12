@@ -170,7 +170,7 @@ export default function RolesIndex({ roles, permissions }) {
     const [showCreate, setShowCreate] = useState(false);
 
     const handleDelete = async (id, name) => {
-        if (await window.confirmUI(`Hapus role "${name}"?`)) router.delete(`/roles/${id}`);
+        if (await window.confirmUI(`Hapus role "${formatRole(name)}"?`)) router.delete(`/roles/${id}`);
     };
 
     return (

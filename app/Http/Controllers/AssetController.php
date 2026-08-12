@@ -341,7 +341,7 @@ class AssetController extends Controller
             'category_id', 'department_id', 'location_id', 'status_id', 'condition_id',
         ]);
 
-        return Inertia::render('Assets/QrExport', [
+        return Inertia::render('Export/QrExport', [
             'assets'      => $assets,
             'categories'  => AssetCategory::where('is_active', true)->orderBy('name')->get(['id', 'name']),
             'departments' => Department::where('is_active', true)->orderBy('name')->get(['id', 'name']),
@@ -393,10 +393,4 @@ class AssetController extends Controller
         return redirect()->route('assets.qr', $asset)->with('success', 'QR Code berhasil di-regenerate.');
     }
 
-    private function authorize(string $permission): void
-    {
-        if (!auth()->user()->can($permission)) {
-            abort(403, 'Anda tidak memiliki akses untuk tindakan ini.');
-        }
-    }
 }

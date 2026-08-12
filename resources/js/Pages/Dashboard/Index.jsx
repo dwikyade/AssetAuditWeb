@@ -10,7 +10,7 @@ import {
 import {
     AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
     XAxis, YAxis, CartesianGrid, Tooltip,
-    ResponsiveContainer, Legend
+    ResponsiveContainer
 } from 'recharts';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -80,10 +80,34 @@ const StatCardLight = ({ title, value, sub, icon: Icon, iconClass, delay = 0 }) 
 );
 
 // ─── Alert Panel ─────────────────────────────────────────────────────────────
-const alertStyles = {
-    error:   { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-800', icon: XCircle, iconColor: 'text-red-500' },
-    warning: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-800', icon: AlertTriangle, iconColor: 'text-amber-500' },
-    info:    { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', icon: Info, iconColor: 'text-blue-500' },
+const alertConfig = {
+    error: {
+        bg: 'bg-gradient-to-r from-rose-50 to-red-50',
+        border: 'border-rose-200/60',
+        text: 'text-rose-800',
+        icon: XCircle,
+        iconBg: 'bg-rose-100',
+        iconColor: 'text-rose-500',
+        linkColor: 'text-rose-600 hover:text-rose-800 hover:bg-rose-100',
+    },
+    warning: {
+        bg: 'bg-gradient-to-r from-amber-50 to-yellow-50',
+        border: 'border-amber-200/60',
+        text: 'text-amber-800',
+        icon: AlertTriangle,
+        iconBg: 'bg-amber-100',
+        iconColor: 'text-amber-500',
+        linkColor: 'text-amber-600 hover:text-amber-800 hover:bg-amber-100',
+    },
+    info: {
+        bg: 'bg-gradient-to-r from-blue-50 to-indigo-50',
+        border: 'border-blue-200/60',
+        text: 'text-blue-800',
+        icon: Info,
+        iconBg: 'bg-blue-100',
+        iconColor: 'text-blue-500',
+        linkColor: 'text-blue-600 hover:text-blue-800 hover:bg-blue-100',
+    },
 };
 
 const AlertPanel = ({ alerts }) => {
@@ -92,41 +116,112 @@ const AlertPanel = ({ alerts }) => {
         <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.4, staggerChildren: 0.08 }}
             className="space-y-2"
         >
             {alerts.map((alert, i) => {
-                const s = alertStyles[alert.type] ?? alertStyles.info;
+                const s = alertConfig[alert.type] ?? alertConfig.info;
                 const Icon = s.icon;
                 return (
-                    <div key={i} className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-sm ${s.bg} ${s.border} ${s.text}`}>
-                        <Icon size={16} className={`shrink-0 ${s.iconColor}`} />
-                        <span className="flex-1">{alert.message}</span>
+                    <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.08, type: 'spring', stiffness: 400, damping: 25 }}
+                        className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl border text-sm ${s.bg} ${s.border} ${s.text} shadow-sm`}
+                    >
+                        <div className={`flex items-center justify-center w-8 h-8 rounded-xl shrink-0 ${s.iconBg}`}>
+                            <Icon size={16} className={s.iconColor} />
+                        </div>
+                        <span className="flex-1 font-medium">{alert.message}</span>
                         {alert.link && (
-                            <Link href={alert.link} className="shrink-0 font-medium underline underline-offset-2 opacity-70 hover:opacity-100">
+                            <Link
+                                href={alert.link}
+                                className={`shrink-0 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${s.linkColor}`}
+                            >
                                 Lihat
                             </Link>
                         )}
-                    </div>
+                    </motion.div>
                 );
             })}
         </motion.div>
     );
 };
 
-const CustomTooltip = ({ active, payload, label }) => {
+const DonutTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
+        const { name, count, fill, percent } = payload[0].payload;
+        const pct = typeof percent === 'number' ? percent : 0;
         return (
-            <div className="bg-white border border-gray-200 rounded-xl shadow-lg px-3 py-2 text-sm">
-                <p className="font-semibold text-gray-900">{label}</p>
-                <p className="text-gray-600">{fmt(payload[0]?.value)} aset</p>
+            <div className="bg-white/95 backdrop-blur-sm border border-gray-200 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] px-4 py-3 text-sm min-w-[140px]">
+                <div className="flex items-center gap-2 mb-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: fill }} />
+                    <span className="font-semibold text-gray-900">{name}</span>
+                </div>
+                <div className="space-y-0.5 pl-[18px]">
+                    <p className="text-gray-600">{fmt(count)} aset</p>
+                    <p className="text-gray-400 text-xs">{pct.toFixed(1)}%</p>
+                </div>
             </div>
         );
     }
     return null;
 };
 
-const DONUT_COLORS = ['#10b981', '#f59e0b', '#ef4444', '#6366f1', '#8b5cf6', '#06b6d4'];
+const getDonutPrimary = (data) => {
+    const total = data.reduce((sum, d) => sum + (d.count || 0), 0);
+    if (total === 0) return null;
+    const primary = data.reduce((max, d) => (d.count > max.count ? d : max), data[0]);
+    return {
+        label: primary.name,
+        percent: ((primary.count / total) * 100).toFixed(0),
+    };
+};
+
+const DonutEmptyState = ({ label }) => (
+    <div className="flex flex-col items-center justify-center h-full py-8">
+        <div className="w-24 h-24 rounded-full border-[6px] border-gray-100 flex items-center justify-center mb-4">
+            <div className="w-10 h-10 rounded-full border-[3px] border-gray-100" />
+        </div>
+        <p className="text-sm font-medium text-gray-400">Belum ada data</p>
+        <p className="text-xs text-gray-300 mt-0.5">{label}</p>
+    </div>
+);
+
+const DonutLegend = ({ data, colorMap, total }) => (
+    <div className="space-y-2 mt-4">
+        {data.map((entry, i) => {
+            const pct = total > 0 ? ((entry.count / total) * 100).toFixed(1) : '0.0';
+            const color = colorMap[entry.name] || getColor(entry.name, i);
+            return (
+                <div key={i} className="flex items-center gap-2.5 group">
+                    <span className="w-2.5 h-2.5 rounded-full shrink-0 transition-transform group-hover:scale-125" style={{ backgroundColor: color }} />
+                    <span className="flex-1 text-sm text-gray-600 truncate">{entry.name}</span>
+                    <span className="text-sm font-semibold text-gray-900 tabular-nums">{fmt(entry.count)}</span>
+                    <span className="text-xs text-gray-400 tabular-nums w-12 text-right">{pct}%</span>
+                </div>
+            );
+        })}
+    </div>
+);
+
+const CONDITION_COLORS = {
+    Good: '#10b981',
+    Fair: '#f59e0b',
+    Poor: '#ef4444',
+    Damaged: '#ef4444',
+    Broken: '#f97316',
+};
+
+const STATUS_COLORS = {
+    Active: '#10b981',
+    Inactive: '#64748b',
+    Lost: '#ef4444',
+    Missing: '#ef4444',
+    Disposed: '#94a3b8',
+    Broken: '#f59e0b',
+};
 
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 export default function Dashboard({ stats, charts, recentActivity, alerts }) {
@@ -313,48 +408,128 @@ export default function Dashboard({ stats, charts, recentActivity, alerts }) {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                     {/* Condition Donut */}
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                        <h3 className="font-bold text-gray-900 mb-4">Kondisi Aset</h3>
-                        {charts?.by_condition?.length > 0 ? (
-                            <ResponsiveContainer width="100%" height={200}>
-                                <PieChart>
-                                    <Pie data={charts.by_condition} dataKey="count" nameKey="name"
-                                        cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3}>
-                                        {charts.by_condition.map((entry, i) => (
-                                            <Cell key={i} fill={getColor(entry.name, i)} stroke="transparent" />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip formatter={(v) => [fmt(v), 'Total']} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                                    <Legend iconSize={8} iconType="circle" wrapperStyle={{ fontSize: 12, paddingTop: '10px' }} />
-                                </PieChart>
-                            </ResponsiveContainer>
-                        ) : (
-                            <div className="flex items-center justify-center h-[200px] text-gray-400 text-sm">
-                                Belum ada data kondisi
-                            </div>
-                        )}
+                        <h3 className="font-bold text-gray-900 mb-2">Kondisi Aset</h3>
+                        {(() => {
+                            const data = charts?.by_condition;
+                            if (!data || data.length === 0) {
+                                return <DonutEmptyState label="Belum ada data kondisi aset" />;
+                            }
+                            const total = data.reduce((s, d) => s + (d.count || 0), 0);
+                            if (total === 0) {
+                                return <DonutEmptyState label="Belum ada data kondisi aset" />;
+                            }
+                            const enriched = data.map((d, i) => ({
+                                ...d,
+                                count: d.count || 0,
+                                fill: CONDITION_COLORS[d.name] || getColor(d.name, i),
+                                percent: total > 0 ? (d.count / total) * 100 : 0,
+                            }));
+                            const hasOnlyOne = enriched.filter(d => d.count > 0).length === 1;
+                            return (
+                                <>
+                                    <div className="relative h-[200px]">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <PieChart>
+                                                <Pie
+                                                    data={enriched}
+                                                    dataKey="count"
+                                                    nameKey="name"
+                                                    cx="50%"
+                                                    cy="50%"
+                                                    innerRadius={55}
+                                                    outerRadius={82}
+                                                    paddingAngle={hasOnlyOne ? 0 : 3}
+                                                    cornerRadius={3}
+                                                    stroke="none"
+                                                >
+                                                    {enriched.map((entry, i) => (
+                                                        <Cell
+                                                            key={i}
+                                                            fill={entry.fill}
+                                                            className="transition-opacity duration-200 hover:opacity-80"
+                                                        />
+                                                    ))}
+                                                </Pie>
+                                                <Tooltip content={<DonutTooltip />} />
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                        {(() => {
+                                            const primary = getDonutPrimary(enriched);
+                                            return primary ? (
+                                                <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                                                    <div className="text-2xl font-bold leading-none text-gray-900 tabular-nums">{primary.percent}%</div>
+                                                    <div className="mt-1 max-w-[90px] truncate text-xs font-medium text-gray-400">{primary.label}</div>
+                                                </div>
+                                            ) : null;
+                                        })()}
+                                    </div>
+                                    <DonutLegend data={enriched} colorMap={CONDITION_COLORS} total={total} />
+                                </>
+                            );
+                        })()}
                     </div>
 
                     {/* Status Donut */}
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                        <h3 className="font-bold text-gray-900 mb-4">Status Aset</h3>
-                        {charts?.by_status?.length > 0 ? (
-                            <ResponsiveContainer width="100%" height={200}>
-                                <PieChart>
-                                    <Pie data={charts.by_status} dataKey="count" nameKey="name"
-                                        cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3}>
-                                        {charts.by_status.map((entry, i) => (
-                                            <Cell key={i} fill={getColor(entry.name, i)} stroke="transparent" />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip formatter={(v) => [fmt(v), 'Total']} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                                    <Legend iconSize={8} iconType="circle" wrapperStyle={{ fontSize: 12, paddingTop: '10px' }} />
-                                </PieChart>
-                            </ResponsiveContainer>
-                        ) : (
-                            <div className="flex items-center justify-center h-[200px] text-gray-400 text-sm">
-                                Belum ada data status
-                            </div>
-                        )}
+                        <h3 className="font-bold text-gray-900 mb-2">Status Aset</h3>
+                        {(() => {
+                            const data = charts?.by_status;
+                            if (!data || data.length === 0) {
+                                return <DonutEmptyState label="Belum ada data status aset" />;
+                            }
+                            const total = data.reduce((s, d) => s + (d.count || 0), 0);
+                            if (total === 0) {
+                                return <DonutEmptyState label="Belum ada data status aset" />;
+                            }
+                            const enriched = data.map((d, i) => ({
+                                ...d,
+                                count: d.count || 0,
+                                fill: STATUS_COLORS[d.name] || getColor(d.name, i),
+                                percent: total > 0 ? (d.count / total) * 100 : 0,
+                            }));
+                            const hasOnlyOne = enriched.filter(d => d.count > 0).length === 1;
+                            return (
+                                <>
+                                    <div className="relative h-[200px]">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <PieChart>
+                                                <Pie
+                                                    data={enriched}
+                                                    dataKey="count"
+                                                    nameKey="name"
+                                                    cx="50%"
+                                                    cy="50%"
+                                                    innerRadius={55}
+                                                    outerRadius={82}
+                                                    paddingAngle={hasOnlyOne ? 0 : 3}
+                                                    cornerRadius={3}
+                                                    stroke="none"
+                                                >
+                                                    {enriched.map((entry, i) => (
+                                                        <Cell
+                                                            key={i}
+                                                            fill={entry.fill}
+                                                            className="transition-opacity duration-200 hover:opacity-80"
+                                                        />
+                                                    ))}
+                                                </Pie>
+                                                <Tooltip content={<DonutTooltip />} />
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                        {(() => {
+                                            const primary = getDonutPrimary(enriched);
+                                            return primary ? (
+                                                <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                                                    <div className="text-2xl font-bold leading-none text-gray-900 tabular-nums">{primary.percent}%</div>
+                                                    <div className="mt-1 max-w-[90px] truncate text-xs font-medium text-gray-400">{primary.label}</div>
+                                                </div>
+                                            ) : null;
+                                        })()}
+                                    </div>
+                                    <DonutLegend data={enriched} colorMap={STATUS_COLORS} total={total} />
+                                </>
+                            );
+                        })()}
                     </div>
 
                     {/* Recent Activity */}

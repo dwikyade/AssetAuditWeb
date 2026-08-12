@@ -28,9 +28,9 @@ class AssetCodePrefixController extends Controller
         ]);
     }
 
-    public function create(): Response
+    public function create(): RedirectResponse
     {
-        return Inertia::render('AssetCodes/Create');
+        return redirect()->route('asset-code-prefixes.index');
     }
 
     public function store(Request $request): RedirectResponse
@@ -51,11 +51,9 @@ class AssetCodePrefixController extends Controller
         return redirect()->route('asset-code-prefixes.index')->with('success', "Prefix {$prefix->prefix} berhasil ditambahkan.");
     }
 
-    public function edit(AssetCodePrefix $assetCodePrefix): Response
+    public function edit(AssetCodePrefix $assetCodePrefix): RedirectResponse
     {
-        return Inertia::render('AssetCodes/Edit', [
-            'prefix' => $assetCodePrefix,
-        ]);
+        return redirect()->route('asset-code-prefixes.index');
     }
 
     public function update(Request $request, AssetCodePrefix $assetCodePrefix): RedirectResponse

@@ -134,7 +134,7 @@ export default function ImportIndex({ default_mapping }) {
                         <h1 className="text-2xl font-bold text-gray-900">Import Aset via Excel</h1>
                         <p className="text-sm text-gray-500">Unggah file Excel untuk menambahkan aset secara massal.</p>
                     </div>
-                    <Button variant="secondary" onClick={() => window.location.href = '/import/template'}>
+                    <Button variant="secondary" onClick={() => window.location.href = '/import/template/download'}>
                         <FileSpreadsheet size={16} className="mr-2" />
                         Download Template
                     </Button>

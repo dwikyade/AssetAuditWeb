@@ -71,6 +71,7 @@ export default function QrExportPage({ assets, categories, departments, location
             const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
             const res = await fetch('/export/qr-bulk', {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
@@ -106,6 +107,10 @@ export default function QrExportPage({ assets, categories, departments, location
         `).join('');
 
         const win = window.open('', '_blank');
+        if (!win) {
+            setError('Popup diblokir browser. Izinkan popup untuk mencetak QR code.');
+            return;
+        }
         win.document.write(`<!DOCTYPE html><html><head><title>QR Code - ${qrItems.length} Aset</title>
 <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:sans-serif;padding:16px}
 h1{font-size:13px;font-weight:700;color:#111;margin-bottom:14px;border-bottom:1px solid #e5e7eb;padding-bottom:8px}
@@ -303,7 +308,7 @@ h1{font-size:13px;font-weight:700;color:#111;margin-bottom:14px;border-bottom:1p
                                             }
                                         </td>
                                         <td className="px-4 py-3">
-                                            <span className="font-mono font-bold text-orange-600 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded text-xs">
+                                            <span className="font-mono font-bold text-gray-900 bg-gray-50 border border-gray-200 px-2 py-0.5 rounded text-xs">
                                                 {asset.asset_code}
                                             </span>
                                         </td>
@@ -357,17 +362,18 @@ h1{font-size:13px;font-weight:700;color:#111;margin-bottom:14px;border-bottom:1p
                         </div>
                         <div className="p-5 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                             {qrItems.map(item => (
-                                <div key={item.id} className="flex flex-col items-center border border-gray-200 rounded-xl p-3 gap-2 bg-gray-50 hover:shadow-md transition-shadow">
-                                    <div
-                                        className="w-full"
-                                        style={{ maxWidth: 100, aspectRatio: '1 / 1' }}
-                                        dangerouslySetInnerHTML={{ __html: item.qr_svg }}
-                                    />
-                                    <span className="font-mono font-bold text-orange-600 bg-orange-50 border border-orange-200 px-1.5 py-0.5 rounded text-xs text-center w-full truncate">
+                                <div key={item.id} className="flex h-full min-h-[210px] flex-col items-center justify-start border border-gray-200 rounded-xl bg-white p-3 gap-2 hover:shadow-md transition-shadow">
+                                    <div className="flex h-[112px] w-[112px] shrink-0 items-center justify-center rounded-lg bg-white border border-gray-100 p-2 [&_svg]:h-full [&_svg]:w-full [&_svg]:max-h-full [&_svg]:max-w-full">
+                                        <div
+                                            className="h-full w-full"
+                                            dangerouslySetInnerHTML={{ __html: item.qr_svg }}
+                                        />
+                                    </div>
+                                    <span className="font-mono font-bold text-gray-900 bg-gray-50 border border-gray-200 px-1.5 py-0.5 rounded text-xs text-center w-full truncate">
                                         {item.asset_code}
                                     </span>
-                                    <p className="text-xs text-gray-700 text-center leading-tight line-clamp-2 font-medium">{item.asset_name}</p>
-                                    {item.location && <p className="text-xs text-gray-400 text-center">{item.location}</p>}
+                                    <p className="min-h-[32px] text-xs text-gray-700 text-center leading-tight line-clamp-2 font-medium w-full">{item.asset_name}</p>
+                                    {item.location && <p className="text-xs text-gray-400 text-center truncate w-full">{item.location}</p>}
                                 </div>
                             ))}
                         </div>

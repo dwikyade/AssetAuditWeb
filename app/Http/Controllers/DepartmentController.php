@@ -26,9 +26,9 @@ class DepartmentController extends Controller
         ]);
     }
 
-    public function create(): Response
+    public function create(): RedirectResponse
     {
-        return Inertia::render('Departments/Create');
+        return redirect()->route('departments.index');
     }
 
     public function store(Request $request): RedirectResponse
@@ -46,11 +46,9 @@ class DepartmentController extends Controller
         return redirect()->route('departments.index')->with('success', "Departemen {$dept->name} berhasil ditambahkan.");
     }
 
-    public function edit(Department $department): Response
+    public function edit(Department $department): RedirectResponse
     {
-        return Inertia::render('Departments/Edit', [
-            'department' => $department->loadCount('assets'),
-        ]);
+        return redirect()->route('departments.index');
     }
 
     public function update(Request $request, Department $department): RedirectResponse

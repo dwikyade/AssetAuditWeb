@@ -12,6 +12,7 @@ use App\Models\Department;
 use App\Models\Location;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Rap2hpoutre\FastExcel\FastExcel;
@@ -228,27 +229,35 @@ class ReportController extends Controller
     {
         $this->authorize('asset.view');
 
-        $ids = $request->input('ids', []);
+        $ids = array_values(array_filter((array) $request->input('ids', []), fn ($id) => is_numeric($id)));
 
         if (empty($ids)) {
             return response()->json(['error' => 'Tidak ada aset dipilih'], 422);
         }
 
-        // Cap at 100 to avoid timeout
-        $ids = array_slice((array) $ids, 0, 100);
+        $ids = array_slice($ids, 0, 100);
 
         $assets = Asset::whereIn('id', $ids)
             ->orderBy('asset_code')
             ->with(['category', 'location'])
             ->get(['id', 'asset_code', 'asset_name', 'qr_token', 'category_id', 'location_id']);
 
+        if ($assets->isEmpty()) {
+            return response()->json(['error' => 'Aset yang dipilih tidak ditemukan'], 404);
+        }
+
         $result = $assets->map(function ($asset) {
-            try {
-                $url   = route('qr.redirect', $asset->qr_token);
-                $qrSvg = (string) QrCode::format('svg')->size(200)->generate($url);
-            } catch (\Throwable $e) {
-                $qrSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><text y="100" x="50" fill="red">Error</text></svg>';
+            if (empty($asset->qr_token)) {
+                $asset->forceFill(['qr_token' => Str::random(32)])->save();
             }
+
+            $url = route('qr.redirect', ['token' => $asset->qr_token]);
+            $qrSvg = (string) QrCode::format('svg')
+                ->size(220)
+                ->margin(1)
+                ->errorCorrection('M')
+                ->generate($url);
+
             return [
                 'id'         => $asset->id,
                 'asset_code' => $asset->asset_code,
@@ -257,7 +266,7 @@ class ReportController extends Controller
                 'location'   => $asset->location?->name,
                 'qr_svg'     => $qrSvg,
             ];
-        });
+        })->values();
 
         return response()->json($result);
     }
