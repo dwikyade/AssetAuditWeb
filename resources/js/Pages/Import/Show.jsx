@@ -6,11 +6,15 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 export default function ImportShow({ job }) {
+    const initialPct = (job.status === 'completed' || job.status === 'completed_with_errors')
+        ? 100
+        : (job.progress_percent || (job.total_rows > 0 ? Math.round((job.processed_rows / job.total_rows) * 100) : 0));
+
     const [progressData, setProgressData] = useState({
         status: job.status,
         total_rows: job.total_rows || 0,
         processed_rows: job.processed_rows || 0,
-        progress_percent: job.progress_percent || 0,
+        progress_percent: initialPct,
         created_rows: job.created_rows || 0,
         updated_rows: job.updated_rows || 0,
         error_rows: job.error_rows || 0,

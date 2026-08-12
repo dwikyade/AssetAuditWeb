@@ -10,6 +10,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function AssetIndex({ assets, filters, categories, departments, locations, statuses, conditions }) {
+    const fmtNumber = (n) => new Intl.NumberFormat('id-ID').format(n ?? 0);
+    const fmtCurrency = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n ?? 0);
+    const fmtDate = (d) => d ? new Date(d).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-';
+
     const [search, setSearch] = useState(filters.search || '');
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [qrModal, setQrModal] = useState(false);
@@ -200,42 +204,50 @@ export default function AssetIndex({ assets, filters, categories, departments, l
                         <table className="w-full text-left text-sm whitespace-nowrap">
                             <thead className="bg-gray-50 text-gray-500">
                                 <tr>
-                                    <th className="px-6 py-3 font-medium">Kode Aset</th>
-                                    <th className="px-6 py-3 font-medium">Nama Aset</th>
-                                    <th className="px-6 py-3 font-medium">Kategori / Dept</th>
-                                    <th className="px-6 py-3 font-medium">Lokasi</th>
-                                    <th className="px-6 py-3 font-medium">Status / Kondisi</th>
-                                    <th className="px-6 py-3 font-medium text-right">Aksi</th>
+                                    <th className="px-4 py-3 font-medium text-center">No</th>
+                                    <th className="px-4 py-3 font-medium">Kode</th>
+                                    <th className="px-4 py-3 font-medium">Barang</th>
+                                    <th className="px-4 py-3 font-medium">Lokasi</th>
+                                    <th className="px-4 py-3 font-medium text-right">Qty</th>
+                                    <th className="px-4 py-3 font-medium text-center">Tgl. Oleh</th>
+                                    <th className="px-4 py-3 font-medium text-center">Tgl Susut Akhir</th>
+                                    <th className="px-4 py-3 font-medium text-right">Nilai Perolehan</th>
+                                    <th className="px-4 py-3 font-medium text-right">Prev.Akum</th>
+                                    <th className="px-4 py-3 font-medium text-right">Akum. Total</th>
+                                    <th className="px-4 py-3 font-medium text-right">Nilai Per-Akum</th>
+                                    <th className="px-4 py-3 font-medium text-right">Nilai Buku</th>
+                                    <th className="px-4 py-3 font-medium">Status / Kondisi</th>
+                                    <th className="px-4 py-3 font-medium text-right">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
                                 {assets.data.length === 0 ? (
                                     <tr>
-                                        <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
+                                        <td colSpan="14" className="px-6 py-12 text-center text-gray-500">
                                             Tidak ada data aset yang ditemukan.
                                         </td>
                                     </tr>
                                 ) : (
-                                    assets.data.map((asset) => (
+                                    assets.data.map((asset, index) => (
                                         <tr key={asset.id} className="hover:bg-gray-50 transition-colors">
-                                            <td className="px-6 py-3">
-                                                <div className="font-medium text-black">{asset.asset_code}</div>
-                                                <div className="text-xs text-gray-400">
-                                                    Qty: {asset.quantity} {asset.unit}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-3">
+                                             <td className="px-4 py-3 text-center text-gray-600">{assets.from + index}</td>
+                                            <td className="px-4 py-3 font-mono font-medium text-gray-900">{asset.asset_code}</td>
+                                            <td className="px-4 py-3">
                                                 <div className="font-medium text-gray-900">{asset.asset_name}</div>
-                                                <div className="text-xs text-gray-500">{asset.brand} {asset.model}</div>
+                                                {(asset.category?.name || asset.department?.name) && (
+                                                    <div className="text-xs text-gray-500">{asset.category?.name || '-'} · {asset.department?.name || '-'}</div>
+                                                )}
                                             </td>
-                                            <td className="px-6 py-3">
-                                                <div className="text-gray-900">{asset.category?.name || '-'}</div>
-                                                <div className="text-xs text-gray-500">{asset.department?.name || '-'}</div>
-                                            </td>
-                                            <td className="px-6 py-3 text-gray-900">
-                                                {asset.location?.name || '-'}
-                                            </td>
-                                            <td className="px-6 py-3">
+                                            <td className="px-4 py-3 text-gray-900">{asset.location?.name || '-'}</td>
+                                            <td className="px-4 py-3 text-right text-gray-900 tabular-nums">{fmtNumber(asset.quantity)} {asset.unit || ''}</td>
+                                            <td className="px-4 py-3 text-center text-gray-700">{fmtDate(asset.acquisition_date)}</td>
+                                            <td className="px-4 py-3 text-center text-gray-700">{fmtDate(asset.depreciation_end_date)}</td>
+                                            <td className="px-4 py-3 text-right font-mono text-gray-700">{fmtCurrency(asset.acquisition_value)}</td>
+                                            <td className="px-4 py-3 text-right font-mono text-gray-700">{fmtCurrency(asset.previous_accumulated_depreciation)}</td>
+                                            <td className="px-4 py-3 text-right font-mono text-gray-700">{fmtCurrency(asset.accumulated_depreciation)}</td>
+                                            <td className="px-4 py-3 text-right font-mono text-gray-700">{fmtCurrency(asset.depreciation_per_period)}</td>
+                                            <td className="px-4 py-3 text-right font-mono font-medium text-gray-900">{fmtCurrency(asset.book_value)}</td>
+                                            <td className="px-4 py-3">
                                                 <div className="flex items-center gap-2 mb-1">
                                                     <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium`} style={{ backgroundColor: `${asset.status?.color}20`, color: asset.status?.color || '#6b7280' }}>
                                                         {asset.status?.name || '-'}

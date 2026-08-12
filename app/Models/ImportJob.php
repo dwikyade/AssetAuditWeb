@@ -16,6 +16,8 @@ class ImportJob extends Model
         'started_at', 'completed_at', 'error_file_path', 'error_message',
     ];
 
+    protected $appends = ['progress_percent'];
+
     protected $casts = [
         'started_at'     => 'datetime',
         'completed_at'   => 'datetime',
@@ -44,7 +46,12 @@ class ImportJob extends Model
 
     public function getProgressPercentAttribute(): float
     {
-        if ($this->total_rows === 0) return 0;
+        if (empty($this->total_rows) || $this->total_rows <= 0) {
+            return in_array($this->status, ['completed', 'completed_with_errors']) ? 100.0 : 0.0;
+        }
+        if (in_array($this->status, ['completed', 'completed_with_errors'])) {
+            return 100.0;
+        }
         return round(($this->processed_rows / $this->total_rows) * 100, 1);
     }
 }

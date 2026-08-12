@@ -32,7 +32,12 @@ class ProcessAssetImport implements ShouldQueue
         $job = $this->importJob;
 
         try {
-            $job->update(['status' => 'processing', 'started_at' => now()]);
+            $totalRows = count($collection);
+            $job->update([
+                'status'     => 'processing',
+                'started_at' => now(),
+                'total_rows' => $totalRows > 0 ? $totalRows : $job->total_rows,
+            ]);
 
             $collection = (new FastExcel)->import(Storage::path($job->file_path));
             $mapping    = $job->column_mapping ?? [];

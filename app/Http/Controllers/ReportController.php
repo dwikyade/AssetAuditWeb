@@ -181,20 +181,21 @@ class ReportController extends Controller
     public function exportAssets(Request $request)
     {
         $assets = Asset::with(['category', 'department', 'location', 'status', 'condition'])
+            ->orderBy('asset_code')
             ->get()
-            ->map(fn ($a) => [
-                'Kode'              => $a->asset_code,
-                'Nama Aset'         => $a->asset_name,
-                'Kategori'          => $a->category?->name,
-                'Departemen'        => $a->department?->name,
-                'Lokasi'            => $a->location?->name,
-                'Qty'               => $a->quantity,
-                'Unit'              => $a->unit,
-                'Nilai Perolehan'   => $a->acquisition_value,
-                'Nilai Buku'        => $a->book_value,
-                'Status'            => $a->status?->name,
-                'Kondisi'           => $a->condition?->name,
-                'Tanggal Perolehan' => $a->acquisition_date?->format('d/m/Y'),
+            ->map(fn ($a, $i) => [
+                'No'              => $i + 1,
+                'Kode'            => $a->asset_code,
+                'Barang'          => $a->asset_name,
+                'Lokasi'          => $a->location?->name,
+                'Qty'             => $a->quantity,
+                'Tgl. Oleh'       => $a->acquisition_date?->format('d/m/Y'),
+                'Tgl Susut Akhir' => $a->depreciation_end_date?->format('d/m/Y'),
+                'Nilai Perolehan' => $a->acquisition_value,
+                'Prev.Akum'       => $a->previous_accumulated_depreciation,
+                'Akum. Total'     => $a->accumulated_depreciation,
+                'Nilai Per-Akum'  => $a->depreciation_per_period,
+                'Nilai Buku'      => $a->book_value,
             ]);
 
         return (new FastExcel($assets))->download('asset-register-' . now()->format('Y-m-d') . '.xlsx');

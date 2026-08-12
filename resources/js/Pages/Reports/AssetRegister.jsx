@@ -6,6 +6,8 @@ import { useState } from 'react';
 
 export default function AssetRegister({ assets, filters, totals }) {
     const formatRp = (val) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(val || 0);
+    const formatNumber = (val) => new Intl.NumberFormat('id-ID').format(val ?? 0);
+    const formatDate = (val) => val ? new Date(val).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-';
 
     return (
         <AppLayout>
@@ -56,36 +58,43 @@ export default function AssetRegister({ assets, filters, totals }) {
                         <table className="w-full text-left text-sm whitespace-nowrap">
                             <thead className="bg-gray-50 text-gray-500 border-b border-gray-200">
                                 <tr>
-                                    <th className="px-6 py-3 font-medium">Aset</th>
-                                    <th className="px-6 py-3 font-medium">Kategori</th>
-                                    <th className="px-6 py-3 font-medium">Departemen / Lokasi</th>
-                                    <th className="px-6 py-3 font-medium text-right">Nilai Perolehan</th>
-                                    <th className="px-6 py-3 font-medium text-right">Nilai Buku</th>
+                                    <th className="px-4 py-3 font-medium text-center">No</th>
+                                    <th className="px-4 py-3 font-medium">Kode</th>
+                                    <th className="px-4 py-3 font-medium">Barang</th>
+                                    <th className="px-4 py-3 font-medium">Lokasi</th>
+                                    <th className="px-4 py-3 font-medium text-right">Qty</th>
+                                    <th className="px-4 py-3 font-medium text-center">Tgl. Oleh</th>
+                                    <th className="px-4 py-3 font-medium text-center">Tgl Susut Akhir</th>
+                                    <th className="px-4 py-3 font-medium text-right">Nilai Perolehan</th>
+                                    <th className="px-4 py-3 font-medium text-right">Prev.Akum</th>
+                                    <th className="px-4 py-3 font-medium text-right">Akum. Total</th>
+                                    <th className="px-4 py-3 font-medium text-right">Nilai Per-Akum</th>
+                                    <th className="px-4 py-3 font-medium text-right">Nilai Buku</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {assets.data.map((asset) => (
+                                {assets.data.map((asset, index) => (
                                     <tr key={asset.id} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4">
+                                        <td className="px-4 py-3 text-center text-gray-600">{assets.from + index}</td>
+                                        <td className="px-4 py-3 font-mono font-medium text-gray-900">{asset.asset_code}</td>
+                                        <td className="px-4 py-3">
                                             <div className="font-medium text-gray-900">{asset.asset_name}</div>
-                                            <div className="text-xs text-black font-mono mt-0.5">{asset.asset_code}</div>
+                                            {asset.category?.name && <div className="text-xs text-gray-500">{asset.category.name}</div>}
                                         </td>
-                                        <td className="px-6 py-4 text-gray-700">{asset.category?.name || '-'}</td>
-                                        <td className="px-6 py-4">
-                                            <div className="text-gray-900">{asset.department?.name || '-'}</div>
-                                            <div className="text-xs text-gray-500">{asset.location?.name || '-'}</div>
-                                        </td>
-                                        <td className="px-6 py-4 text-right text-gray-700 font-mono">
-                                            {formatRp(asset.acquisition_value)}
-                                        </td>
-                                        <td className="px-6 py-4 text-right font-medium text-gray-900 font-mono">
-                                            {formatRp(asset.book_value)}
-                                        </td>
+                                        <td className="px-4 py-3 text-gray-700">{asset.location?.name || '-'}</td>
+                                        <td className="px-4 py-3 text-right text-gray-900 tabular-nums">{formatNumber(asset.quantity)} {asset.unit || ''}</td>
+                                        <td className="px-4 py-3 text-center text-gray-700">{formatDate(asset.acquisition_date)}</td>
+                                        <td className="px-4 py-3 text-center text-gray-700">{formatDate(asset.depreciation_end_date)}</td>
+                                        <td className="px-4 py-3 text-right text-gray-700 font-mono">{formatRp(asset.acquisition_value)}</td>
+                                        <td className="px-4 py-3 text-right text-gray-700 font-mono">{formatRp(asset.previous_accumulated_depreciation)}</td>
+                                        <td className="px-4 py-3 text-right text-gray-700 font-mono">{formatRp(asset.accumulated_depreciation)}</td>
+                                        <td className="px-4 py-3 text-right text-gray-700 font-mono">{formatRp(asset.depreciation_per_period)}</td>
+                                        <td className="px-4 py-3 text-right font-medium text-gray-900 font-mono">{formatRp(asset.book_value)}</td>
                                     </tr>
                                 ))}
                                 {assets.data.length === 0 && (
                                     <tr>
-                                        <td colSpan="5" className="px-6 py-12 text-center text-gray-500">
+                                        <td colSpan="12" className="px-6 py-12 text-center text-gray-500">
                                             Data aset kosong.
                                         </td>
                                     </tr>
