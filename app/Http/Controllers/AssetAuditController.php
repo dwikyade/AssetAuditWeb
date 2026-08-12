@@ -28,20 +28,16 @@ class AssetAuditController extends Controller
             ->pluck('asset_id')
             ->toArray();
 
-        $totalScope = $auditSession->scope_type === 'all'
-            ? Asset::count()
-            : Asset::when($auditSession->scope_type === 'department', fn ($q) => $q->whereIn('department_id', $auditSession->scope_ids ?? []))
-                   ->when($auditSession->scope_type === 'location', fn ($q) => $q->whereIn('location_id', $auditSession->scope_ids ?? []))
-                   ->when($auditSession->scope_type === 'category', fn ($q) => $q->whereIn('category_id', $auditSession->scope_ids ?? []))
-                   ->count();
+        $uniqueAuditedIds = array_unique($auditedAssetIds);
+        $totalScope = $auditSession->total_scope;
 
         return Inertia::render('Audits/Conduct', [
             'session'         => $auditSession->load('creator'),
             'conditions'      => AssetCondition::where('is_active', true)->orderBy('sort_order')->get(['id', 'name', 'color']),
             'locations'       => Location::where('is_active', true)->orderBy('name')->get(['id', 'name', 'code']),
-            'audited_ids'     => $auditedAssetIds,
+            'audited_ids'     => array_values($uniqueAuditedIds),
             'total_scope'     => $totalScope,
-            'audited_count'   => count($auditedAssetIds),
+            'audited_count'   => count($uniqueAuditedIds),
         ]);
     }
 

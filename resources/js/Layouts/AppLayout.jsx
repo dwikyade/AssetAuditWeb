@@ -5,10 +5,11 @@ import {
     BarChart3, Users, Settings, LogOut, ChevronLeft,
     Bell, ChevronDown, Building2, Tag, MapPin, Hash,
     Activity, Shield, CheckCircle2, XCircle, AlertTriangle,
-    Info, X, Check, ExternalLink, Trash2, BellOff
+    Info, X, Check, ExternalLink, Trash2, BellOff, Camera, QrCode
 } from 'lucide-react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { cn, getInitials, formatRelativeTime } from '@/lib/utils';
+import QrScannerModal from '@/Components/QrScannerModal';
 
 const navItems = [
     {
@@ -407,17 +408,20 @@ const NotificationDropdown = ({ isOpen, onClose, dropdownRef }) => {
 };
 
 export default function AppLayout({ children }) {
-    const { auth, app, flash, notificationCount } = usePage().props;
+    const { auth, app, flash, notificationCount, settings } = usePage().props;
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [openMenus, setOpenMenus] = useState({});
     const [toasts, setToasts] = useState([]);
     const [notifOpen, setNotifOpen] = useState(false);
+    const [qrScannerOpen, setQrScannerOpen] = useState(false);
     const [unreadCount, setUnreadCount] = useState(notificationCount ?? 0);
     const notifRef = useRef(null);
 
     const user = auth?.user;
     const permissions = user?.permissions ?? [];
     const roles = user?.roles ?? [];
+    const appName = app?.name || 'Asset Sync';
+    const orgName = settings?.company_name || settings?.hotel_name || 'Asset Management System';
 
     useEffect(() => {
         setUnreadCount(notificationCount ?? 0);
@@ -643,6 +647,15 @@ export default function AppLayout({ children }) {
                         </nav>
                     </div>
                     <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setQrScannerOpen(true)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-900 hover:text-white transition-all text-xs font-semibold"
+                            title="Scan QR Code Aset"
+                        >
+                            <Camera size={16} />
+                            <span className="hidden sm:inline">Scan QR</span>
+                        </button>
+                        <div className="w-px h-5 bg-gray-200" />
                         <div className="relative">
                             <button
                                 onClick={() => setNotifOpen(!notifOpen)}
@@ -693,6 +706,18 @@ export default function AppLayout({ children }) {
                     {children}
                 </main>
             </div>
+
+            {/* Watermark overlay (Activation Style - Bottom Right) */}
+            <div className="pointer-events-none fixed bottom-4 right-5 z-40 select-none text-right opacity-30">
+                <p className="text-sm font-semibold tracking-wide text-gray-500">{appName}</p>
+                <p className="text-xs text-gray-400">{orgName}</p>
+            </div>
+
+            {/* QR Scanner Modal */}
+            <QrScannerModal
+                isOpen={qrScannerOpen}
+                onClose={() => setQrScannerOpen(false)}
+            />
 
             {/* Toast notifications */}
             <div className="pointer-events-none fixed inset-y-0 right-0 z-50 flex flex-col items-end gap-3 p-6 pt-20">

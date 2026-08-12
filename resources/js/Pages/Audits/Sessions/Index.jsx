@@ -101,9 +101,11 @@ export default function AuditSessionIndex({ sessions, filters }) {
                     <div className="space-y-3">
                         {sessions.data.map((session, idx) => {
                             const s = statusConfig[session.status] || statusConfig.draft;
-                            const progress = session.total_scope > 0
-                                ? Math.round((session.audits_count / session.total_scope) * 100)
-                                : 0;
+                            const totalScope = session.total_scope || 0;
+                            const auditedCount = session.unique_audits_count ?? session.audits_count ?? 0;
+                            const progress = session.progress_percent !== undefined
+                                ? Math.min(100, Math.round(session.progress_percent))
+                                : (totalScope > 0 ? Math.min(100, Math.round((auditedCount / totalScope) * 100)) : 0);
 
                             return (
                                 <motion.div
@@ -177,7 +179,7 @@ export default function AuditSessionIndex({ sessions, filters }) {
                                                 <span className="text-xs font-bold text-gray-700 w-8 text-right">{progress}%</span>
                                             </div>
                                             <p className="text-xs text-gray-400 mt-1">
-                                                {session.audits_count ?? 0} aset diaudit
+                                                {auditedCount} dari {totalScope} aset
                                                 {session.status === 'completed' && session.found_count != null && (
                                                     <span className="text-green-600 ml-1">· {session.found_count} ditemukan</span>
                                                 )}

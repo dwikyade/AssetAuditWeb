@@ -23,6 +23,8 @@ export default function AuditSessionShow({ session, stats }) {
         }
     };
 
+    const progressPercent = Math.min(100, Math.max(0, stats.progress || 0));
+
     return (
         <AppLayout>
             <Head title={`Sesi Audit: ${session.name}`} />
@@ -100,10 +102,10 @@ export default function AuditSessionShow({ session, stats }) {
 
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-sm font-medium text-gray-700">Telah Diaudit: {stats.audited} dari {stats.total_scope} Aset</span>
-                                <span className="text-sm font-bold text-black">{stats.progress}%</span>
+                                <span className="text-sm font-bold text-black">{progressPercent}%</span>
                             </div>
-                            <div className="w-full bg-gray-100 rounded-full h-3 mb-6">
-                                <div className="bg-black h-3 rounded-full" style={{ width: `${stats.progress}%` }}></div>
+                            <div className="w-full bg-gray-100 rounded-full h-3 mb-6 overflow-hidden">
+                                <div className="bg-black h-3 rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
                             </div>
 
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">

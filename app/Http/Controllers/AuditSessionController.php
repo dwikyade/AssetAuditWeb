@@ -12,8 +12,6 @@ use App\Services\ActivityLogService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -23,7 +21,7 @@ class AuditSessionController extends Controller
     {
         $query = AuditSession::with('creator')->withCount([
             'audits',
-            'audits as found_count'  => fn ($q) => $q->where('found_status', 'found'),
+            'audits as found_count' => fn ($q) => $q->where('found_status', 'found'),
         ]);
 
         if ($status = $request->get('status')) {
@@ -31,12 +29,25 @@ class AuditSessionController extends Controller
         }
 
         if ($search = $request->get('search')) {
-            $query->where('name', 'like', "%{$search}%")
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
                   ->orWhere('code', 'like', "%{$search}%");
+            });
         }
 
+        $sessions = $query->orderByDesc('created_at')->paginate(25)->withQueryString();
+
+        $sessions->through(function ($session) {
+            $totalScope = $session->total_scope;
+            $audited    = $session->audited_count;
+            $session->total_scope         = $totalScope;
+            $session->unique_audits_count = $audited;
+            $session->progress_percent    = $totalScope > 0 ? min(100.0, round(($audited / $totalScope) * 100, 1)) : 0.0;
+            return $session;
+        });
+
         return Inertia::render('Audits/Sessions/Index', [
-            'sessions' => $query->orderByDesc('created_at')->paginate(25)->withQueryString(),
+            'sessions' => $sessions,
             'filters'  => $request->only(['status', 'search']),
         ]);
     }
@@ -63,7 +74,7 @@ class AuditSessionController extends Controller
         ]);
 
         $session = AuditSession::create(array_merge($data, [
-            'code'       => 'AUD-' . strtoupper(Str::random(6)),
+            'code'       => 'AUD-' . strtoupper(\Illuminate\Support\Str::random(6)),
             'status'     => 'draft',
             'created_by' => auth()->id(),
         ]));
@@ -77,22 +88,18 @@ class AuditSessionController extends Controller
     {
         $auditSession->load(['creator', 'audits.asset', 'audits.auditor', 'audits.condition']);
 
-        $totalScope = $this->countScope($auditSession);
-        $audited    = $auditSession->audits()->distinct('asset_id')->count('asset_id');
-        $found      = $auditSession->audits()->where('found_status', 'found')->count();
-        $notFound   = $auditSession->audits()->where('found_status', 'not_found')->count();
-        $mismatches = $auditSession->audits()->where('result', 'mismatch')->count();
+        $progressData = $auditSession->progress;
 
         return Inertia::render('Audits/Sessions/Show', [
             'session' => $auditSession,
             'stats'   => [
-                'total_scope' => $totalScope,
-                'audited'     => $audited,
-                'not_audited' => max(0, $totalScope - $audited),
-                'found'       => $found,
-                'not_found'   => $notFound,
-                'mismatches'  => $mismatches,
-                'progress'    => $totalScope > 0 ? round(($audited / $totalScope) * 100, 1) : 0,
+                'total_scope' => $progressData['total_scope'],
+                'audited'     => $progressData['audited'],
+                'not_audited' => $progressData['not_audited'],
+                'found'       => $progressData['found'],
+                'not_found'   => $progressData['not_found'],
+                'mismatches'  => $progressData['mismatches'],
+                'progress'    => $progressData['percent'],
             ],
         ]);
     }
@@ -154,8 +161,8 @@ class AuditSessionController extends Controller
             return back()->with('error', 'Hanya session In Progress yang dapat diselesaikan.');
         }
 
-        $totalScope = $this->countScope($auditSession);
-        $audited    = $auditSession->audits()->distinct('asset_id')->count('asset_id');
+        $totalScope = $auditSession->total_scope;
+        $audited    = $auditSession->audited_count;
 
         if ($auditSession->completion_mode === 'strict' && $audited < $totalScope) {
             $remaining = $totalScope - $audited;
@@ -178,26 +185,18 @@ class AuditSessionController extends Controller
 
     public function progress(AuditSession $auditSession): JsonResponse
     {
-        $totalScope = $this->countScope($auditSession);
-        $audited    = $auditSession->audits()->distinct('asset_id')->count('asset_id');
+        $progressData = $auditSession->progress;
 
         return response()->json([
-            'total'    => $totalScope,
-            'audited'  => $audited,
-            'progress' => $totalScope > 0 ? round(($audited / $totalScope) * 100, 1) : 0,
+            'total'    => $progressData['total_scope'],
+            'audited'  => $progressData['audited'],
+            'progress' => $progressData['percent'],
             'status'   => $auditSession->status,
         ]);
     }
 
     private function countScope(AuditSession $session): int
     {
-        return match ($session->scope_type) {
-            'department' => Asset::whereIn('department_id', $session->scope_ids ?? [])->count(),
-            'location'   => Asset::whereIn('location_id', $session->scope_ids ?? [])->count(),
-            'category'   => Asset::whereIn('category_id', $session->scope_ids ?? [])->count(),
-            'selection'  => count($session->scope_ids ?? []),
-            default      => Asset::count(),
-        };
+        return $session->total_scope;
     }
 }
-

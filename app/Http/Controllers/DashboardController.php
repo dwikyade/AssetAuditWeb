@@ -35,9 +35,8 @@ class DashboardController extends Controller
             $totalScope       = 0;
 
             if ($activeSession) {
-                $auditedCount = AssetAudit::where('audit_session_id', $activeSession->id)
-                    ->distinct('asset_id')->count('asset_id');
-                $totalScope   = $totalAssets;
+                $auditedCount = $activeSession->audited_count;
+                $totalScope   = $activeSession->total_scope;
             }
 
             // Extra stats
