@@ -149,7 +149,7 @@ export default function ImportShow({ job }) {
                                 <AlertTriangle size={18} />
                                 Detail Error ({job.errors.length} baris pertama)
                             </h3>
-                            <Button variant="secondary" onClick={() => window.location.href = `/import/${job.id}/errors`} size="sm" className="bg-white text-red-700 hover:bg-red-50 border-red-200">
+                            <Button variant="secondary" onClick={() => window.location.href = `/import/${job.id}/download-errors`} size="sm" className="bg-white text-red-700 hover:bg-red-50 border-red-200">
                                 <Download size={14} className="mr-2" />
                                 Unduh Log Error
                             </Button>

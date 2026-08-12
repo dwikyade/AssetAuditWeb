@@ -118,4 +118,3 @@ class AssetAuditController extends Controller
         ]);
     }
 }
-

@@ -26,9 +26,9 @@ class AssetCategoryController extends Controller
         ]);
     }
 
-    public function create(): Response
+    public function create(): RedirectResponse
     {
-        return Inertia::render('Categories/Create');
+        return redirect()->route('categories.index');
     }
 
     public function store(Request $request): RedirectResponse
@@ -46,11 +46,9 @@ class AssetCategoryController extends Controller
         return redirect()->route('categories.index')->with('success', "Kategori {$category->name} berhasil ditambahkan.");
     }
 
-    public function edit(AssetCategory $category): Response
+    public function edit(AssetCategory $category): RedirectResponse
     {
-        return Inertia::render('Categories/Edit', [
-            'category' => $category->loadCount('assets'),
-        ]);
+        return redirect()->route('categories.index');
     }
 
     public function update(Request $request, AssetCategory $category): RedirectResponse

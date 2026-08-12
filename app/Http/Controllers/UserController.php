@@ -15,6 +15,8 @@ class UserController extends Controller
 {
     public function index(Request $request): Response
     {
+        $this->authorize('user.view');
+
         $users = User::with('roles')
             ->when($request->get('search'), fn ($q, $s) =>
                 $q->where('name', 'like', "%{$s}%")->orWhere('email', 'like', "%{$s}%")
@@ -32,6 +34,8 @@ class UserController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        $this->authorize('user.create');
+
         $data = $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
@@ -54,6 +58,8 @@ class UserController extends Controller
 
     public function update(Request $request, User $user): RedirectResponse
     {
+        $this->authorize('user.update');
+
         $data = $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => "required|email|unique:users,email,{$user->id}",
@@ -76,6 +82,8 @@ class UserController extends Controller
 
     public function destroy(User $user): RedirectResponse
     {
+        $this->authorize('user.delete');
+
         if ($user->id === auth()->id()) {
             return back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
         }

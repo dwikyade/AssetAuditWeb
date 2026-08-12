@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Permission\Models\Permission;
@@ -31,7 +32,8 @@ class RoleController extends Controller
             $role->syncPermissions($data['permissions']);
         }
 
-        return back()->with('success', "Role {$role->name} berhasil dibuat.");
+        $roleName = Str::title(str_replace('_', ' ', $role->name));
+        return back()->with('success', "Role {$roleName} berhasil dibuat.");
     }
 
     public function update(Request $request, Role $role): RedirectResponse
@@ -42,7 +44,8 @@ class RoleController extends Controller
 
         $role->syncPermissions($data['permissions'] ?? []);
 
-        return back()->with('success', "Permissions untuk role {$role->name} berhasil diperbarui.");
+        $roleName = Str::title(str_replace('_', ' ', $role->name));
+        return back()->with('success', "Permissions untuk role {$roleName} berhasil diperbarui.");
     }
 
     public function destroy(Role $role): RedirectResponse
@@ -50,8 +53,9 @@ class RoleController extends Controller
         if ($role->name === 'super_admin') {
             return back()->with('error', 'Role Super Admin tidak dapat dihapus.');
         }
+        $roleName = Str::title(str_replace('_', ' ', $role->name));
         $role->delete();
-        return back()->with('success', "Role {$role->name} berhasil dihapus.");
+        return back()->with('success', "Role {$roleName} berhasil dihapus.");
     }
 }
 

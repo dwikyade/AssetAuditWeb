@@ -28,11 +28,9 @@ class LocationController extends Controller
         ]);
     }
 
-    public function create(): Response
+    public function create(): RedirectResponse
     {
-        return Inertia::render('Locations/Create', [
-            'parents' => Location::orderBy('name')->get(['id', 'name', 'code', 'parent_id']),
-        ]);
+        return redirect()->route('locations.index');
     }
 
     public function store(Request $request): RedirectResponse
@@ -51,14 +49,9 @@ class LocationController extends Controller
         return redirect()->route('locations.index')->with('success', "Lokasi {$location->name} berhasil ditambahkan.");
     }
 
-    public function edit(Location $location): Response
+    public function edit(Location $location): RedirectResponse
     {
-        return Inertia::render('Locations/Edit', [
-            'location' => $location->loadCount('assets'),
-            'parents'  => Location::where('id', '!=', $location->id)
-                ->orderBy('name')
-                ->get(['id', 'name', 'code', 'parent_id']),
-        ]);
+        return redirect()->route('locations.index');
     }
 
     public function update(Request $request, Location $location): RedirectResponse
@@ -96,6 +89,11 @@ class LocationController extends Controller
         $location->delete();
 
         return redirect()->route('locations.index')->with('success', 'Lokasi berhasil dihapus.');
+    }
+
+    public function show(Location $location): RedirectResponse
+    {
+        return redirect()->route('locations.index');
     }
 
     /**

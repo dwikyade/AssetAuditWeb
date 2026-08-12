@@ -5,10 +5,10 @@ import {
     BarChart3, Users, Settings, LogOut, ChevronLeft,
     Bell, ChevronDown, Building2, Tag, MapPin, Hash,
     Activity, Shield, CheckCircle2, XCircle, AlertTriangle,
-    Info, X
+    Info, X, Check, ExternalLink, Trash2, BellOff
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { cn, getInitials } from '@/lib/utils';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { cn, getInitials, formatRelativeTime } from '@/lib/utils';
 
 const navItems = [
     {
@@ -91,14 +91,12 @@ const navItems = [
         icon: Users,
         href: '/users',
         permission: 'user.view',
-        roles: ['super_admin'],
     },
     {
         label: 'Roles & Permissions',
         icon: Shield,
         href: '/roles',
-        permission: null,
-        roles: ['super_admin'],
+        permission: 'system.manage',
     },
     {
         label: 'Activity Log',
@@ -110,30 +108,321 @@ const navItems = [
         label: 'Pengaturan',
         icon: Settings,
         href: '/settings',
-        roles: ['super_admin'],
+        permission: 'system.manage',
     },
 ];
 
 const TOAST_DURATION = 5000;
 
-const toastStyles = {
-    success: { title: 'Berhasil', icon: CheckCircle2 },
-    error:   { title: 'Gagal', icon: XCircle },
-    warning: { title: 'Perhatian', icon: AlertTriangle },
-    info:    { title: 'Informasi', icon: Info },
+const toastConfig = {
+    success: {
+        icon: CheckCircle2,
+        gradient: 'from-emerald-500 to-emerald-600',
+        bg: 'bg-emerald-50',
+        border: 'border-emerald-200',
+        text: 'text-emerald-800',
+        iconColor: 'text-emerald-500',
+        progressColor: 'bg-emerald-500',
+    },
+    error: {
+        icon: XCircle,
+        gradient: 'from-rose-500 to-rose-600',
+        bg: 'bg-rose-50',
+        border: 'border-rose-200',
+        text: 'text-rose-800',
+        iconColor: 'text-rose-500',
+        progressColor: 'bg-rose-500',
+    },
+    warning: {
+        icon: AlertTriangle,
+        gradient: 'from-amber-500 to-amber-600',
+        bg: 'bg-amber-50',
+        border: 'border-amber-200',
+        text: 'text-amber-800',
+        iconColor: 'text-amber-500',
+        progressColor: 'bg-amber-500',
+    },
+    info: {
+        icon: Info,
+        gradient: 'from-blue-500 to-blue-600',
+        bg: 'bg-blue-50',
+        border: 'border-blue-200',
+        text: 'text-blue-800',
+        iconColor: 'text-blue-500',
+        progressColor: 'bg-blue-500',
+    },
+};
+
+const notifTypeConfig = {
+    success: { icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-emerald-50', dot: 'bg-emerald-500' },
+    error:   { icon: XCircle, color: 'text-rose-500', bg: 'bg-rose-50', dot: 'bg-rose-500' },
+    warning: { icon: AlertTriangle, color: 'text-amber-500', bg: 'bg-amber-50', dot: 'bg-amber-500' },
+    info:    { icon: Info, color: 'text-blue-500', bg: 'bg-blue-50', dot: 'bg-blue-500' },
+};
+
+const ToastItem = ({ toast, onDismiss }) => {
+    const config = toastConfig[toast.type] ?? toastConfig.info;
+    const Icon = config.icon;
+
+    return (
+        <motion.div
+            layout
+            initial={{ opacity: 0, x: 50, scale: 0.9 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 50, scale: 0.9, filter: 'blur(4px)' }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            className="pointer-events-auto w-[380px] overflow-hidden rounded-2xl bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] border border-gray-100/80"
+        >
+            <div className="relative flex items-start gap-3 p-4">
+                <div className={cn(
+                    "flex items-center justify-center w-10 h-10 rounded-xl shrink-0",
+                    config.bg
+                )}>
+                    <Icon size={20} strokeWidth={2} className={config.iconColor} />
+                </div>
+                <div className="flex-1 min-w-0 pt-0.5">
+                    <p className={cn("text-sm font-semibold", config.text)}>
+                        {toast.type === 'success' ? 'Berhasil' :
+                         toast.type === 'error' ? 'Gagal' :
+                         toast.type === 'warning' ? 'Perhatian' : 'Informasi'}
+                    </p>
+                    <p className="text-sm text-gray-600 mt-0.5 leading-relaxed">{toast.msg}</p>
+                </div>
+                <button
+                    onClick={() => onDismiss(toast.id)}
+                    className="shrink-0 p-1 rounded-lg text-gray-300 transition-all hover:text-gray-500 hover:bg-gray-100"
+                >
+                    <X size={16} />
+                </button>
+            </div>
+            <motion.div
+                className={cn("h-1 rounded-full", config.progressColor)}
+                initial={{ width: '100%' }}
+                animate={{ width: '0%' }}
+                transition={{ duration: TOAST_DURATION / 1000, ease: 'linear' }}
+            />
+        </motion.div>
+    );
+};
+
+const NotificationDropdown = ({ isOpen, onClose, dropdownRef }) => {
+    const [notifications, setNotifications] = useState([]);
+    const [unreadCount, setUnreadCount] = useState(0);
+    const [loading, setLoading] = useState(false);
+
+    const fetchNotifications = useCallback(async () => {
+        setLoading(true);
+        try {
+            const res = await fetch('/notifications/recent', {
+                headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setNotifications(data.notifications || []);
+                setUnreadCount(data.unread_count || 0);
+            }
+        } catch { /* silent */ }
+        setLoading(false);
+    }, []);
+
+    useEffect(() => {
+        if (isOpen) fetchNotifications();
+    }, [isOpen, fetchNotifications]);
+
+    const handleMarkAsRead = async (id) => {
+        try {
+            await fetch(`/notifications/${id}/read`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            });
+            setNotifications(prev => prev.map(n => n.id === id ? { ...n, read_at: new Date().toISOString() } : n));
+            setUnreadCount(prev => Math.max(0, prev - 1));
+        } catch { /* silent */ }
+    };
+
+    const handleMarkAllRead = async () => {
+        try {
+            await fetch('/notifications/read-all', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            });
+            setNotifications(prev => prev.map(n => ({ ...n, read_at: n.read_at || new Date().toISOString() })));
+            setUnreadCount(0);
+        } catch { /* silent */ }
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            await fetch(`/notifications/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            });
+            const removed = notifications.find(n => n.id === id);
+            setNotifications(prev => prev.filter(n => n.id !== id));
+            if (removed && !removed.read_at) setUnreadCount(prev => Math.max(0, prev - 1));
+        } catch { /* silent */ }
+    };
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <>
+                    <div className="fixed inset-0 z-40" onClick={onClose} />
+                    <motion.div
+                        ref={dropdownRef}
+                        initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                        className="absolute right-0 top-full mt-2 z-50 w-[400px] bg-white rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden"
+                    >
+                        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                            <div className="flex items-center gap-2">
+                                <h3 className="text-sm font-bold text-gray-900">Notifikasi</h3>
+                                {unreadCount > 0 && (
+                                    <span className="inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 text-[10px] font-bold text-white bg-rose-500 rounded-full">
+                                        {unreadCount}
+                                    </span>
+                                )}
+                            </div>
+                            {unreadCount > 0 && (
+                                <button
+                                    onClick={handleMarkAllRead}
+                                    className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-gray-900 transition-colors"
+                                >
+                                    <Check size={12} />
+                                    Tandai semua dibaca
+                                </button>
+                            )}
+                        </div>
+
+                        <div className="max-h-[420px] overflow-y-auto overscroll-contain">
+                            {loading && notifications.length === 0 ? (
+                                <div className="flex items-center justify-center py-12">
+                                    <div className="w-6 h-6 border-2 border-gray-200 border-t-gray-900 rounded-full animate-spin" />
+                                </div>
+                            ) : notifications.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center py-12 px-4">
+                                    <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center mb-3">
+                                        <BellOff size={24} className="text-gray-300" />
+                                    </div>
+                                    <p className="text-sm font-medium text-gray-400">Tidak ada notifikasi</p>
+                                    <p className="text-xs text-gray-300 mt-1">Notifikasi baru akan muncul di sini</p>
+                                </div>
+                            ) : (
+                                <div className="divide-y divide-gray-50">
+                                    {notifications.map(notif => {
+                                        const config = notifTypeConfig[notif.type] ?? notifTypeConfig.info;
+                                        const Icon = config.icon;
+                                        const isUnread = !notif.read_at;
+                                        return (
+                                            <motion.div
+                                                key={notif.id}
+                                                layout
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0, height: 0 }}
+                                                className={cn(
+                                                    "group relative flex items-start gap-3 px-5 py-3.5 transition-colors hover:bg-gray-50/80",
+                                                    isUnread && "bg-blue-50/30"
+                                                )}
+                                            >
+                                                {isUnread && (
+                                                    <div className={cn("absolute left-1.5 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full", config.dot)} />
+                                                )}
+                                                <div className={cn("flex items-center justify-center w-9 h-9 rounded-xl shrink-0 mt-0.5", config.bg)}>
+                                                    <Icon size={16} className={config.color} />
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className={cn("text-sm leading-snug", isUnread ? "font-semibold text-gray-900" : "font-medium text-gray-700")}>
+                                                        {notif.title}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-2 leading-relaxed">{notif.message}</p>
+                                                    <p className="text-[11px] text-gray-400 mt-1">{formatRelativeTime(notif.created_at)}</p>
+                                                </div>
+                                                <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 mt-1">
+                                                    {isUnread && (
+                                                        <button
+                                                            onClick={(e) => { e.stopPropagation(); handleMarkAsRead(notif.id); }}
+                                                            className="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                                                            title="Tandai dibaca"
+                                                        >
+                                                            <Check size={13} />
+                                                        </button>
+                                                    )}
+                                                    {notif.link && (
+                                                        <Link
+                                                            href={notif.link}
+                                                            onClick={(e) => { e.stopPropagation(); if (isUnread) handleMarkAsRead(notif.id); onClose(); }}
+                                                            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                                                            title="Lihat detail"
+                                                        >
+                                                            <ExternalLink size={13} />
+                                                        </Link>
+                                                    )}
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); handleDelete(notif.id); }}
+                                                        className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                                                        title="Hapus"
+                                                    >
+                                                        <Trash2 size={13} />
+                                                    </button>
+                                                </div>
+                                            </motion.div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="border-t border-gray-100 px-5 py-3">
+                            <Link
+                                href="/notifications"
+                                onClick={onClose}
+                                className="flex items-center justify-center gap-1.5 w-full text-xs font-semibold text-gray-500 hover:text-gray-900 transition-colors"
+                            >
+                                Lihat semua notifikasi
+                                <ExternalLink size={11} />
+                            </Link>
+                        </div>
+                    </motion.div>
+                </>
+            )}
+        </AnimatePresence>
+    );
 };
 
 export default function AppLayout({ children }) {
-    const { auth, app, flash } = usePage().props;
+    const { auth, app, flash, notificationCount } = usePage().props;
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [openMenus, setOpenMenus] = useState({});
     const [toasts, setToasts] = useState([]);
+    const [notifOpen, setNotifOpen] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(notificationCount ?? 0);
+    const notifRef = useRef(null);
 
     const user = auth?.user;
     const permissions = user?.permissions ?? [];
     const roles = user?.roles ?? [];
 
-    // Handle flash messages as toasts
+    useEffect(() => {
+        setUnreadCount(notificationCount ?? 0);
+    }, [notificationCount]);
+
     useEffect(() => {
         const newToasts = [];
         if (flash?.success) newToasts.push({ type: 'success', msg: flash.success });
@@ -146,14 +435,14 @@ export default function AppLayout({ children }) {
         }
     }, [flash]);
 
-    const dismissToast = (id) => setToasts(prev => prev.filter(t => t.id !== id));
+    const dismissToast = useCallback((id) => setToasts(prev => prev.filter(t => t.id !== id)), []);
 
     useEffect(() => {
-        toasts.forEach(t => {
-            const timer = setTimeout(() => dismissToast(t.id), TOAST_DURATION);
-            return () => clearTimeout(timer);
-        });
-    }, [toasts]);
+        const timers = toasts.map(t =>
+            setTimeout(() => dismissToast(t.id), TOAST_DURATION)
+        );
+        return () => timers.forEach(clearTimeout);
+    }, [toasts, dismissToast]);
 
     const canSee = (item) => {
         if (item.roles && !item.roles.some(r => roles.includes(r))) return false;
@@ -170,7 +459,6 @@ export default function AppLayout({ children }) {
         return item.children.some(c => isActive(c.href));
     };
 
-    // Auto-open parent menu if a child is currently active
     useEffect(() => {
         navItems.forEach(item => {
             if (item.children && item.children.some(c => isActive(c.href))) {
@@ -197,7 +485,6 @@ export default function AppLayout({ children }) {
                 className="flex flex-col flex-shrink-0 h-full"
                 style={{ backgroundColor: 'var(--color-sidebar-bg)' }}
             >
-                {/* Logo area */}
                 <div className="flex items-center justify-between px-4 py-4 border-b" style={{ borderColor: 'var(--color-sidebar-border)' }}>
                     {!sidebarCollapsed && (
                         <motion.div
@@ -231,7 +518,6 @@ export default function AppLayout({ children }) {
                     </button>
                 </div>
 
-                {/* Navigation */}
                 <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-0.5">
                     {navItems.map((item, i) => {
                         if (item.divider) {
@@ -312,7 +598,6 @@ export default function AppLayout({ children }) {
                     })}
                 </nav>
 
-                {/* User footer */}
                 <div className="p-3 border-t" style={{ borderColor: 'var(--color-sidebar-border)' }}>
                     {!sidebarCollapsed ? (
                         <div className="flex items-center gap-3">
@@ -321,7 +606,7 @@ export default function AppLayout({ children }) {
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-white truncate">{user?.name}</p>
-                                <p className="text-xs truncate" style={{ color: 'var(--color-sidebar-text)' }}>{user?.roles?.[0]}</p>
+                                <p className="text-xs truncate" style={{ color: 'var(--color-sidebar-text)' }}>{user?.email}</p>
                             </div>
                             <button
                                 onClick={handleLogout}
@@ -358,9 +643,42 @@ export default function AppLayout({ children }) {
                         </nav>
                     </div>
                     <div className="flex items-center gap-3">
-                        <button className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors">
-                            <Bell size={18} />
-                        </button>
+                        <div className="relative">
+                            <button
+                                onClick={() => setNotifOpen(!notifOpen)}
+                                className={cn(
+                                    "relative p-2 rounded-xl transition-all",
+                                    notifOpen
+                                        ? "bg-gray-900 text-white shadow-lg"
+                                        : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                                )}
+                            >
+                                <Bell size={18} />
+                                <AnimatePresence>
+                                    {unreadCount > 0 && (
+                                        <motion.span
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            exit={{ scale: 0 }}
+                                            className="absolute -top-0.5 -right-0.5 flex items-center justify-center h-[18px] min-w-[18px] px-1 text-[10px] font-bold text-white bg-rose-500 rounded-full ring-2 ring-white"
+                                        >
+                                            {unreadCount > 99 ? '99+' : unreadCount}
+                                        </motion.span>
+                                    )}
+                                </AnimatePresence>
+                                {unreadCount > 0 && (
+                                    <span className="absolute -top-0.5 -right-0.5 flex h-[18px] min-w-[18px]">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-30" />
+                                    </span>
+                                )}
+                            </button>
+                            <NotificationDropdown
+                                isOpen={notifOpen}
+                                onClose={() => setNotifOpen(false)}
+                                dropdownRef={notifRef}
+                            />
+                        </div>
+                        <div className="w-px h-6 bg-gray-200" />
                         <div className="flex items-center gap-2">
                             <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-white text-xs font-semibold">
                                 {getInitials(user?.name ?? 'U')}
@@ -377,41 +695,11 @@ export default function AppLayout({ children }) {
             </div>
 
             {/* Toast notifications */}
-            <div className="pointer-events-none fixed inset-x-0 top-12 z-50 flex flex-col items-center gap-3 px-4">
-                <AnimatePresence>
-                    {toasts.map(toast => {
-                        const s = toastStyles[toast.type] ?? toastStyles.info;
-                        const Icon = s.icon;
-                        return (
-                            <motion.div
-                                key={toast.id}
-                                initial={{ opacity: 0, y: -20, scale: 0.95 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                exit={{ opacity: 0, y: -10, scale: 0.95, filter: 'blur(2px)' }}
-                                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                                className="pointer-events-auto flex items-center gap-3 rounded-full bg-white/95 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)] backdrop-blur-md px-4 py-3"
-                            >
-                                <div className={cn(
-                                    "flex items-center justify-center shrink-0",
-                                    toast.type === 'success' ? 'text-emerald-500' :
-                                    toast.type === 'error' ? 'text-rose-500' :
-                                    toast.type === 'warning' ? 'text-amber-500' :
-                                    'text-blue-500'
-                                )}>
-                                    <Icon size={18} strokeWidth={2.5} />
-                                </div>
-                                <div className="text-sm font-medium text-gray-800 mr-2">
-                                    {toast.msg}
-                                </div>
-                                <button
-                                    onClick={() => dismissToast(toast.id)}
-                                    className="shrink-0 p-1 text-gray-300 transition-colors hover:text-gray-500"
-                                >
-                                    <X size={14} strokeWidth={2.5} />
-                                </button>
-                            </motion.div>
-                        );
-                    })}
+            <div className="pointer-events-none fixed inset-y-0 right-0 z-50 flex flex-col items-end gap-3 p-6 pt-20">
+                <AnimatePresence mode="popLayout">
+                    {toasts.map(toast => (
+                        <ToastItem key={toast.id} toast={toast} onDismiss={dismissToast} />
+                    ))}
                 </AnimatePresence>
             </div>
         </div>

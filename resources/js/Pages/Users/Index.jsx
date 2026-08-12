@@ -1,4 +1,4 @@
-import { Head, Link, router, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import { Button, Input, Label, Modal, Select } from '@/Components/UI';
 import { Search, Plus, Edit, Trash, Users, Eye, EyeOff, Save } from 'lucide-react';
@@ -112,6 +112,12 @@ function UserForm({ isOpen, onClose, initialData = null, roles = [] }) {
 }
 
 export default function UsersIndex({ users, filters, roles }) {
+    const { auth } = usePage().props;
+    const permissions = auth?.user?.permissions ?? [];
+    const canCreate = permissions.includes('user.create');
+    const canUpdate = permissions.includes('user.update');
+    const canDelete = permissions.includes('user.delete');
+
     const [search, setSearch] = useState(filters.search || '');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editData, setEditData] = useState(null);
@@ -157,9 +163,11 @@ export default function UsersIndex({ users, filters, roles }) {
                         <h1 className="text-2xl font-bold text-gray-900">Pengguna</h1>
                         <p className="text-sm text-gray-500">Kelola akun pengguna dan akses sistem.</p>
                     </div>
-                    <Button onClick={openCreateModal}>
-                        <Plus size={16} className="mr-2" /> Tambah Pengguna
-                    </Button>
+                    {canCreate && (
+                        <Button onClick={openCreateModal}>
+                            <Plus size={16} className="mr-2" /> Tambah Pengguna
+                        </Button>
+                    )}
                 </div>
 
                 <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -218,14 +226,18 @@ export default function UsersIndex({ users, filters, roles }) {
                                             <td className="px-6 py-3 text-center text-gray-500">
                                                 {new Date(user.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                                             </td>
-                                            <td className="px-6 py-3 text-right">
+                                             <td className="px-6 py-3 text-right">
                                                 <div className="flex items-center justify-end gap-2">
-                                                    <Button variant="ghost" size="icon" onClick={() => openEditModal(user)} title="Edit">
-                                                        <Edit size={16} className="text-amber-500" />
-                                                    </Button>
-                                                    <Button variant="ghost" size="icon" onClick={() => handleDelete(user.id, user.name)} title="Hapus">
-                                                        <Trash size={16} className="text-red-500" />
-                                                    </Button>
+                                                    {canUpdate && (
+                                                        <Button variant="ghost" size="icon" onClick={() => openEditModal(user)} title="Edit">
+                                                            <Edit size={16} className="text-amber-500" />
+                                                        </Button>
+                                                    )}
+                                                    {canDelete && (
+                                                        <Button variant="ghost" size="icon" onClick={() => handleDelete(user.id, user.name)} title="Hapus">
+                                                            <Trash size={16} className="text-red-500" />
+                                                        </Button>
+                                                    )}
                                                 </div>
                                             </td>
                                         </tr>
