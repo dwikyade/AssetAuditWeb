@@ -66,9 +66,13 @@ class LocationController extends Controller
             'is_active'   => 'boolean',
         ]);
 
-        // Prevent circular reference
-        if ($data['parent_id'] === $location->id) {
+        // Prevent direct and indirect circular references
+        if (!empty($data['parent_id']) && (int) $data['parent_id'] === $location->id) {
             return back()->withErrors(['parent_id' => 'Lokasi tidak dapat menjadi parent-nya sendiri.']);
+        }
+
+        if (!empty($data['parent_id']) && $this->isDescendant($location, (int) $data['parent_id'])) {
+            return back()->withErrors(['parent_id' => 'Lokasi tidak dapat menggunakan sub-lokasi sebagai parent.']);
         }
 
         $old = $location->toArray();
@@ -98,6 +102,27 @@ class LocationController extends Controller
     public function show(Location $location): RedirectResponse
     {
         return redirect()->route('locations.index');
+    }
+
+    private function isDescendant(Location $location, int $parentId): bool
+    {
+        $parent = Location::find($parentId);
+        $visited = [];
+
+        while ($parent) {
+            if ($parent->id === $location->id) {
+                return true;
+            }
+
+            if (isset($visited[$parent->id])) {
+                return true;
+            }
+
+            $visited[$parent->id] = true;
+            $parent = $parent->parent;
+        }
+
+        return false;
     }
 
     /**

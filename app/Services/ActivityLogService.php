@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\ActivityLog;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Request;
 
 class ActivityLogService
@@ -34,6 +35,8 @@ class ActivityLogService
                 'description' => $description,
                 'created_at'  => now(),
             ]);
+
+            Cache::forget('activity_log_modules');
         } catch (\Throwable $e) {
             // Don't let logging failure break the main flow
             logger()->error('Failed to log activity: ' . $e->getMessage());

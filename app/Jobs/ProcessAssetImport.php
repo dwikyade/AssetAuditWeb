@@ -33,14 +33,15 @@ class ProcessAssetImport implements ShouldQueue
         $job = $this->importJob;
 
         try {
+            $collection = (new FastExcel)->import(Storage::path($job->file_path));
             $totalRows = count($collection);
+
             $job->update([
                 'status'     => 'processing',
                 'started_at' => now(),
                 'total_rows' => $totalRows > 0 ? $totalRows : $job->total_rows,
             ]);
 
-            $collection = (new FastExcel)->import(Storage::path($job->file_path));
             $mapping    = $job->column_mapping ?? [];
             $mode       = $job->mode ?? 'create_only';
 
@@ -194,8 +195,32 @@ class ProcessAssetImport implements ShouldQueue
     private function parseNumber($value): float
     {
         if ($value === null || $value === '') return 0;
+
+        if (is_numeric($value)) {
+            return (float) $value;
+        }
+
         $cleaned = preg_replace('/[^0-9.,\-]/', '', (string) $value);
-        $cleaned = str_replace(',', '.', str_replace('.', '', $cleaned));
+
+        if ($cleaned === '' || $cleaned === '-') {
+            return 0;
+        }
+
+        $lastComma = strrpos($cleaned, ',');
+        $lastDot = strrpos($cleaned, '.');
+
+        if ($lastComma !== false && $lastDot !== false) {
+            $decimalSeparator = $lastComma > $lastDot ? ',' : '.';
+            $thousandSeparator = $decimalSeparator === ',' ? '.' : ',';
+            $cleaned = str_replace($thousandSeparator, '', $cleaned);
+            $cleaned = str_replace($decimalSeparator, '.', $cleaned);
+        } elseif ($lastComma !== false) {
+            $cleaned = str_replace('.', '', $cleaned);
+            $cleaned = str_replace(',', '.', $cleaned);
+        } else {
+            $cleaned = str_replace(',', '', $cleaned);
+        }
+
         return (float) $cleaned;
     }
 

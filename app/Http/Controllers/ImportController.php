@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Jobs\ProcessAssetImport;
 use App\Models\ImportJob;
 use App\Services\ActivityLogService;
-use App\Services\CacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -139,11 +138,10 @@ class ImportController extends Controller
 
         ActivityLogService::log('start', 'import', get_class($job), $job->id, description: "Import {$job->file_name} dimulai (mode: {$job->mode})");
 
-        (new ProcessAssetImport($job->fresh()))->handle();
-        CacheService::clearDashboardCache();
-        CacheService::clearMasterData();
+        $job->update(['status' => 'queued']);
+        ProcessAssetImport::dispatch($job->fresh());
 
-        return redirect()->route('import.show', $job)->with('info', 'Import selesai diproses.');
+        return redirect()->route('import.show', $job)->with('info', 'Import sedang diproses di background.');
     }
 
     public function show(ImportJob $job): Response

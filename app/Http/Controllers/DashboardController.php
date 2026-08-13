@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ActivityLog;
 use App\Models\Asset;
 use App\Models\AssetAudit;
+use App\Models\AssetStatus;
 use App\Models\AuditSession;
 use App\Models\Department;
 use App\Models\ImportJob;
@@ -161,10 +162,14 @@ class DashboardController extends Controller
         }
 
         if ($stats['lost_assets'] > 0) {
+            $lostStatusId = AssetStatus::where('code', 'lost')->value('id');
+
             $alerts[] = [
                 'type'    => 'warning',
                 'message' => "{$stats['lost_assets']} aset berstatus Lost.",
-                'link'    => route('assets.index') . '?status=lost',
+                'link'    => $lostStatusId
+                    ? route('assets.index', ['status_id' => $lostStatusId])
+                    : route('assets.index'),
             ];
         }
 

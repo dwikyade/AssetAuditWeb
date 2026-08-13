@@ -20,6 +20,8 @@ class QrController extends Controller
 
         // If not logged in, redirect to login then come back
         if (!auth()->check()) {
+            session()->put('url.intended', route('qr.redirect', $token));
+
             return redirect()->route('login')->with('info', 'Silakan login untuk melihat detail aset.');
         }
 
