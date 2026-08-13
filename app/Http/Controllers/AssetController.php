@@ -12,6 +12,7 @@ use App\Models\Department;
 use App\Models\Location;
 use App\Services\ActivityLogService;
 use App\Services\AssetCodeService;
+use App\Services\CacheService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -47,7 +48,14 @@ class AssetController extends Controller
         $this->authorize('asset.view');
 
         $query = Asset::query()
-            ->with(['category', 'department', 'location', 'status', 'condition', 'latestAudit'])
+            ->with([
+                'category:id,name,code',
+                'department:id,name,code',
+                'location:id,name,code',
+                'status:id,name,color,code',
+                'condition:id,name,color,code',
+                'latestAudit'
+            ])
             ->withCount('audits');
 
         // Search
@@ -83,14 +91,16 @@ class AssetController extends Controller
         $perPage = in_array($request->get('per_page'), [25, 50, 100]) ? $request->get('per_page') : 25;
         $assets  = $query->paginate($perPage)->withQueryString();
 
+        $master = CacheService::getMasterData();
+
         return Inertia::render('Assets/Index', [
             'assets'      => $assets,
             'filters'     => $request->only(['search', 'category_id', 'department_id', 'location_id', 'status_id', 'condition_id', 'sort_by', 'sort_dir', 'per_page']),
-            'categories'  => AssetCategory::where('is_active', true)->orderBy('name')->get(['id', 'name']),
-            'departments' => Department::where('is_active', true)->orderBy('name')->get(['id', 'name']),
-            'locations'   => Location::where('is_active', true)->orderBy('name')->get(['id', 'name', 'code']),
-            'statuses'    => AssetStatus::where('is_active', true)->orderBy('sort_order')->get(['id', 'name', 'color']),
-            'conditions'  => AssetCondition::where('is_active', true)->orderBy('sort_order')->get(['id', 'name', 'color']),
+            'categories'  => $master['categories'],
+            'departments' => $master['departments'],
+            'locations'   => $master['locations'],
+            'statuses'    => $master['statuses'],
+            'conditions'  => $master['conditions'],
         ]);
     }
 
@@ -98,13 +108,15 @@ class AssetController extends Controller
     {
         $this->authorize('asset.create');
 
+        $master = CacheService::getMasterData();
+
         return Inertia::render('Assets/Create', [
-            'categories'  => AssetCategory::where('is_active', true)->orderBy('name')->get(['id', 'name', 'code']),
-            'departments' => Department::where('is_active', true)->orderBy('name')->get(['id', 'name', 'code']),
-            'locations'   => Location::where('is_active', true)->orderBy('name')->get(['id', 'name', 'code', 'parent_id']),
-            'statuses'    => AssetStatus::where('is_active', true)->orderBy('sort_order')->get(['id', 'name', 'color', 'is_default']),
-            'conditions'  => AssetCondition::where('is_active', true)->orderBy('sort_order')->get(['id', 'name', 'color', 'is_default']),
-            'prefixes'    => AssetCodePrefix::where('is_active', true)->orderBy('prefix')->get(['id', 'prefix', 'name', 'format', 'next_number', 'number_length']),
+            'categories'  => $master['categories'],
+            'departments' => $master['departments'],
+            'locations'   => $master['locations'],
+            'statuses'    => $master['statuses'],
+            'conditions'  => $master['conditions'],
+            'prefixes'    => $master['prefixes'],
         ]);
     }
 
@@ -175,7 +187,7 @@ class AssetController extends Controller
             ]);
 
             // Invalidate dashboard cache
-            Cache::forget('dashboard_stats');
+            CacheService::clearDashboardCache();
 
             ActivityLogService::logModelChange('create', 'asset', $asset, [], $asset->toArray(), "Asset {$asset->asset_code} dibuat");
 
@@ -203,13 +215,15 @@ class AssetController extends Controller
     {
         $this->authorize('asset.update');
 
+        $master = CacheService::getMasterData();
+
         return Inertia::render('Assets/Edit', [
             'asset'       => $asset->load(['category', 'department', 'location', 'status', 'condition']),
-            'categories'  => AssetCategory::where('is_active', true)->orderBy('name')->get(['id', 'name']),
-            'departments' => Department::where('is_active', true)->orderBy('name')->get(['id', 'name']),
-            'locations'   => Location::where('is_active', true)->orderBy('name')->get(['id', 'name', 'parent_id']),
-            'statuses'    => AssetStatus::where('is_active', true)->orderBy('sort_order')->get(['id', 'name', 'color']),
-            'conditions'  => AssetCondition::where('is_active', true)->orderBy('sort_order')->get(['id', 'name', 'color']),
+            'categories'  => $master['categories'],
+            'departments' => $master['departments'],
+            'locations'   => $master['locations'],
+            'statuses'    => $master['statuses'],
+            'conditions'  => $master['conditions'],
         ]);
     }
 
@@ -263,7 +277,7 @@ class AssetController extends Controller
                 ]);
             }
 
-            Cache::forget('dashboard_stats');
+            CacheService::clearDashboardCache();
             ActivityLogService::logModelChange('update', 'asset', $asset, $oldValues, $asset->toArray(), "Asset {$asset->asset_code} diperbarui");
 
             return redirect()->route('assets.show', $asset)->with('success', "Asset {$asset->asset_code} berhasil diperbarui.");
@@ -278,7 +292,7 @@ class AssetController extends Controller
         ActivityLogService::logModelChange('delete', 'asset', $asset, $asset->toArray(), [], "Asset {$code} dihapus (soft delete)");
 
         $asset->delete(); // Soft delete
-        Cache::forget('dashboard_stats');
+        CacheService::clearDashboardCache();
 
         return redirect()->route('assets.index')->with('success', "Asset {$code} berhasil dihapus.");
     }

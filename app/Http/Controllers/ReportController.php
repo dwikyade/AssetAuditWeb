@@ -10,6 +10,7 @@ use App\Models\AssetStatus;
 use App\Models\AuditSession;
 use App\Models\Department;
 use App\Models\Location;
+use App\Services\CacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -17,7 +18,6 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Rap2hpoutre\FastExcel\FastExcel;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-
 
 class ReportController extends Controller
 {
@@ -28,7 +28,13 @@ class ReportController extends Controller
 
     public function assetRegister(Request $request): Response
     {
-        $query = Asset::with(['category', 'department', 'location', 'status', 'condition'])
+        $query = Asset::with([
+            'category:id,name,code',
+            'department:id,name,code',
+            'location:id,name,code',
+            'status:id,name,color',
+            'condition:id,name,color'
+        ])
             ->when($request->get('category_id'), fn ($q, $v) => $q->where('category_id', $v))
             ->when($request->get('department_id'), fn ($q, $v) => $q->where('department_id', $v))
             ->when($request->get('status_id'), fn ($q, $v) => $q->where('status_id', $v));
@@ -46,7 +52,7 @@ class ReportController extends Controller
 
     public function audit(Request $request): Response
     {
-        $sessions = AuditSession::with('creator')
+        $sessions = AuditSession::with('creator:id,name,email')
             ->when($request->get('status'), fn ($q, $v) => $q->where('status', $v))
             ->orderByDesc('created_at')
             ->paginate(25);
@@ -67,7 +73,11 @@ class ReportController extends Controller
 
         if ($session) {
             $auditedIds   = AssetAudit::where('audit_session_id', $session->id)->pluck('asset_id');
-            $missingAssets = Asset::with(['category', 'department', 'location'])
+            $missingAssets = Asset::with([
+                'category:id,name',
+                'department:id,name',
+                'location:id,name'
+            ])
                 ->whereNotIn('id', $auditedIds)
                 ->paginate(50);
         }
@@ -80,7 +90,14 @@ class ReportController extends Controller
 
     public function mismatch(Request $request): Response
     {
-        $audits = AssetAudit::with(['asset.category', 'asset.location', 'auditor', 'condition', 'location'])
+        $audits = AssetAudit::with([
+            'asset:id,asset_code,asset_name,category_id,location_id',
+            'asset.category:id,name',
+            'asset.location:id,name',
+            'auditor:id,name',
+            'condition:id,name,color',
+            'location:id,name'
+        ])
             ->where('result', 'mismatch')
             ->when($request->get('session_id'), fn ($q, $v) => $q->where('audit_session_id', $v))
             ->orderByDesc('audit_time')
@@ -102,7 +119,11 @@ class ReportController extends Controller
 
         return Inertia::render('Reports/ConditionReport', [
             'by_condition' => $byCondition,
-            'assets'       => Asset::with(['category', 'location', 'condition'])
+            'assets'       => Asset::with([
+                'category:id,name',
+                'location:id,name',
+                'condition:id,name,color'
+            ])
                 ->when($request->get('condition_id'), fn ($q, $v) => $q->where('condition_id', $v))
                 ->paginate(50)->withQueryString(),
             'filters'      => $request->only(['condition_id']),
@@ -151,7 +172,13 @@ class ReportController extends Controller
 
     public function qrExportPage(Request $request): Response
     {
-        $query = Asset::query()->with(['category', 'department', 'location', 'status', 'condition']);
+        $query = Asset::query()->with([
+            'category:id,name',
+            'department:id,name',
+            'location:id,name',
+            'status:id,name,color',
+            'condition:id,name,color'
+        ]);
 
         if ($search = $request->get('search')) {
             $query->search($search);
@@ -167,20 +194,22 @@ class ReportController extends Controller
             'category_id', 'department_id', 'location_id', 'status_id', 'condition_id',
         ]);
 
+        $master = CacheService::getMasterData();
+
         return Inertia::render('Export/QrExport', [
             'assets'      => $assets,
-            'categories'  => AssetCategory::where('is_active', true)->orderBy('name')->get(['id', 'name']),
-            'departments' => Department::where('is_active', true)->orderBy('name')->get(['id', 'name']),
-            'locations'   => Location::where('is_active', true)->orderBy('name')->get(['id', 'name']),
-            'statuses'    => AssetStatus::where('is_active', true)->orderBy('sort_order')->get(['id', 'name', 'color']),
-            'conditions'  => AssetCondition::where('is_active', true)->orderBy('sort_order')->get(['id', 'name', 'color']),
+            'categories'  => $master['categories'],
+            'departments' => $master['departments'],
+            'locations'   => $master['locations'],
+            'statuses'    => $master['statuses'],
+            'conditions'  => $master['conditions'],
             'filters'     => $request->only(['search', 'category_id', 'department_id', 'location_id', 'status_id', 'condition_id']),
         ]);
     }
 
     public function exportAssets(Request $request)
     {
-        $assets = Asset::with(['category', 'department', 'location', 'status', 'condition'])
+        $assets = Asset::with(['category:id,name', 'department:id,name', 'location:id,name', 'status:id,name', 'condition:id,name'])
             ->orderBy('asset_code')
             ->get()
             ->map(fn ($a, $i) => [
@@ -204,7 +233,13 @@ class ReportController extends Controller
     public function exportAudit(Request $request)
     {
         $sessionId = $request->get('session_id');
-        $audits    = AssetAudit::with(['asset', 'auditor', 'condition', 'location', 'auditSession'])
+        $audits    = AssetAudit::with([
+            'asset:id,asset_code,asset_name',
+            'auditor:id,name',
+            'condition:id,name',
+            'location:id,name',
+            'auditSession:id,name'
+        ])
             ->when($sessionId, fn ($q) => $q->where('audit_session_id', $sessionId))
             ->orderByDesc('audit_time')
             ->get()
@@ -240,7 +275,7 @@ class ReportController extends Controller
 
         $assets = Asset::whereIn('id', $ids)
             ->orderBy('asset_code')
-            ->with(['category', 'location'])
+            ->with(['category:id,name', 'location:id,name'])
             ->get(['id', 'asset_code', 'asset_name', 'qr_token', 'category_id', 'location_id']);
 
         if ($assets->isEmpty()) {
@@ -272,4 +307,3 @@ class ReportController extends Controller
         return response()->json($result);
     }
 }
-

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -11,12 +12,14 @@ class ActivityLogController extends Controller
 {
     public function index(Request $request): Response
     {
-        $query = ActivityLog::with('user')->orderByDesc('created_at');
+        $query = ActivityLog::with('user:id,name,email')->orderByDesc('created_at');
 
         if ($search = $request->get('search')) {
-            $query->where('description', 'like', "%{$search}%")
+            $query->where(function ($q) use ($search) {
+                $q->where('description', 'like', "%{$search}%")
                   ->orWhere('action', 'like', "%{$search}%")
                   ->orWhere('module', 'like', "%{$search}%");
+            });
         }
 
         if ($module = $request->get('module')) {
@@ -35,11 +38,14 @@ class ActivityLogController extends Controller
             $query->whereDate('created_at', '<=', $dateTo);
         }
 
+        $modules = Cache::remember('activity_log_modules', 600, function () {
+            return ActivityLog::distinct()->pluck('module')->sort()->values();
+        });
+
         return Inertia::render('ActivityLogs/Index', [
             'logs'    => $query->paginate(50)->withQueryString(),
             'filters' => $request->only(['search', 'module', 'user_id', 'date_from', 'date_to']),
-            'modules' => ActivityLog::distinct()->pluck('module')->sort()->values(),
+            'modules' => $modules,
         ]);
     }
 }
-

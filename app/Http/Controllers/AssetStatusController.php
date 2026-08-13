@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AssetStatus;
 use App\Services\ActivityLogService;
+use App\Services\CacheService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -29,6 +30,7 @@ class AssetStatusController extends Controller
         ]);
 
         $status = AssetStatus::create(array_merge($data, ['is_active' => true]));
+        CacheService::clearMasterData();
         ActivityLogService::log('create', 'status', get_class($status), $status->id, description: "Status {$status->name} dibuat");
 
         return back()->with('success', "Status {$status->name} berhasil ditambahkan.");
@@ -45,6 +47,7 @@ class AssetStatusController extends Controller
         ]);
 
         $assetStatus->update($data);
+        CacheService::clearMasterData();
         return back()->with('success', "Status {$assetStatus->name} berhasil diperbarui.");
     }
 
@@ -57,6 +60,7 @@ class AssetStatusController extends Controller
             return back()->with('error', 'Status default tidak dapat dihapus.');
         }
         $assetStatus->delete();
+        CacheService::clearMasterData();
         return back()->with('success', 'Status berhasil dihapus.');
     }
 }

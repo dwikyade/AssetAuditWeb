@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Department;
 use App\Services\ActivityLogService;
+use App\Services\CacheService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -41,6 +42,7 @@ class DepartmentController extends Controller
         ]);
 
         $dept = Department::create($data);
+        CacheService::clearMasterData();
         ActivityLogService::log('create', 'department', get_class($dept), $dept->id, description: "Departemen {$dept->name} dibuat");
 
         return redirect()->route('departments.index')->with('success', "Departemen {$dept->name} berhasil ditambahkan.");
@@ -62,6 +64,7 @@ class DepartmentController extends Controller
 
         $old = $department->toArray();
         $department->update($data);
+        CacheService::clearMasterData();
         ActivityLogService::logModelChange('update', 'department', $department, $old, $department->toArray());
 
         return redirect()->route('departments.index')->with('success', "Departemen {$department->name} berhasil diperbarui.");
@@ -75,6 +78,7 @@ class DepartmentController extends Controller
 
         ActivityLogService::log('delete', 'department', get_class($department), $department->id, description: "Departemen {$department->name} dihapus");
         $department->delete();
+        CacheService::clearMasterData();
 
         return redirect()->route('departments.index')->with('success', 'Departemen berhasil dihapus.');
     }

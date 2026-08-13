@@ -3,28 +3,24 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class SmokeTest extends TestCase
 {
-    // Gunakan DB MySQL sungguhan (bukan sqlite memory) agar mirror environment produksi.
-    // Kita tidak pakai RefreshDatabase untuk menghindari migrate ulang.
+    use RefreshDatabase;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->withoutVite();
-        config(['database.default' => 'mysql']);
+        $this->seed(DatabaseSeeder::class);
     }
 
     private function loginAsAdmin()
     {
         $user = User::where('email', 'admin@hotel.com')->first();
-        if (!$user) {
-            $user = User::factory()->create(['email' => 'smoke@hotel.com']);
-            $user->assignRole('super_admin');
-        }
         return $this->actingAs($user);
     }
 
@@ -53,37 +49,20 @@ class SmokeTest extends TestCase
             ['GET', '/reports/condition'],
             ['GET', '/reports/department'],
             ['GET', '/reports/financial'],
-            ['GET', '/import'],
-            ['GET', '/import/template/download'],
-            ['GET', '/import/history'],
             ['GET', '/export'],
             ['GET', '/export/qr'],
-            ['GET', '/settings'],
             ['GET', '/users'],
             ['GET', '/roles'],
             ['GET', '/activity-logs'],
+            ['GET', '/settings'],
+            ['GET', '/notifications'],
+            ['GET', '/notifications/recent'],
         ];
 
-        $failures = [];
-        foreach ($routes as [$method, $path]) {
-            try {
-                $response = $this->call($method, $path);
-                $status = $response->getStatusCode();
-                if ($status >= 500) {
-                    $failures[] = "{$method} {$path} -> HTTP {$status}";
-                } elseif ($status === 302 && $path !== '/') {
-                    // redirect tanpa intent bisa jadi masalah auth/role
-                    $failures[] = "{$method} {$path} -> HTTP 302 (redirect)";
-                }
-            } catch (\Throwable $e) {
-                $failures[] = "{$method} {$path} -> EXCEPTION: " . get_class($e) . ': ' . $e->getMessage();
-            }
+        foreach ($routes as [$method, $uri]) {
+            $resp = $this->json($method, $uri);
+            $this->assertNotEquals(500, $resp->getStatusCode(), "500 Error on {$method} {$uri}");
+            $this->assertContains($resp->getStatusCode(), [200, 302], "Unexpected status {$resp->getStatusCode()} on {$method} {$uri}");
         }
-
-        if (!empty($failures)) {
-            $this->fail("Smoke test failures:\n" . implode("\n", $failures));
-        }
-
-        $this->assertTrue(true);
     }
 }

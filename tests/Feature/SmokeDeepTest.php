@@ -7,6 +7,7 @@ use App\Models\AssetAudit;
 use App\Models\AssetCondition;
 use App\Models\AuditSession;
 use App\Models\User;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use Spatie\Permission\Models\Role;
@@ -14,11 +15,13 @@ use Tests\TestCase;
 
 class SmokeDeepTest extends TestCase
 {
+    use RefreshDatabase;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->withoutVite();
-        config(['database.default' => 'mysql']);
+        $this->seed(DatabaseSeeder::class);
     }
 
     private function admin()

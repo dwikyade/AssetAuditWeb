@@ -8,6 +8,7 @@ use App\Models\AssetCondition;
 use App\Models\AuditSession;
 use App\Models\Location;
 use App\Services\ActivityLogService;
+use App\Services\CacheService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -30,11 +31,12 @@ class AssetAuditController extends Controller
 
         $uniqueAuditedIds = array_unique($auditedAssetIds);
         $totalScope = $auditSession->total_scope;
+        $master = CacheService::getMasterData();
 
         return Inertia::render('Audits/Conduct', [
-            'session'         => $auditSession->load('creator'),
-            'conditions'      => AssetCondition::where('is_active', true)->orderBy('sort_order')->get(['id', 'name', 'color']),
-            'locations'       => Location::where('is_active', true)->orderBy('name')->get(['id', 'name', 'code']),
+            'session'         => $auditSession->load('creator:id,name,email'),
+            'conditions'      => $master['conditions'],
+            'locations'       => $master['locations'],
             'audited_ids'     => array_values($uniqueAuditedIds),
             'total_scope'     => $totalScope,
             'audited_count'   => count($uniqueAuditedIds),
@@ -95,6 +97,8 @@ class AssetAuditController extends Controller
         if ($data['found_status'] === 'found' && $data['condition_id']) {
             $asset->update(['condition_id' => $data['condition_id']]);
         }
+
+        CacheService::clearDashboardCache();
 
         ActivityLogService::log(
             'audit', 'asset', get_class($asset), $asset->id,

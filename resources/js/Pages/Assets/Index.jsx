@@ -68,9 +68,9 @@ export default function AssetIndex({ assets, filters, categories, departments, l
             if (search !== (filters.search || '')) {
                 router.get('/assets', { ...filters, search }, { preserveState: true, replace: true });
             }
-        }, 500);
+        }, 400);
         return () => clearTimeout(timer);
-    }, [search, filters]);
+    }, [search, filters.search]);
 
     const handleFilterChange = async (key, value) => {
         router.get('/assets', { ...filters, [key]: value }, { preserveState: true });

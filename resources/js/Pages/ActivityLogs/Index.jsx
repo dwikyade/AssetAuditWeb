@@ -22,10 +22,17 @@ export default function ActivityLogsIndex({ logs, filters, modules }) {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            router.get('/activity-logs', { search, module, date_from: dateFrom, date_to: dateTo }, { preserveState: true, replace: true });
-        }, 500);
+            if (
+                search !== (filters.search || '') ||
+                module !== (filters.module || '') ||
+                dateFrom !== (filters.date_from || '') ||
+                dateTo !== (filters.date_to || '')
+            ) {
+                router.get('/activity-logs', { search, module, date_from: dateFrom, date_to: dateTo }, { preserveState: true, replace: true });
+            }
+        }, 400);
         return () => clearTimeout(timer);
-    }, [search, module, dateFrom, dateTo]);
+    }, [search, module, dateFrom, dateTo, filters]);
 
     const formatTime = (dt) => {
         const d = new Date(dt);

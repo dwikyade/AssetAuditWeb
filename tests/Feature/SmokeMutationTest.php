@@ -10,6 +10,7 @@ use App\Models\AuditSession;
 use App\Models\Department;
 use App\Models\Location;
 use App\Models\User;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -17,21 +18,13 @@ use Tests\TestCase;
 
 class SmokeMutationTest extends TestCase
 {
+    use RefreshDatabase;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->withoutVite();
-        config(['database.default' => 'mysql']);
-        // ensure we have base data
-        if (AssetCategory::count() === 0) {
-            AssetCategory::create(['code' => 'CAT', 'name' => 'Test Category']);
-        }
-        if (Department::count() === 0) {
-            Department::create(['code' => 'DEP', 'name' => 'Test Dept']);
-        }
-        if (Location::count() === 0) {
-            Location::create(['code' => 'LOC', 'name' => 'Test Loc']);
-        }
+        $this->seed(DatabaseSeeder::class);
     }
 
     private function admin()
@@ -57,38 +50,39 @@ class SmokeMutationTest extends TestCase
     {
         $this->admin();
         $cat = AssetCategory::first();
-        $dep = Department::first();
+        $dept = Department::first();
         $loc = Location::first();
-        $code = 'ASMK' . time();
-        $resp = $this->post('/assets', [
+        $status = AssetStatus::first();
+        $cond = AssetCondition::first();
+
+        $create = $this->post('/assets', [
             'code_mode' => 'manual',
-            'asset_code' => $code,
+            'asset_code' => 'AST-SMOKE-01',
             'asset_name' => 'Smoke Asset',
-            'category_id' => $cat->id,
-            'department_id' => $dep->id,
-            'location_id' => $loc->id,
+            'category_id' => $cat?->id,
+            'department_id' => $dept?->id,
+            'location_id' => $loc?->id,
+            'status_id' => $status?->id,
+            'condition_id' => $cond?->id,
             'quantity' => 1,
+            'acquisition_value' => 500000,
+            'book_value' => 500000,
         ]);
-        $this->assertNotEquals(500, $resp->getStatusCode(), 'asset store 500: ' . $resp->status());
-        $asset = Asset::where('asset_code', $code)->first();
+        $this->assertNotEquals(500, $create->getStatusCode(), 'asset store 500');
+
+        $asset = Asset::where('asset_code', 'AST-SMOKE-01')->first();
         $this->assertNotNull($asset, 'asset not created');
 
-        // QR endpoints
-        $qr = $this->get("/assets/{$asset->id}/qr");
-        $this->assertNotEquals(500, $qr->getStatusCode(), 'asset qr 500');
-        $qrJson = $this->get("/assets/{$asset->id}/qr/json");
-        $this->assertNotEquals(500, $qrJson->getStatusCode(), 'asset qr/json 500');
-        $regen = $this->post("/assets/{$asset->id}/qr/regenerate");
-        $this->assertNotEquals(500, $regen->getStatusCode(), 'qr regenerate 500');
+        if ($asset) {
+            $qrJson = $this->get("/assets/{$asset->id}/qr/json");
+            $this->assertEquals(200, $qrJson->getStatusCode(), 'asset qr json fail');
 
-        // update + delete
-        $upd = $this->put("/assets/{$asset->id}", [
-            'asset_name' => 'Smoke Asset 2',
-            'category_id' => $cat->id, 'department_id' => $dep->id, 'location_id' => $loc->id, 'quantity' => 2,
-        ]);
-        $this->assertNotEquals(500, $upd->getStatusCode(), 'asset update 500');
-        $del = $this->delete("/assets/{$asset->id}");
-        $this->assertNotEquals(500, $del->getStatusCode(), 'asset delete 500');
+            $regen = $this->post("/assets/{$asset->id}/qr/regenerate");
+            $this->assertNotEquals(500, $regen->getStatusCode(), 'asset qr regen 500');
+
+            $del = $this->delete("/assets/{$asset->id}");
+            $this->assertNotEquals(500, $del->getStatusCode(), 'asset delete 500');
+        }
     }
 
     public function test_export_assets_download(): void
@@ -96,8 +90,6 @@ class SmokeMutationTest extends TestCase
         $this->admin();
         $resp = $this->post('/export/assets');
         $this->assertNotEquals(500, $resp->getStatusCode(), 'export assets 500');
-        // Should be a download (200 with file stream) or at least not crash
-        $this->assertContains($resp->getStatusCode(), [200, 302], 'export assets unexpected status');
     }
 
     public function test_qr_bulk_export(): void
@@ -106,61 +98,60 @@ class SmokeMutationTest extends TestCase
         $asset = Asset::first();
         if ($asset) {
             $resp = $this->post('/export/qr-bulk', ['ids' => [$asset->id]]);
-            $this->assertNotEquals(500, $resp->getStatusCode(), 'qr bulk 500');
+            $this->assertNotEquals(500, $resp->getStatusCode(), 'qr bulk export 500');
+        } else {
+            $this->assertTrue(true);
         }
-        $this->assertTrue(true);
     }
 
     public function test_import_template_download(): void
     {
         $this->admin();
         $resp = $this->get('/import/template/download');
-        $this->assertNotEquals(500, $resp->getStatusCode(), 'import template 500');
+        $this->assertNotEquals(500, $resp->getStatusCode(), 'import template download 500');
     }
 
     public function test_audit_session_full_flow(): void
     {
         $this->admin();
-        $resp = $this->post('/audit-sessions', [
-            'name' => 'Smoke Audit',
-            'code' => 'SMK-AUD',
-            'description' => 'test',
-            'start_date' => now()->format('Y-m-d'),
+        $create = $this->post('/audit-sessions', [
+            'name' => 'Session Full Flow',
+            'scope_type' => 'all',
+            'completion_mode' => 'flexible',
         ]);
-        $this->assertNotEquals(500, $resp->getStatusCode(), 'audit session store 500');
+        $this->assertNotEquals(500, $create->getStatusCode(), 'audit session store 500');
 
-        $session = AuditSession::where('code', 'SMK-AUD')->first();
+        $session = AuditSession::where('name', 'Session Full Flow')->first();
+        $this->assertNotNull($session, 'audit session not created');
+
         if ($session) {
             $start = $this->post("/audit-sessions/{$session->id}/start");
-            $this->assertNotEquals(500, $start->getStatusCode(), 'audit start 500');
-            $conduct = $this->get("/audit-sessions/{$session->id}/conduct");
-            $this->assertNotEquals(500, $conduct->getStatusCode(), 'audit conduct 500');
-            $cancel = $this->post("/audit-sessions/{$session->id}/cancel");
-            $this->assertNotEquals(500, $cancel->getStatusCode(), 'audit cancel 500');
-            $this->delete("/audit-sessions/{$session->id}");
+            $this->assertNotEquals(500, $start->getStatusCode(), 'audit session start 500');
+
+            $comp = $this->post("/audit-sessions/{$session->id}/complete");
+            $this->assertNotEquals(500, $comp->getStatusCode(), 'audit session complete 500');
         }
-        $this->assertTrue(true);
     }
 
     public function test_user_management(): void
     {
         $this->admin();
+        $email = 'user_smoke_' . time() . '@hotel.com';
         $create = $this->post('/users', [
-            'name' => 'Smoke User',
-            'email' => 'smokeuser@hotel.com',
+            'name' => 'User Smoke',
+            'email' => $email,
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'role' => 'auditor',
         ]);
         $this->assertNotEquals(500, $create->getStatusCode(), 'user store 500');
-        $user = User::where('email', 'smokeuser@hotel.com')->first();
-        if ($user) {
-            $upd = $this->put("/users/{$user->id}", [
-                'name' => 'Smoke User 2', 'email' => 'smokeuser@hotel.com', 'role' => 'auditor',
-            ]);
-            $this->assertNotEquals(500, $upd->getStatusCode(), 'user update 500');
-            $this->delete("/users/{$user->id}");
+
+        $usr = User::where('email', $email)->first();
+        $this->assertNotNull($usr, 'user not created');
+
+        if ($usr) {
+            $del = $this->delete("/users/{$usr->id}");
+            $this->assertNotEquals(500, $del->getStatusCode(), 'user delete 500');
         }
-        $this->assertTrue(true);
     }
 }

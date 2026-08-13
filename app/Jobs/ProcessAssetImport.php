@@ -10,6 +10,7 @@ use App\Models\Department;
 use App\Models\ImportError;
 use App\Models\ImportJob;
 use App\Models\Location;
+use App\Services\CacheService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -167,6 +168,8 @@ class ProcessAssetImport implements ShouldQueue
                 'error_rows'     => $errors,
                 'completed_at'   => now(),
             ]);
+            CacheService::clearDashboardCache();
+            CacheService::clearMasterData();
 
         } catch (\Throwable $e) {
             $job->update([

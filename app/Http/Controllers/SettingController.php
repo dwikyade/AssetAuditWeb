@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SystemSetting;
+use App\Services\CacheService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -30,7 +31,7 @@ class SettingController extends Controller
             );
         }
 
-        \Illuminate\Support\Facades\Cache::forget('system_settings');
+        CacheService::clearSystemSettingsCache();
 
         return back()->with('success', 'Pengaturan sistem berhasil diperbarui dan diterapkan!');
     }

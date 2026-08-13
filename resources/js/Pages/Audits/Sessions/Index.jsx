@@ -43,9 +43,9 @@ export default function AuditSessionIndex({ sessions, filters }) {
             if (search !== (filters?.search || '')) {
                 router.get('/audit-sessions', { ...filters, search }, { preserveState: true, replace: true });
             }
-        }, 500);
+        }, 400);
         return () => clearTimeout(timer);
-    }, [search, filters]);
+    }, [search, filters?.search]);
 
     return (
         <AppLayout>

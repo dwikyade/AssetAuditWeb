@@ -18,7 +18,7 @@ class DashboardController extends Controller
 {
     public function index(): Response
     {
-        $stats = Cache::remember('dashboard_stats', 60, function () {
+        $stats = Cache::remember('dashboard_stats', 300, function () {
             $totalAssets    = Asset::count();
             $activeAssets   = Asset::whereHas('status', fn ($q) => $q->where('code', 'active'))->count();
             $inactiveAssets = Asset::whereHas('status', fn ($q) => $q->whereIn('code', ['inactive', 'disposed']))->count();
@@ -74,47 +74,58 @@ class DashboardController extends Controller
             ];
         });
 
-        // Monthly asset trend (last 6 months)
-        $monthlyTrend = collect(range(5, 0))->map(function ($monthsAgo) {
-            $date = now()->subMonths($monthsAgo);
+        $charts = Cache::remember('dashboard_charts', 300, function () {
+            // Monthly asset trend (last 6 months)
+            $monthlyTrend = collect(range(5, 0))->map(function ($monthsAgo) {
+                $date = now()->subMonths($monthsAgo);
+                return [
+                    'month' => $date->format('M'),
+                    'count' => Asset::whereYear('created_at', $date->year)
+                        ->whereMonth('created_at', $date->month)
+                        ->count(),
+                ];
+            })->values();
+
+            // Asset by category
+            $byCategory = Asset::join('asset_categories', 'assets.category_id', '=', 'asset_categories.id')
+                ->selectRaw('asset_categories.name as name, COUNT(assets.id) as count')
+                ->groupBy('asset_categories.id', 'asset_categories.name')
+                ->orderByDesc('count')
+                ->limit(8)
+                ->get();
+
+            // Asset by department
+            $byDepartment = Asset::join('departments', 'assets.department_id', '=', 'departments.id')
+                ->selectRaw('departments.name as name, COUNT(assets.id) as count')
+                ->groupBy('departments.id', 'departments.name')
+                ->orderByDesc('count')
+                ->limit(8)
+                ->get();
+
+            // Asset by condition
+            $byCondition = Asset::join('asset_conditions', 'assets.condition_id', '=', 'asset_conditions.id')
+                ->selectRaw('asset_conditions.name as name, asset_conditions.color as color, COUNT(assets.id) as count')
+                ->groupBy('asset_conditions.id', 'asset_conditions.name', 'asset_conditions.color')
+                ->get();
+
+            // Asset by status
+            $byStatus = Asset::join('asset_statuses', 'assets.status_id', '=', 'asset_statuses.id')
+                ->selectRaw('asset_statuses.name as name, asset_statuses.color as color, COUNT(assets.id) as count')
+                ->groupBy('asset_statuses.id', 'asset_statuses.name', 'asset_statuses.color')
+                ->get();
+
             return [
-                'month' => $date->format('M'),
-                'count' => Asset::whereYear('created_at', $date->year)
-                    ->whereMonth('created_at', $date->month)
-                    ->count(),
+                'by_category'   => $byCategory,
+                'by_department' => $byDepartment,
+                'by_condition'  => $byCondition,
+                'by_status'     => $byStatus,
+                'monthly_trend' => $monthlyTrend,
             ];
-        })->values();
+        });
 
-        // Asset by category
-        $byCategory = Asset::join('asset_categories', 'assets.category_id', '=', 'asset_categories.id')
-            ->selectRaw('asset_categories.name as name, COUNT(assets.id) as count')
-            ->groupBy('asset_categories.id', 'asset_categories.name')
-            ->orderByDesc('count')
-            ->limit(8)
-            ->get();
-
-        // Asset by department
-        $byDepartment = Asset::join('departments', 'assets.department_id', '=', 'departments.id')
-            ->selectRaw('departments.name as name, COUNT(assets.id) as count')
-            ->groupBy('departments.id', 'departments.name')
-            ->orderByDesc('count')
-            ->limit(8)
-            ->get();
-
-        // Asset by condition
-        $byCondition = Asset::join('asset_conditions', 'assets.condition_id', '=', 'asset_conditions.id')
-            ->selectRaw('asset_conditions.name as name, asset_conditions.color as color, COUNT(assets.id) as count')
-            ->groupBy('asset_conditions.id', 'asset_conditions.name', 'asset_conditions.color')
-            ->get();
-
-        // Asset by status
-        $byStatus = Asset::join('asset_statuses', 'assets.status_id', '=', 'asset_statuses.id')
-            ->selectRaw('asset_statuses.name as name, asset_statuses.color as color, COUNT(assets.id) as count')
-            ->groupBy('asset_statuses.id', 'asset_statuses.name', 'asset_statuses.color')
-            ->get();
-
-        // Recent activity
-        $recentActivity = ActivityLog::with('user')
+        // Recent activity - constrain eager loaded user columns
+        $recentActivity = ActivityLog::with('user:id,name')
+            ->select(['id', 'user_id', 'action', 'module', 'description', 'created_at'])
             ->orderByDesc('created_at')
             ->limit(10)
             ->get()
@@ -159,13 +170,7 @@ class DashboardController extends Controller
 
         return Inertia::render('Dashboard/Index', [
             'stats'          => $stats,
-            'charts'         => [
-                'by_category'   => $byCategory,
-                'by_department' => $byDepartment,
-                'by_condition'  => $byCondition,
-                'by_status'     => $byStatus,
-                'monthly_trend' => $monthlyTrend,
-            ],
+            'charts'         => $charts,
             'recentActivity' => $recentActivity,
             'alerts'         => $alerts,
         ]);

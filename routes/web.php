@@ -45,8 +45,8 @@ Route::middleware(['auth'])->group(function () {
     // Master Data
     Route::resource('categories', AssetCategoryController::class);
     Route::resource('departments', DepartmentController::class);
-    Route::resource('locations', LocationController::class);
     Route::get('locations/tree', [LocationController::class, 'tree'])->name('locations.tree');
+    Route::resource('locations', LocationController::class);
     Route::resource('asset-statuses', AssetStatusController::class);
     Route::resource('asset-conditions', AssetConditionController::class);
     Route::resource('asset-code-prefixes', AssetCodePrefixController::class);

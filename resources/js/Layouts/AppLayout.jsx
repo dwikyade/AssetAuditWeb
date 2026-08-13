@@ -646,16 +646,16 @@ export default function AppLayout({ children }) {
                             <Link href="/" className="hover:text-gray-700">Home</Link>
                         </nav>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 sm:gap-3">
                         <button
                             onClick={() => setQrScannerOpen(true)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-900 hover:text-white transition-all text-xs font-semibold"
+                            className="inline-flex items-center justify-center gap-1.5 h-9 px-3 rounded-xl bg-gray-900 text-white hover:bg-black transition-all text-xs font-semibold shadow-sm active:scale-95 shrink-0"
                             title="Scan QR Code Aset"
                         >
-                            <Camera size={16} />
-                            <span className="hidden sm:inline">Scan QR</span>
+                            <Camera size={16} className="shrink-0" />
+                            <span className="hidden sm:inline whitespace-nowrap">Scan QR</span>
                         </button>
-                        <div className="w-px h-5 bg-gray-200" />
+                        <div className="w-px h-5 bg-gray-200 shrink-0" />
                         <div className="relative">
                             <button
                                 onClick={() => setNotifOpen(!notifOpen)}
@@ -706,6 +706,15 @@ export default function AppLayout({ children }) {
                     {children}
                 </main>
             </div>
+
+            {/* Mobile Quick Scan Floating Button */}
+            <button
+                onClick={() => setQrScannerOpen(true)}
+                className="sm:hidden fixed bottom-6 left-6 z-40 flex items-center justify-center w-12 h-12 rounded-full bg-gray-900 text-white shadow-xl hover:bg-black transition-transform active:scale-95 border border-white/20"
+                title="Scan QR Code Aset"
+            >
+                <Camera size={22} />
+            </button>
 
             {/* Watermark overlay (Activation Style - Bottom Right) */}
             <div className="pointer-events-none fixed bottom-4 right-5 z-40 select-none text-right opacity-30">

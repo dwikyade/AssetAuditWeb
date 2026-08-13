@@ -9,6 +9,7 @@ use App\Models\AuditSession;
 use App\Models\Department;
 use App\Models\Location;
 use App\Services\ActivityLogService;
+use App\Services\CacheService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class AuditSessionController extends Controller
 {
     public function index(Request $request): Response
     {
-        $query = AuditSession::with('creator')->withCount([
+        $query = AuditSession::with('creator:id,name,email')->withCount([
             'audits',
             'audits as found_count' => fn ($q) => $q->where('found_status', 'found'),
         ]);
@@ -86,7 +87,12 @@ class AuditSessionController extends Controller
 
     public function show(AuditSession $auditSession): Response
     {
-        $auditSession->load(['creator', 'audits.asset', 'audits.auditor', 'audits.condition']);
+        $auditSession->load([
+            'creator:id,name,email',
+            'audits.asset:id,asset_code,asset_name',
+            'audits.auditor:id,name,email',
+            'audits.condition:id,name,color'
+        ]);
 
         $progressData = $auditSession->progress;
 
@@ -150,6 +156,7 @@ class AuditSessionController extends Controller
         }
 
         $auditSession->update(['status' => 'in_progress', 'started_at' => now()]);
+        CacheService::clearDashboardCache();
         ActivityLogService::log('start', 'audit', get_class($auditSession), $auditSession->id, description: "Audit session {$auditSession->name} dimulai");
 
         return redirect()->route('audit-sessions.conduct', $auditSession)->with('success', 'Audit session dimulai.');
@@ -170,6 +177,7 @@ class AuditSessionController extends Controller
         }
 
         $auditSession->update(['status' => 'completed', 'completed_at' => now()]);
+        CacheService::clearDashboardCache();
         ActivityLogService::log('complete', 'audit', get_class($auditSession), $auditSession->id, description: "Audit session {$auditSession->name} selesai");
 
         return redirect()->route('audit-sessions.show', $auditSession)->with('success', 'Audit session berhasil diselesaikan.');
@@ -178,6 +186,7 @@ class AuditSessionController extends Controller
     public function cancel(AuditSession $auditSession): RedirectResponse
     {
         $auditSession->update(['status' => 'cancelled']);
+        CacheService::clearDashboardCache();
         ActivityLogService::log('cancel', 'audit', get_class($auditSession), $auditSession->id, description: "Audit session {$auditSession->name} dibatalkan");
 
         return back()->with('success', 'Audit session dibatalkan.');

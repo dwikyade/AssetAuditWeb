@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AssetCondition;
 use App\Services\ActivityLogService;
+use App\Services\CacheService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -29,6 +30,7 @@ class AssetConditionController extends Controller
         ]);
 
         $condition = AssetCondition::create(array_merge($data, ['is_active' => true]));
+        CacheService::clearMasterData();
         return back()->with('success', "Kondisi {$condition->name} berhasil ditambahkan.");
     }
 
@@ -43,6 +45,7 @@ class AssetConditionController extends Controller
         ]);
 
         $assetCondition->update($data);
+        CacheService::clearMasterData();
         return back()->with('success', "Kondisi {$assetCondition->name} berhasil diperbarui.");
     }
 
@@ -52,6 +55,7 @@ class AssetConditionController extends Controller
             return back()->with('error', 'Kondisi tidak dapat dihapus karena masih digunakan oleh aset.');
         }
         $assetCondition->delete();
+        CacheService::clearMasterData();
         return back()->with('success', 'Kondisi berhasil dihapus.');
     }
 }

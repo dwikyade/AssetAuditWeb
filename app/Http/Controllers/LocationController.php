@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Location;
 use App\Services\ActivityLogService;
+use App\Services\CacheService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -44,6 +45,7 @@ class LocationController extends Controller
         ]);
 
         $location = Location::create($data);
+        CacheService::clearMasterData();
         ActivityLogService::log('create', 'location', get_class($location), $location->id, description: "Lokasi {$location->name} dibuat");
 
         return redirect()->route('locations.index')->with('success', "Lokasi {$location->name} berhasil ditambahkan.");
@@ -71,6 +73,7 @@ class LocationController extends Controller
 
         $old = $location->toArray();
         $location->update($data);
+        CacheService::clearMasterData();
         ActivityLogService::logModelChange('update', 'location', $location, $old, $location->toArray());
 
         return redirect()->route('locations.index')->with('success', "Lokasi {$location->name} berhasil diperbarui.");
@@ -87,6 +90,7 @@ class LocationController extends Controller
 
         ActivityLogService::log('delete', 'location', get_class($location), $location->id, description: "Lokasi {$location->name} dihapus");
         $location->delete();
+        CacheService::clearMasterData();
 
         return redirect()->route('locations.index')->with('success', 'Lokasi berhasil dihapus.');
     }

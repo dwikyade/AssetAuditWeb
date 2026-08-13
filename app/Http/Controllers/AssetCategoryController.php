@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AssetCategory;
 use App\Services\ActivityLogService;
+use App\Services\CacheService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -41,6 +42,7 @@ class AssetCategoryController extends Controller
         ]);
 
         $category = AssetCategory::create($data);
+        CacheService::clearMasterData();
         ActivityLogService::log('create', 'category', get_class($category), $category->id, description: "Kategori {$category->name} dibuat");
 
         return redirect()->route('categories.index')->with('success', "Kategori {$category->name} berhasil ditambahkan.");
@@ -62,6 +64,7 @@ class AssetCategoryController extends Controller
 
         $old = $category->toArray();
         $category->update($data);
+        CacheService::clearMasterData();
         ActivityLogService::logModelChange('update', 'category', $category, $old, $category->toArray());
 
         return redirect()->route('categories.index')->with('success', "Kategori {$category->name} berhasil diperbarui.");
@@ -75,6 +78,7 @@ class AssetCategoryController extends Controller
 
         ActivityLogService::log('delete', 'category', get_class($category), $category->id, description: "Kategori {$category->name} dihapus");
         $category->delete();
+        CacheService::clearMasterData();
 
         return redirect()->route('categories.index')->with('success', 'Kategori berhasil dihapus.');
     }
